@@ -18,7 +18,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.sun.faces</groupId>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.faces</groupId>
 			<artifactId>jsf-impl</artifactId>
 			<scope>provided</scope>
 		</dependency>
@@ -86,10 +91,6 @@
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>
