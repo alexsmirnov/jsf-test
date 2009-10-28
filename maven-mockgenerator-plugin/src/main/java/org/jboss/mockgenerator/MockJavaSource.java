@@ -97,6 +97,7 @@ public class MockJavaSource extends JavaSource {
     		"    public %2$s(IMocksControl control) {\n" + 
     		"        super();\n" + 
     		"        this.control = control;\n" + 
+            "        %5$s" + 
     		"    }\n" + 
     		"\n" + 
     		"    public IMocksControl getControl() {\n" + 
@@ -104,7 +105,7 @@ public class MockJavaSource extends JavaSource {
     		"    }\n" + 
     		"";
     
-    private static final String fileFooter = "}\n";
+    private static final String fileFooter = "\n}\n";
 
     private final String mockController; 
     
@@ -115,8 +116,12 @@ public class MockJavaSource extends JavaSource {
         this.mockController = mockController;
     }
 
-    public void printFileHeader() {
-        sprintf(fileHeader,mockPackage,mockClass,className,mockController);
+    public void printFileHeader(String postConstruct) {
+        sprintf(fileHeader,mockPackage,mockClass,className,mockController,notNullString(postConstruct));
+    }
+
+    private String notNullString(String postConstruct) {
+        return null==postConstruct?"":postConstruct;
     }
     
     private static final String methodConstant="    private static final Method %2$sMethod%4$d = findMethod(%1$s.class, \"%2$s\"%3$s);\n";
@@ -167,7 +172,10 @@ public class MockJavaSource extends JavaSource {
         }
     }
 
-    public void printFileFooter(){
+    public void printFileFooter(String codeSegment){
+        if(null != codeSegment){
+            write(codeSegment);
+        }
         write(fileFooter);
     }
 }

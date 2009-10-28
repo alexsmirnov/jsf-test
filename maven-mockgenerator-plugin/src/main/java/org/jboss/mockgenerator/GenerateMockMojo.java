@@ -141,7 +141,7 @@ public class GenerateMockMojo
                 mock.setName(mockClassName);
             }
             MockJavaSource javaSource = new MockJavaSource(outputJavaDirectory,mockClassName,className,config.getMockController());
-            javaSource.printFileHeader();
+            javaSource.printFileHeader(mock.getPostConstruct());
             // TODO - remove duplicated methods.
             Method[] declaredMethods = baseClass.getMethods();
             for (Method method : declaredMethods) {
@@ -151,7 +151,7 @@ public class GenerateMockMojo
                     javaSource.printMethod(method);
                 }
             }
-            javaSource.printFileFooter();
+            javaSource.printFileFooter(mock.getCode());
             javaSource.writeClassFile();
         } catch (ClassNotFoundException e) {
             throw new MojoExecutionException("Base class for Mock not found",e);
@@ -164,7 +164,7 @@ public class GenerateMockMojo
     @SuppressWarnings("unchecked")
     protected boolean skipMethod(Mock mock, String name) {
         for (MockMethod mockMethod : (List<MockMethod>)mock.getMethods()) {
-            if(name.equals(mockMethod.getName())&& mockMethod.isExclude()){
+            if(name.equals(mockMethod.getName()) && mockMethod.isExclude()){
                 return true;
             }
         }

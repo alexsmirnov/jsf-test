@@ -62,15 +62,24 @@
 					<name>name</name>
 					<type>String</type>
 				</field>
+				<field>
+                    <name>code</name>
+                    <type>String</type>
+                </field>
+                <field>
+                    <name>postConstruct</name>
+                    <type>String</type>
+                </field>
+				
 				<field xml.tagName="class-name">
 					<name>className</name>
 					<type>String</type>
 					<required>true</required>
 					<identifier>true</identifier>
 				</field>
-				<field xml.tagName="method">
+				<field xml.listStyle="flat">
 					<name>methods</name>
-					<association xml.listStyle="flat" xml.tagName="method">
+					<association xml.listStyle="flat" xml.associationTagName="">
 						<type>MockMethod</type>
 						<multiplicity>*</multiplicity>
 					</association>
