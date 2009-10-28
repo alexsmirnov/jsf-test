@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mock-config>
     <class-prefix>Mock</class-prefix>
-    <package>org.jboss.test.faces.mock.context</package>
-    <mock-controller>org.jboss.test.faces.mock.FacesMock</mock-controller>
+    <package>org.jboss.test.faces.mock</package>
+    <mock-controller>org.jboss.test.faces.mock.FacesMockController</mock-controller>
     <mock>
        <name>org.jboss.test.faces.mock.context.MockFacesContext</name>
        <class-name>javax.faces.context.FacesContext</class-name>
@@ -16,15 +16,25 @@
        <method name="release" exclude="true" />
     </mock>
     <mock>
+       <name>org.jboss.test.faces.mock.context.MockFacesContextFactory</name>
+       <class-name>javax.faces.context.FacesContextFactory</class-name>
+    </mock>
+    <mock>
        <name>org.jboss.test.faces.mock.context.MockExternalContext</name>
        <class-name>javax.faces.context.ExternalContext</class-name>
     </mock>
-    <!-- pending for Type argument processing.
     <mock>
        <name>org.jboss.test.faces.mock.context.MockFlash</name>
        <class-name>javax.faces.context.Flash</class-name>
+       <method name="put" exclude="true"/>
+       <code><![CDATA[
+     private static final Method putMethod0 = findMethod(javax.faces.context.Flash.class, "put",java.lang.String.class,java.lang.Object.class);
+     public java.lang.Object put(java.lang.String arg0,java.lang.Object arg1) {
+            return (java.lang.Object)invokeMethod(this, putMethod0 ,arg0,arg1);
+     }
+       ]]></code>
     </mock>
-    --><mock>
+    <mock>
        <name>org.jboss.test.faces.mock.context.MockExceptionHandler</name>
        <class-name>javax.faces.context.ExceptionHandler</class-name>
     </mock>
@@ -32,21 +42,28 @@
        <name>org.jboss.test.faces.mock.context.MockPartialViewContext</name>
        <class-name>javax.faces.context.PartialViewContext</class-name>
     </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.context.MockPartialViewContextFactory</name>
+       <class-name>javax.faces.context.PartialViewContextFactory</class-name>
+    </mock>
     <!-- pending for constructor analyzing.
     <mock>
        <name>org.jboss.test.faces.mock.context.MockPartialResponseWriter</name>
        <class-name>javax.faces.context.PartialResponseWriter</class-name>
     </mock>
     -->
-    <!-- pending for owerwritten methods processing.
     <mock>
        <name>org.jboss.test.faces.mock.context.MockResponseWriter</name>
        <class-name>javax.faces.context.ResponseWriter</class-name>
     </mock>
     
-    --><mock>
+    <mock>
        <name>org.jboss.test.faces.mock.application.MockApplication</name>
        <class-name>javax.faces.application.Application</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.application.MockApplicationFactory</name>
+       <class-name>javax.faces.application.ApplicationFactory</class-name>
     </mock>
     <mock>
        <name>org.jboss.test.faces.mock.application.MockViewHandler</name>
@@ -59,6 +76,82 @@
     <mock>
        <name>org.jboss.test.faces.mock.application.MockStateManager</name>
        <class-name>javax.faces.application.StateManager</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.application.MockResource</name>
+       <class-name>javax.faces.application.Resource</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.application.MockResourceHandler</name>
+       <class-name>javax.faces.application.ResourceHandler</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.behavior.MockClientBehaviorContext</name>
+       <class-name>javax.faces.component.behavior.ClientBehaviorContext</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.visit.MockVisitContext</name>
+       <class-name>javax.faces.component.visit.VisitContext</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.visit.MockVisitContextFactory</name>
+       <class-name>javax.faces.component.visit.VisitContextFactory</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.el.MockMethodBinding</name>
+       <class-name>javax.faces.el.MethodBinding</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.el.MockValueBinding</name>
+       <class-name>javax.faces.el.ValueBinding</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.el.MockPropertyResolver</name>
+       <class-name>javax.faces.el.PropertyResolver</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.el.MockVariableResolver</name>
+       <class-name>javax.faces.el.VariableResolver</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.lifecycle.MockLifecycle</name>
+       <class-name>javax.faces.lifecycle.Lifecycle</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.lifecycle.MockLifecycleFactory</name>
+       <class-name>javax.faces.lifecycle.LifecycleFactory</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.render.MockClientBehaviorRenderer</name>
+       <class-name>javax.faces.render.ClientBehaviorRenderer</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.render.MockRenderer</name>
+       <class-name>javax.faces.render.Renderer</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.render.MockRenderKit</name>
+       <class-name>javax.faces.render.RenderKit</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.render.MockRenderKitFactory</name>
+       <class-name>javax.faces.render.RenderKitFactory</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.render.MockResponseStateManager</name>
+       <class-name>javax.faces.render.ResponseStateManager</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.view.MockViewDeclarationLanguage</name>
+       <class-name>javax.faces.view.ViewDeclarationLanguage</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.view.MockViewDeclarationLanguageFactory</name>
+       <class-name>javax.faces.view.ViewDeclarationLanguageFactory</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.view.MockStateManagementStrategy</name>
+       <class-name>javax.faces.view.StateManagementStrategy</class-name>
     </mock>
     
 </mock-config>
