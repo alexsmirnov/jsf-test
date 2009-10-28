@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -41,14 +41,14 @@ import javax.faces.event.SystemEvent;
 import javax.faces.validator.Validator;
 
 @SuppressWarnings("deprecation")
-public class MockApplication extends Application
+public class StubApplication extends Application
 {
    
    private javax.el.CompositeELResolver elResolver;
    private javax.el.CompositeELResolver additionalResolvers;
    private Collection locales;
    
-   public MockApplication()
+   public StubApplication()
    {
      elResolver = new CompositeELResolver();
      additionalResolvers = new CompositeELResolver();
@@ -156,7 +156,7 @@ public class MockApplication extends Application
       this.msgBundleName = bundleName;
    }
 
-   private NavigationHandler navigationHandler = null; //new SeamNavigationHandler( new MockNavigationHandler() );
+   private NavigationHandler navigationHandler = null; //new SeamNavigationHandler( new StubNavigationHandler() );
 
    @Override
    public NavigationHandler getNavigationHandler()
@@ -202,7 +202,7 @@ public class MockApplication extends Application
       this.variableResolver = variableResolver;
    }
 
-   private ViewHandler viewHandler = null; //new SeamViewHandler( new MockViewHandler() );
+   private ViewHandler viewHandler = null; //new SeamViewHandler( new StubViewHandler() );
 
    @Override
    public ViewHandler getViewHandler()
@@ -216,7 +216,7 @@ public class MockApplication extends Application
       this.viewHandler = viewHandler;
    }
 
-   private StateManager stateManager = null; //new SeamStateManager( new MockStateManager() );
+   private StateManager stateManager = null; //new SeamStateManager( new StubStateManager() );
 
    @Override
    public StateManager getStateManager()

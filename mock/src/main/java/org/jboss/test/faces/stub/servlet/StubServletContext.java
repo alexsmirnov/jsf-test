@@ -1,5 +1,5 @@
-//$Id: MockServletContext.java 9513 2008-11-06 03:09:55Z shane.bryzak@jboss.com $
-package org.jboss.seam.mock.servlet;
+//$Id: StubServletContext.java 9513 2008-11-06 03:09:55Z shane.bryzak@jboss.com $
+package org.jboss.test.faces.stub.servlet;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,9 +18,9 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import org.jboss.seam.mock.util.IteratorEnumeration;
+import org.jboss.test.faces.stub.util.IteratorEnumeration;
 
-public class MockServletContext implements ServletContext
+public class StubServletContext implements ServletContext
 {
    private Map<String, String> initParameters = new HashMap<String, String>();
    private Map<String, Object> attributes = new HashMap<String, Object>();
@@ -28,7 +28,7 @@ public class MockServletContext implements ServletContext
    private File webInfRoot;
    private File webInfClassesRoot;
 
-   public MockServletContext()
+   public StubServletContext()
    {
       try
       {

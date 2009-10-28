@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
 @SuppressWarnings("deprecation")
-public class MockStateManager extends StateManager
+public class StubStateManager extends StateManager
 {
    @Override
    public Object saveView(FacesContext ctx)

@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.util;
+package org.jboss.test.faces.stub.util;
 
 import java.util.Enumeration;
 import java.util.Iterator;

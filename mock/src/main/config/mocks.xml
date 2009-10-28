@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mock-config>
+    <class-prefix>Mock</class-prefix>
+    <package>org.jboss.test.faces.mock.context</package>
+    <mock-controller>org.jboss.test.faces.mock.FacesMock</mock-controller>
+    <mock>
+       <name>org.jboss.test.faces.mock.context.MockFacesContext</name>
+       <class-name>org.jboss.test.faces.mock.context.AbstractFacesContext</class-name>
+       <method name="release" exclude="true" />
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.context.MockExternalContext</name>
+       <class-name>javax.faces.context.ExternalContext</class-name>
+    </mock>
+    <!-- pending for Type argument processing.
+    <mock>
+       <name>org.jboss.test.faces.mock.context.MockFlash</name>
+       <class-name>javax.faces.context.Flash</class-name>
+    </mock>
+    --><mock>
+       <name>org.jboss.test.faces.mock.context.MockExceptionHandler</name>
+       <class-name>javax.faces.context.ExceptionHandler</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.context.MockPartialViewContext</name>
+       <class-name>javax.faces.context.PartialViewContext</class-name>
+    </mock>
+    <!-- pending for constructor analyzing.
+    <mock>
+       <name>org.jboss.test.faces.mock.context.MockPartialResponseWriter</name>
+       <class-name>javax.faces.context.PartialResponseWriter</class-name>
+    </mock>
+    -->
+    <!-- pending for owerwritten methods processing.
+    <mock>
+       <name>org.jboss.test.faces.mock.context.MockResponseWriter</name>
+       <class-name>javax.faces.context.ResponseWriter</class-name>
+    </mock>
+    
+    --><mock>
+       <name>org.jboss.test.faces.mock.application.MockApplication</name>
+       <class-name>javax.faces.application.Application</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.application.MockViewHandler</name>
+       <class-name>javax.faces.application.ViewHandler</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.application.MockNavigationHandler</name>
+       <class-name>javax.faces.application.NavigationHandler</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.application.MockStateManager</name>
+       <class-name>javax.faces.application.StateManager</class-name>
+    </mock>
+    
+</mock-config>

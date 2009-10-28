@@ -1,11 +1,11 @@
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 
-public class MockFacesContextFactory extends FacesContextFactory
+public class StubFacesContextFactory extends FacesContextFactory
 {
    private static FacesContext facesContext;
 
@@ -17,11 +17,11 @@ public class MockFacesContextFactory extends FacesContextFactory
 
    public static void setFacesContext(FacesContext facesContext)
    {
-      MockFacesContextFactory.facesContext = facesContext;
+      StubFacesContextFactory.facesContext = facesContext;
    }
 
    public static FacesContext getFacesContext()
    {
-      return MockFacesContextFactory.facesContext;
+      return StubFacesContextFactory.facesContext;
    }
 }

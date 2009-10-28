@@ -4,7 +4,7 @@
  * Distributable under LGPL license.
  * See terms of license at gnu.org.
  */
-package org.jboss.seam.mock.servlet;
+package org.jboss.test.faces.stub.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,13 +24,14 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import org.jboss.seam.mock.util.IteratorEnumeration;
+
+import org.jboss.test.faces.stub.util.IteratorEnumeration;
 
 /**
  * @author Gavin King
  * @author Thomas Heute
  */
-public class MockHttpServletRequest implements HttpServletRequest
+public class StubHttpServletRequest implements HttpServletRequest
 {
    
    private Map<String, String[]> parameters = new HashMap<String, String[]>();
@@ -43,17 +44,17 @@ public class MockHttpServletRequest implements HttpServletRequest
    private String method;
    private Enumeration locales;
    
-   public MockHttpServletRequest(HttpSession session)
+   public StubHttpServletRequest(HttpSession session)
    {
       this(session, null, new HashSet<String>());
    }
 
-   public MockHttpServletRequest(HttpSession session, String principalName, Set<String> principalRoles)
+   public StubHttpServletRequest(HttpSession session, String principalName, Set<String> principalRoles)
    {
       this(session, principalName, principalRoles, new Cookie[] {}, null);
    }
 
-   public MockHttpServletRequest(HttpSession session, String principalName, Set<String> principalRoles, Cookie[] cookies, String method)
+   public StubHttpServletRequest(HttpSession session, String principalName, Set<String> principalRoles, Cookie[] cookies, String method)
    {
       this.session = session;
       this.principalName = principalName;

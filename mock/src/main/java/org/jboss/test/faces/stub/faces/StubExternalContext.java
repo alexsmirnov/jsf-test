@@ -4,7 +4,7 @@
  * Distributable under LGPL license.
  * See terms of license at gnu.org.
  */
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,18 +29,19 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.jboss.seam.mock.servlet.MockHttpServletRequest;
-import org.jboss.seam.mock.servlet.MockHttpServletResponse;
-import org.jboss.seam.mock.servlet.MockHttpSession;
-import org.jboss.seam.mock.servlet.MockServletContext;
-import org.jboss.seam.mock.util.EnumerationIterator;
+
+import org.jboss.test.faces.stub.servlet.StubHttpServletRequest;
+import org.jboss.test.faces.stub.servlet.StubHttpServletResponse;
+import org.jboss.test.faces.stub.servlet.StubHttpSession;
+import org.jboss.test.faces.stub.servlet.StubServletContext;
+import org.jboss.test.faces.stub.util.EnumerationIterator;
 
 /**
  * @author Gavin King
  * @author <a href="mailto:theute@jboss.org">Thomas Heute</a>
  * @version $Revision: 9684 $
  */
-public class MockExternalContext extends ExternalContext
+public class StubExternalContext extends ExternalContext
 {
    private ServletContext context;
 
@@ -48,35 +49,35 @@ public class MockExternalContext extends ExternalContext
 
    private HttpServletResponse response;
 
-   public MockExternalContext()
+   public StubExternalContext()
    {
-      this.context = new MockServletContext();
-      this.request = new MockHttpServletRequest(new MockHttpSession(context));
-      this.response = new MockHttpServletResponse();
+      this.context = new StubServletContext();
+      this.request = new StubHttpServletRequest(new StubHttpSession(context));
+      this.response = new StubHttpServletResponse();
    }
 
-   public MockExternalContext(ServletContext context)
-   {
-      this.context = context;
-      this.request = new MockHttpServletRequest(new MockHttpSession(context));
-      this.response = new MockHttpServletResponse();
-   }
-
-   public MockExternalContext(ServletContext context, HttpSession session)
+   public StubExternalContext(ServletContext context)
    {
       this.context = context;
-      this.request = new MockHttpServletRequest(session);
-      this.response = new MockHttpServletResponse();
+      this.request = new StubHttpServletRequest(new StubHttpSession(context));
+      this.response = new StubHttpServletResponse();
    }
 
-   public MockExternalContext(ServletContext context, HttpServletRequest request)
+   public StubExternalContext(ServletContext context, HttpSession session)
+   {
+      this.context = context;
+      this.request = new StubHttpServletRequest(session);
+      this.response = new StubHttpServletResponse();
+   }
+
+   public StubExternalContext(ServletContext context, HttpServletRequest request)
    {
       this.context = context;
       this.request = request;
-      this.response = new MockHttpServletResponse();
+      this.response = new StubHttpServletResponse();
    }
 
-   public MockExternalContext(ServletContext context, HttpServletRequest request,
+   public StubExternalContext(ServletContext context, HttpServletRequest request,
             HttpServletResponse response)
    {
       this.context = context;
@@ -84,7 +85,7 @@ public class MockExternalContext extends ExternalContext
       this.response = response;
    }
    
-   public MockExternalContext(HttpServletRequest request)
+   public StubExternalContext(HttpServletRequest request)
    {
       this.request = request;
    }

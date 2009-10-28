@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.servlet;
+package org.jboss.test.faces.stub.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,7 +8,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-public class MockHttpServletResponse implements HttpServletResponse
+public class StubHttpServletResponse implements HttpServletResponse
 {
    public void addCookie(Cookie cookie)
    {

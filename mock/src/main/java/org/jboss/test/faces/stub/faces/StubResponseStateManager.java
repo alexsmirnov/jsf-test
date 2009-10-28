@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.render.ResponseStateManager;
 
 @SuppressWarnings("deprecation")
-public class MockResponseStateManager extends ResponseStateManager
+public class StubResponseStateManager extends ResponseStateManager
 {
    @Override
    public Object getComponentStateToRestore(FacesContext ctx)

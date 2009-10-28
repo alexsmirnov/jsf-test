@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -6,18 +6,18 @@ import java.util.Iterator;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
 
-public class MockLifecycleFactory extends LifecycleFactory
+public class StubLifecycleFactory extends LifecycleFactory
 {
    private static Lifecycle lifecycle;
 
    public static void setLifecycle(Lifecycle lifecycle)
    {
-      MockLifecycleFactory.lifecycle = lifecycle;
+      StubLifecycleFactory.lifecycle = lifecycle;
    }
 
    public static Lifecycle getLifecycle()
    {
-      return MockLifecycleFactory.lifecycle;
+      return StubLifecycleFactory.lifecycle;
    }
 
    @Override

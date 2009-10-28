@@ -1,5 +1,5 @@
 //$Id: IteratorEnumeration.java 5629 2007-06-29 00:41:37Z gavin $
-package org.jboss.seam.mock.util;
+package org.jboss.test.faces.stub.util;
 
 import java.util.Enumeration;
 import java.util.Iterator;

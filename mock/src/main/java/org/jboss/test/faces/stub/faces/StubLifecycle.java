@@ -1,5 +1,5 @@
-//$Id: MockLifecycle.java 8195 2008-05-15 13:25:37Z pete.muir@jboss.org $
-package org.jboss.seam.mock.faces;
+//$Id: StubLifecycle.java 8195 2008-05-15 13:25:37Z pete.muir@jboss.org $
+package org.jboss.test.faces.stub.faces;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -7,14 +7,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseListener;
 import javax.faces.lifecycle.Lifecycle;
 
-public class MockLifecycle extends Lifecycle
+public class StubLifecycle extends Lifecycle
 {
-   public static final Lifecycle INSTANCE = new MockLifecycle();
+   public static final Lifecycle INSTANCE = new StubLifecycle();
 
-   public MockLifecycle()
+   public StubLifecycle()
    {
-      MockLifecycleFactory.setLifecycle(this);
-      FactoryFinder.setFactory(FactoryFinder.LIFECYCLE_FACTORY, MockLifecycleFactory.class.getName());
+      StubLifecycleFactory.setLifecycle(this);
+      FactoryFinder.setFactory(FactoryFinder.LIFECYCLE_FACTORY, StubLifecycleFactory.class.getName());
    }
 
    @Override

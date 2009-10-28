@@ -4,7 +4,7 @@
  * Distributable under LGPL license.
  * See terms of license at gnu.org.
  */
-package org.jboss.seam.mock.servlet;
+package org.jboss.test.faces.stub.servlet;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -13,7 +13,8 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
-import org.jboss.seam.mock.util.IteratorEnumeration;
+
+import org.jboss.test.faces.stub.util.IteratorEnumeration;
 
 /**
  * @author Gavin King
@@ -21,16 +22,16 @@ import org.jboss.seam.mock.util.IteratorEnumeration;
  * @version $Revision: 9668 $
  */
 @SuppressWarnings("deprecation")
-public class MockHttpSession implements HttpSession
+public class StubHttpSession implements HttpSession
 {
    
    private Map<String, Object> attributes = new HashMap<String, Object>();
    private boolean isInvalid;
    private ServletContext servletContext;
    
-   public MockHttpSession() {}
+   public StubHttpSession() {}
    
-   public MockHttpSession(ServletContext servletContext) 
+   public StubHttpSession(ServletContext servletContext) 
    {
       this.servletContext = servletContext;
    }

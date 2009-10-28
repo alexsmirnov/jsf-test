@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import java.io.OutputStream;
 import java.io.Writer;
@@ -9,9 +9,9 @@ import javax.faces.render.RenderKit;
 import javax.faces.render.Renderer;
 import javax.faces.render.ResponseStateManager;
 
-public class MockRenderKit extends RenderKit
+public class StubRenderKit extends RenderKit
 {
-   public static final MockRenderKit INSTANCE = new MockRenderKit();
+   public static final StubRenderKit INSTANCE = new StubRenderKit();
 
    @Override
    public void addRenderer(String x, String y, Renderer renderer)
@@ -28,13 +28,13 @@ public class MockRenderKit extends RenderKit
    @Override
    public ResponseStateManager getResponseStateManager()
    {
-      return new MockResponseStateManager();
+      return new StubResponseStateManager();
    }
 
    @Override
    public ResponseWriter createResponseWriter(Writer writer, String x, String y)
    {
-      return new MockResponseWriter();
+      return new StubResponseWriter();
    }
 
    @Override

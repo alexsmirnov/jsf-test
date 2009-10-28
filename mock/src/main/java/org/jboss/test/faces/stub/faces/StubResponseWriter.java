@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -7,16 +7,16 @@ import java.io.Writer;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ResponseWriter;
 
-public class MockResponseWriter extends ResponseWriter
+public class StubResponseWriter extends ResponseWriter
 {
    private Writer writer;
 
-   public MockResponseWriter(Writer writer)
+   public StubResponseWriter(Writer writer)
    {
       this.writer = writer;
    }
 
-   public MockResponseWriter()
+   public StubResponseWriter()
    {
       this.writer = new StringWriter();
    }
@@ -24,7 +24,7 @@ public class MockResponseWriter extends ResponseWriter
    @Override
    public ResponseWriter cloneWithWriter(Writer writer)
    {
-      return new MockResponseWriter(writer);
+      return new StubResponseWriter(writer);
    }
 
    @Override

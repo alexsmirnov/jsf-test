@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -8,7 +8,7 @@ import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
-public class MockViewHandler extends ViewHandler
+public class StubViewHandler extends ViewHandler
 {
    @Override
    public Locale calculateLocale(FacesContext ctx)

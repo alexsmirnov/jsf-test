@@ -1,4 +1,4 @@
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import javax.faces.application.Application;
 import javax.faces.application.ApplicationFactory;
@@ -10,14 +10,14 @@ import javax.faces.application.ApplicationFactory;
  * 
  * <code>
  * FactoryFinder.setFactory(FactoryFinder.APPLICATION_FACTORY,
- *    "org.jboss.seam.mock.faces.MockApplicationFactory");
+ *    "org.jboss.test.faces.mock.faces.StubApplicationFactory");
  * Application application = ((ApplicationFactory) FactoryFinder
  *    .getFactory(FactoryFinder.APPLICATION_FACTORY)).getApplication();    
  * </code>
  * 
  * @author Dan Allen
  */
-public class MockApplicationFactory extends ApplicationFactory
+public class StubApplicationFactory extends ApplicationFactory
 {
    private Application application;
    

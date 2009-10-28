@@ -21,7 +21,7 @@
  *
  * $Id$
  */
-package org.jboss.seam.mock.faces;
+package org.jboss.test.faces.stub.faces;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +53,7 @@ import javax.faces.render.RenderKitFactory;
  * @author Thomas Heute
  * @author Dan Allen
  */
-public class MockFacesContext extends FacesContext
+public class StubFacesContext extends FacesContext
 {
    private Application application;
 
@@ -84,40 +84,40 @@ public class MockFacesContext extends FacesContext
 
    private boolean postback;
 
-   public MockFacesContext()
+   public StubFacesContext()
    {
       attributes.put(UINamingContainer.SEPARATOR_CHAR_PARAM_NAME, ':');
    }
 
-   public MockFacesContext(boolean postback)
+   public StubFacesContext(boolean postback)
    {
       this();
       this.postback = postback;
    }
 
-   public MockFacesContext(Application application)
+   public StubFacesContext(Application application)
    {
       this();
       this.application = application;
    }
 
-   public MockFacesContext(Application application, boolean postback)
+   public StubFacesContext(Application application, boolean postback)
    {
       this();
       this.application = application;
       this.postback = postback;
    }
 
-   public MockFacesContext(ExternalContext externalContext, Application application)
+   public StubFacesContext(ExternalContext externalContext, Application application)
    {
       this();
       this.externalContext = externalContext;
       this.application = application;
    }
 
-   // Create a MockFacesContext using a ApplicationFactory to get the
+   // Create a StubFacesContext using a ApplicationFactory to get the
    // Application
-   public MockFacesContext(ExternalContext externalContext)
+   public StubFacesContext(ExternalContext externalContext)
    {
       this();
       this.application = ((ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY)).getApplication();
@@ -205,7 +205,7 @@ public class MockFacesContext extends FacesContext
    {
       if (getViewRoot() == null || getViewRoot().getRenderKitId() == null)
       {
-         return MockRenderKit.INSTANCE;
+         return StubRenderKit.INSTANCE;
       }
       else
       {
@@ -280,7 +280,7 @@ public class MockFacesContext extends FacesContext
    public void release()
    {
       setCurrentInstance(null);
-      MockFacesContextFactory.setFacesContext(null);
+      StubFacesContextFactory.setFacesContext(null);
    }
 
    @Override
@@ -318,15 +318,15 @@ public class MockFacesContext extends FacesContext
       this.postback = postback;
    }
 
-   public MockFacesContext setCurrent()
+   public StubFacesContext setCurrent()
    {
       setCurrentInstance(this);
 
-      MockFacesContextFactory.setFacesContext(this);
+      StubFacesContextFactory.setFacesContext(this);
       return this;
    }
 
-   public MockFacesContext createViewRoot()
+   public StubFacesContext createViewRoot()
    {
       viewRoot = new UIViewRoot();
       viewRoot.setRenderKitId(getApplication().getViewHandler().calculateRenderKitId(this));
