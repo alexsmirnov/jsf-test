@@ -1,0 +1,86 @@
+<models>
+	<id>mock-config</id>
+	<name>MockConfig</name>
+	<description><![CDATA[Model for mock config.]]></description>
+	<defaults>
+		<default>
+			<key>package</key>
+			<value>org.jboss.mockgenerator.config</value>
+		</default>
+	</defaults>
+	<classes>
+		<class rootElement="true" xml.tagName="mock-config">
+			<name>MockConfig</name>
+			<fields>
+                <field xml.tagName="package">
+                    <name>mockPackage</name>
+                    <type>String</type>
+                </field>
+                <field xml.tagName="class-prefix">
+                    <name>classPrefix</name>
+                    <type>String</type>
+                    <defaultValue>Mock</defaultValue>
+                </field>
+                <field xml.tagName="mock-controller">
+                    <name>mockController</name>
+                    <type>String</type>
+                    <required>true</required>
+                </field>
+				<field xml.listStyle="flat">
+					<name>mocks</name>
+					<association xml.listStyle="flat" xml.associationTagName="">
+						<type>Mock</type>
+						<multiplicity>*</multiplicity>
+					</association>
+				</field>
+			</fields>
+			<codeSegments>
+				<codeSegment>
+				<code><![CDATA[//
+				//]]></code></codeSegment>
+			</codeSegments>
+		</class>
+		<class xml.tagName="method">
+			<name>MockMethod</name>
+			<fields>
+			    <field xml.attribute="true">
+                    <name>exclude</name>
+                    <type>boolean</type>
+                    <defaultValue>true</defaultValue>
+			    </field>
+				<field xml.attribute="true">
+					<name>name</name>
+					<type>String</type>
+                    <required>true</required>
+				</field>
+			</fields>
+		</class>
+		<class xml.tagName="mock">
+			<name>Mock</name>
+			<fields>
+				<field>
+					<name>name</name>
+					<type>String</type>
+				</field>
+				<field xml.tagName="class-name">
+					<name>className</name>
+					<type>String</type>
+					<required>true</required>
+					<identifier>true</identifier>
+				</field>
+				<field xml.tagName="method">
+					<name>methods</name>
+					<association xml.listStyle="flat" xml.tagName="method">
+						<type>MockMethod</type>
+						<multiplicity>*</multiplicity>
+					</association>
+				</field>
+			</fields>
+			<codeSegments>
+				<codeSegment>
+				<code><![CDATA[//
+				//]]></code></codeSegment>
+			</codeSegments>
+		</class>
+	</classes>
+</models>
