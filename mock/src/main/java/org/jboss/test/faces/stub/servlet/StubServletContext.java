@@ -1,4 +1,4 @@
-//$Id: StubServletContext.java 9513 2008-11-06 03:09:55Z shane.bryzak@jboss.com $
+//$Id$
 package org.jboss.test.faces.stub.servlet;
 
 import java.io.File;

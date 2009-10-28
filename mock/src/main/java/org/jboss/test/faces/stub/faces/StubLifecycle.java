@@ -1,4 +1,4 @@
-//$Id: StubLifecycle.java 8195 2008-05-15 13:25:37Z pete.muir@jboss.org $
+//$Id$
 package org.jboss.test.faces.stub.faces;
 
 import javax.faces.FacesException;

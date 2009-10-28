@@ -39,7 +39,7 @@ import org.jboss.test.faces.stub.util.EnumerationIterator;
 /**
  * @author Gavin King
  * @author <a href="mailto:theute@jboss.org">Thomas Heute</a>
- * @version $Revision: 9684 $
+ * @version $Revision$
  */
 public class StubExternalContext extends ExternalContext
 {

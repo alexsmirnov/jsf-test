@@ -23,6 +23,9 @@ import org.easymock.internal.RecordState;
  */
 public class FacesMock {
     
+    public static MockFacesEnvironment createMockEnvironment(){
+        return new MockFacesEnvironment(createControl());
+    }
 
     
     

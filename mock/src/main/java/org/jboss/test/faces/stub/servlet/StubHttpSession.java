@@ -19,7 +19,7 @@ import org.jboss.test.faces.stub.util.IteratorEnumeration;
 /**
  * @author Gavin King
  * @author Thomas Heute
- * @version $Revision: 9668 $
+ * @version $Revision$
  */
 @SuppressWarnings("deprecation")
 public class StubHttpSession implements HttpSession
