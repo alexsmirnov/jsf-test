@@ -25,6 +25,7 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -41,14 +42,12 @@ import org.jboss.mockgenerator.config.io.xpp3.MockConfigXpp3Reader;
 
 /**
  * Goal which generates EasyMock Java classes.
- *
+ * 
  * @goal generate-mock
  * @requiresDependencyResolution compile
  * @phase generate-sources
  */
-public class GenerateMockMojo
-    extends AbstractMojo
-{
+public class GenerateMockMojo extends AbstractMojo {
     /**
      * Top maven project.
      * 
@@ -58,6 +57,7 @@ public class GenerateMockMojo
     protected MavenProject project;
     /**
      * Location of the compiled java classes.
+     * 
      * @parameter expression="${project.build.directory}"
      * @required
      */
@@ -65,6 +65,7 @@ public class GenerateMockMojo
 
     /**
      * Location of the plugin configuration file.
+     * 
      * @parameter expression="src/main/config/mocks.xml"
      * @required
      */
@@ -73,7 +74,8 @@ public class GenerateMockMojo
     /**
      * Directory where the output Java Files will be located.
      * 
-     * @parameter expression="${project.build.directory}/generated-sources/mocks"
+     * @parameter 
+     *            expression="${project.build.directory}/generated-sources/mocks"
      */
     protected File outputJavaDirectory;
 
@@ -85,47 +87,61 @@ public class GenerateMockMojo
      * @readonly
      */
     protected List<String> classpathElements;
-    
-    /**
-      * <p class="changed_added_4_0">Project classloader that able to load classes from project dependencies.</p>
-      */
-    protected ClassLoader projectClassLoader;
-    
-    /**
-      * <p class="changed_added_4_0">Parsed generator configuration.</p>
-      */
-    protected MockConfig config;
 
-    public void execute()
-        throws MojoExecutionException
-    {
+    /**
+     * <p class="changed_added_4_0">
+     * Project classloader that able to load classes from project dependencies.
+     * </p>
+     */
+    protected ClassLoader projectClassLoader;
+
+    /**
+     * <p class="changed_added_4_0">
+     * Parsed generator configuration.
+     * </p>
+     */
+    protected MockConfig config;
+    
+    protected int errorsCount = 0;
+
+    public void execute() throws MojoExecutionException {
         File f = outputJavaDirectory;
         // Prepare output directory.
-        if ( !f.exists() )
-        {
+        if (!f.exists()) {
             f.mkdirs();
         }
         config = readConfig();
         projectClassLoader = createProjectClassLoader();
-        MockControlSource mockControl = new MockControlSource(outputJavaDirectory, config.getMockController());
+        MockControlSource mockControl = new MockControlSource(
+                outputJavaDirectory, config.getMockController());
         mockControl.printFileHeader();
-        for (Mock mock : (List<Mock>)config.getMocks()) {
+        for (Mock mock : (List<Mock>) config.getMocks()) {
             generateClass(mock);
             mockControl.printMockClass(mock.getName());
+        }
+        if(errorsCount>0){
+            throw new MojoExecutionException(
+                    "Errors during mock classes grneration");
         }
         mockControl.printFileFooter();
         try {
             mockControl.writeClassFile();
         } catch (IOException e) {
-            throw new MojoExecutionException("Error writing mock controller Java source", e);
+            throw new MojoExecutionException(
+                    "Error writing mock controller Java source", e);
         }
         // Tell project about generated files.
-        project.addCompileSourceRoot(outputJavaDirectory.getAbsolutePath());            
+        project.addCompileSourceRoot(outputJavaDirectory.getAbsolutePath());
     }
 
-    private static final List<String> systemMethods = Arrays.asList("toString","equals","hashCode","getClass","wait","notify","notifyAll");
+    private static final List<String> systemMethods = Arrays.asList("toString",
+            "equals", "hashCode", "getClass", "wait", "notify", "notifyAll");
+
     /**
-     * <p class="changed_added_4_0">Generate single Mock class</p>
+     * <p class="changed_added_4_0">
+     * Generate single Mock class
+     * </p>
+     * 
      * @param config
      * @param mock
      */
@@ -134,37 +150,81 @@ public class GenerateMockMojo
             String className = mock.getClassName();
             Class<?> baseClass = projectClassLoader.loadClass(className);
             String mockClassName = mock.getName();
-            if(null == mockClassName || mockClassName.length()==0){
+            if (null == mockClassName || mockClassName.length() == 0) {
                 // Calculate mock class name.
                 int indexOfDot = className.lastIndexOf('.');
-                mockClassName = config.getMockPackage()+"."+config.getClassPrefix()+className.substring(indexOfDot+1);
+                mockClassName = config.getMockPackage() + "."
+                        + config.getClassPrefix()
+                        + className.substring(indexOfDot + 1);
                 mock.setName(mockClassName);
             }
-            MockJavaSource javaSource = new MockJavaSource(outputJavaDirectory,mockClassName,className,config.getMockController());
+            MockJavaSource javaSource = new MockJavaSource(outputJavaDirectory,
+                    mockClassName, className, config.getMockController());
             javaSource.printFileHeader(mock.getPostConstruct());
-            // TODO - remove duplicated methods.
-            Method[] declaredMethods = baseClass.getMethods();
+            List<Method> declaredMethods = getPublicMethods(baseClass);
             for (Method method : declaredMethods) {
                 String name = method.getName();
-                skipMethod(mock, name);
-                if(!systemMethods.contains(name) && !skipMethod(mock, name) && 0 ==(method.getModifiers()&Modifier.STATIC)){
+                if (!skipMethod(mock, name)) {
                     javaSource.printMethod(method);
                 }
             }
             javaSource.printFileFooter(mock.getCode());
             javaSource.writeClassFile();
         } catch (ClassNotFoundException e) {
-            throw new MojoExecutionException("Base class for Mock not found",e);
+            getLog().error("Base class for Mock not found", e);
+            errorsCount++;
         } catch (IOException e) {
-            throw new MojoExecutionException("Error writing Mock class source",e);
+            getLog().error("Error writing Mock class source",
+                    e);
+            errorsCount++;
         }
-        
+
+    }
+
+    protected List<Method> getPublicMethods(Class<?> baseClass) {
+        Method[] declaredMethods = baseClass.getMethods();
+        ArrayList<Method> publicMethods = new ArrayList<Method>(
+                declaredMethods.length);
+        for (Method method : declaredMethods) {
+            boolean visible = true;
+            if (systemMethods.contains(method.getName())
+                    || 0 != (method.getModifiers() & Modifier.STATIC)) {
+                visible = false;
+            } else {
+                for (Method otherMethod : publicMethods) {
+                    if (method.getName().equals(otherMethod.getName())
+                            && method != otherMethod) {
+                        // two different methods with same name, check arguments
+                        Class<?>[] methodParameters = method
+                                .getParameterTypes();
+                        Class<?>[] otherMethodParameters = otherMethod
+                                .getParameterTypes();
+                        if (Arrays.equals(methodParameters,
+                                otherMethodParameters)) {
+                            // these methods have same signatures, check their
+                            // classes.
+                            if (method.getDeclaringClass().isAssignableFrom(
+                                    otherMethod.getDeclaringClass())) {
+                                // otherMetood overrides method, so we should
+                                // skip
+                                // first declaration.
+                                visible = false;
+                            }
+                        }
+                    }
+                }
+            }
+            if (visible) {
+                publicMethods.add(method);
+            }
+        }
+        return publicMethods;
     }
 
     @SuppressWarnings("unchecked")
     protected boolean skipMethod(Mock mock, String name) {
-        for (MockMethod mockMethod : (List<MockMethod>)mock.getMethods()) {
-            if(name.equals(mockMethod.getName()) && mockMethod.isExclude()){
+        for (MockMethod mockMethod : (List<MockMethod>) mock.getMethods()) {
+            if (name.equals(mockMethod.getName()) && mockMethod.isExclude()) {
                 return true;
             }
         }
@@ -176,7 +236,7 @@ public class GenerateMockMojo
         ClassLoader classLoader = null;
         try {
             List<String> classpathElements = project
-            .getCompileClasspathElements();
+                    .getCompileClasspathElements();
             String outputDirectory = project.getBuild().getOutputDirectory();
             URL[] urls = new URL[classpathElements.size() + 1];
             int i = 0;
@@ -198,20 +258,26 @@ public class GenerateMockMojo
 
     protected MockConfig readConfig() throws MojoExecutionException {
         // Read configuration
-        FileInputStream configurationInput=null;
+        FileInputStream configurationInput = null;
         try {
             MockConfigXpp3Reader reader = new MockConfigXpp3Reader();
             configurationInput = new FileInputStream(configuration);
             MockConfig mockConfig = reader.read(configurationInput);
             return mockConfig;
-        } catch(FileNotFoundException e) {
-          throw new MojoExecutionException("Configuration file does not exists:"+configuration.getAbsolutePath()); 
+        } catch (FileNotFoundException e) {
+            throw new MojoExecutionException(
+                    "Configuration file does not exists:"
+                            + configuration.getAbsolutePath());
         } catch (IOException e) {
-            throw new MojoExecutionException("Error readind configuration file: "+configuration.getAbsolutePath(),e); 
+            throw new MojoExecutionException(
+                    "Error readind configuration file: "
+                            + configuration.getAbsolutePath(), e);
         } catch (XmlPullParserException e) {
-            throw new MojoExecutionException("Error parsing configuration file: "+configuration.getAbsolutePath(),e); 
+            throw new MojoExecutionException(
+                    "Error parsing configuration file: "
+                            + configuration.getAbsolutePath(), e);
         } finally {
-            if(null != configurationInput){
+            if (null != configurationInput) {
                 try {
                     configurationInput.close();
                 } catch (IOException e) {

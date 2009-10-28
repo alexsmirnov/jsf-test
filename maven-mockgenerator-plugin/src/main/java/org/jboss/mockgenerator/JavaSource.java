@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Formatter;
 
 public class JavaSource {
@@ -45,13 +47,49 @@ public class JavaSource {
         writer.close();
     }
 
-    protected String classToString(Class<?> returnType) {
+    static String classToString(Class<?> returnType) {
+        return classToString(returnType, false);
+    }
+
+    static String classToString(Class<?> returnType, boolean varargs) {
         if(returnType.isArray()){
-            return classToString(returnType.getComponentType())+"[]";
+            return classToString(returnType.getComponentType())+(varargs?"...":"[]");
         }
         return returnType.getName().replace('$', '.');
     }
+    
+    static String boxingClassName(Class<?> clazz){
+        if(clazz.isPrimitive()){
+            if(boolean.class.equals(clazz)){
+                return Boolean.class.getSimpleName();
+            } else if(int.class.equals(clazz)){
+                return Integer.class.getSimpleName();
+            } else if(char.class.equals(clazz)){
+                return Character.class.getSimpleName();
+            } else if(short.class.equals(clazz)){
+                return Short.class.getSimpleName();
+            } else if(byte.class.equals(clazz)){
+                return Byte.class.getSimpleName();
+            } else if(long.class.equals(clazz)){
+                return Long.class.getSimpleName();
+            } else if(float.class.equals(clazz)){
+                return Float.class.getSimpleName();
+            } else if(double.class.equals(clazz)){
+                return Double.class.getSimpleName();
+            }
+        }
+        return classToString(clazz);
+    }
 
+    static Class<?>[] getMethodParemeters(Method method){
+        Type[] parameterTypes = method.getGenericParameterTypes();
+        Class<?>[] parameters = new Class<?>[parameterTypes.length];
+        for (int i = 0; i < parameterTypes.length; i++) {
+            Type type = parameterTypes[i];
+        }
+        return parameters;
+    }
+    
     public void sprintf(String format, Object...args) {
         Formatter formatter = new Formatter(output);
         formatter.format(format, args);

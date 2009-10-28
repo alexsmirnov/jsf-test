@@ -43,6 +43,16 @@ public class MockJavaSource extends JavaSource {
         private final Class<?>[] parameterTypes;
         
         private String format = ",%1$s.class";
+        
+        private boolean varargs=false;
+
+        /**
+         * <p class="changed_added_4_0"></p>
+         * @param varargs the varargs to set
+         */
+        public void setVarargs(boolean varargs) {
+            this.varargs = varargs;
+        }
 
         private ParametersFormatter(Class<?>[] parameterTypes) {
             this.parameterTypes = parameterTypes;
@@ -52,7 +62,7 @@ public class MockJavaSource extends JavaSource {
                 int precision) {
             for (int i = 0; i < this.parameterTypes.length; i++) {
                 Class<?> parameter = this.parameterTypes[i];
-                formatter.format(getFormat(), classToString(parameter),i,0==i?"":",");
+                formatter.format(getFormat(), classToString(parameter, varargs && i==this.parameterTypes.length-1),i,0==i?"":",");
             }
         }
 
@@ -126,14 +136,14 @@ public class MockJavaSource extends JavaSource {
     
     private static final String methodConstant="    private static final Method %2$sMethod%4$d = findMethod(%1$s.class, \"%2$s\"%3$s);\n";
     
-    private static final String voidMethod="    @Override\n" + 
+    private static final String voidMethod="//    @Override\n" + 
     		"    public void %2$s(%3$s) {\n" + 
     		"            invokeMethod(this, %2$sMethod%5$d %4$s);\n" + 
     		"    }\n" + 
     		"";
-    private static final String valueMethod="    @Override\n" + 
+    private static final String valueMethod="//    @Override\n" + 
     "    public %1$s %2$s(%3$s) {\n" + 
-    "            return invokeMethod(this, %2$sMethod%5$d %4$s);\n" + 
+    "            return (%6$s)invokeMethod(this, %2$sMethod%5$d %4$s);\n" + 
     "    }\n" + 
     "";
     
@@ -145,7 +155,7 @@ public class MockJavaSource extends JavaSource {
 
     /**
      * <p class="changed_added_4_0"></p>
-     * TODO - analyze type arguments and variable parameters.
+     * TODO - analyze type arguments.
      * @param method
      */
     public void printMethod(Method method){
@@ -162,13 +172,14 @@ public class MockJavaSource extends JavaSource {
         parameterTypesFormat.setFormat(",%1$s.class");
         sprintf(methodConstant, className,name,parameterTypesFormat,methodNumber);
         parameterTypesFormat.setFormat("%3$s%1$s arg%2$d");
+        parameterTypesFormat.setVarargs(method.isVarArgs());
         ParametersFormatter argumentsFormat = new ParametersFormatter(parameterTypes);
         argumentsFormat.setFormat(",arg%2$d");
         Class<?> returnType = method.getReturnType();
         if(void.class.equals(returnType)){
             sprintf(voidMethod, "void",name,parameterTypesFormat,argumentsFormat,methodNumber);
         } else {
-            sprintf(valueMethod, classToString(returnType),name,parameterTypesFormat,argumentsFormat,methodNumber);            
+            sprintf(valueMethod, classToString(returnType, false),name,parameterTypesFormat,argumentsFormat,methodNumber,boxingClassName(returnType));            
         }
     }
 

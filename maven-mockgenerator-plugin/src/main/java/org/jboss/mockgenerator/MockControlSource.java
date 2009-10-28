@@ -72,7 +72,7 @@ public class MockControlSource extends JavaSource {
     		"\n" + 
     		"    \n" + 
     		"    \n" + 
-    		"    public static <T> T createMock(Class<T> clazz,IMocksControl control){\n" + 
+    		"    public static <T> T createMock(Class<T> clazz,IMocksControl control) throws ClassNotFoundException {\n" + 
     		"        for (Class<?> mockClass : mockClasses) {\n" + 
     		"            if(clazz.isAssignableFrom(mockClass)){\n" + 
     		"                try {\n" + 
@@ -83,10 +83,10 @@ public class MockControlSource extends JavaSource {
     		"                }\n" + 
     		"            }\n" + 
     		"        }\n" + 
-    		"        throw new RuntimeException(\"Mock object for class \"+clazz.getName()+\" not found\");\n" + 
+    		"        throw new ClassNotFoundException(\"Mock object for class \"+clazz.getName()+\" not found\");\n" + 
     		"    }\n" + 
     		"    \n" + 
-    		"    public static <T> T createMock(Class<T> clazz){\n" + 
+    		"    public static <T> T createMock(Class<T> clazz) throws ClassNotFoundException {\n" + 
     		"        return createMock(clazz, createControl());\n" + 
     		"    }\n" + 
     		"    \n" + 
@@ -115,36 +115,6 @@ public class MockControlSource extends JavaSource {
     		"            return null; \n" + 
     		"        }\n" + 
     		"    }\n" +
-    		"    private static void verifyObject(Object mock) {\n" + 
-    		"            getControl(mock).verify();\n" + 
-    		"    }\n" + 
-    		"\n" + 
-    		"    private static IMocksControl getControl(Object mock) {\n" + 
-    		"        if (mock instanceof MockObject) {\n" + 
-    		"            MockObject mockObject = (MockObject) mock;\n" + 
-    		"            return mockObject.getControl();\n" + 
-    		"        } else {\n" + 
-    		"            throw new RuntimeException(\"Not a Mock object \"+mock);\n" + 
-    		"        }\n" + 
-    		"    }\n" + 
-    		"\n" + 
-    		"    public static void replay(Object... mocks) {\n" + 
-    		"        for (Object mock : mocks) {\n" + 
-    		"            getControl(mock).replay();\n" + 
-    		"        }\n" + 
-    		"    }\n" + 
-    		"\n" + 
-    		"    public static void reset(Object... mocks) {\n" + 
-    		"        for (Object mock : mocks) {\n" + 
-    		"            getControl(mock).reset();\n" + 
-    		"        }\n" + 
-    		"    }\n" + 
-    		"\n" + 
-    		"    public static void verify(Object... mocks) {\n" + 
-    		"        for (Object object : mocks) {\n" + 
-    		"            verifyObject(object);\n" + 
-    		"        }\n" + 
-    		"    }\n" + 
     		""+
     		"}\n" + 
     		"";
