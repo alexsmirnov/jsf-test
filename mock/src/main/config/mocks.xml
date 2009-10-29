@@ -39,6 +39,10 @@
        <class-name>javax.faces.context.ExceptionHandler</class-name>
     </mock>
     <mock>
+       <name>org.jboss.test.faces.mock.context.MockExceptionHandlerFactory</name>
+       <class-name>javax.faces.context.ExceptionHandlerFactory</class-name>
+    </mock>
+    <mock>
        <name>org.jboss.test.faces.mock.context.MockPartialViewContext</name>
        <class-name>javax.faces.context.PartialViewContext</class-name>
     </mock>
@@ -84,6 +88,40 @@
     <mock>
        <name>org.jboss.test.faces.mock.application.MockResourceHandler</name>
        <class-name>javax.faces.application.ResourceHandler</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUIComponent</name>
+       <class-name>javax.faces.component.UIComponent</class-name>
+       <code><![CDATA[
+    @Override
+    protected void addFacesListener(javax.faces.event.FacesListener listener) {
+        
+    }
+
+    @Override
+    protected javax.faces.context.FacesContext getFacesContext() {
+        return null;
+    }
+
+    @Override
+    protected javax.faces.event.FacesListener[] getFacesListeners(Class clazz) {
+        return null;
+    }
+
+    @Override
+    protected javax.faces.render.Renderer getRenderer(javax.faces.context.FacesContext context) {
+        return null;
+    }
+
+    @Override
+    protected void removeFacesListener(javax.faces.event.FacesListener listener) {
+    }
+       
+       ]]></code>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUIViewRoot</name>
+       <class-name>javax.faces.component.UIViewRoot</class-name>
     </mock>
     <mock>
        <name>org.jboss.test.faces.mock.component.behavior.MockClientBehaviorContext</name>

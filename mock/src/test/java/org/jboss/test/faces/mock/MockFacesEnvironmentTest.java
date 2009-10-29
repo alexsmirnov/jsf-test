@@ -42,30 +42,19 @@ public class MockFacesEnvironmentTest {
 
     private MockFacesEnvironment mockEnvironment;
 
-    /**
-     * <p class="changed_added_4_0"></p>
-     * @throws java.lang.Exception
-     */
     @Before
     public void setUp() throws Exception {
         this.mockEnvironment = FacesMock.createMockEnvironment();
     }
 
-    /**
-     * <p class="changed_added_4_0"></p>
-     * @throws java.lang.Exception
-     */
     @After
     public void tearDown() throws Exception {
         mockEnvironment.release();
     }
 
-    /**
-     * Test method for {@link org.jboss.test.faces.mock.MockFacesEnvironment#verify()}.
-     */
     @Test
     public void testVerify() {
-        mockEnvironment.withServletRequest().withApplication().withRenderKit();
+        mockEnvironment.withServletRequest().withRenderKit();
         expect(mockEnvironment.getExternalContext().getInitParameter("foo")).andReturn("bar");
         expect(mockEnvironment.getResponseStateManager().isPostback(mockEnvironment.getFacesContext())).andReturn(Boolean.TRUE);
         mockEnvironment.replay();
