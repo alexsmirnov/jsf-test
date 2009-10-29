@@ -188,7 +188,7 @@ public class GenerateMockMojo extends AbstractMojo {
         for (Method method : declaredMethods) {
             boolean visible = true;
             if (systemMethods.contains(method.getName())
-                    || 0 != (method.getModifiers() & Modifier.STATIC)) {
+                    || 0 != (method.getModifiers() & (Modifier.STATIC|Modifier.FINAL))) {
                 visible = false;
             } else {
                 for (Method otherMethod : publicMethods) {
