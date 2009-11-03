@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.jboss.test.faces;
+package org.jboss.test.faces.htmlunit;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +11,8 @@ import java.net.MalformedURLException;
 import javax.servlet.http.HttpSession;
 
 import org.jboss.test.faces.AbstractFacesTest;
-import org.jboss.test.faces.LocalWebClient;
+import org.jboss.test.faces.FacesEnvironment;
+import org.jboss.test.faces.htmlunit.LocalWebClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,14 +31,14 @@ import com.gargoylesoftware.htmlunit.html.SubmittableElement;
 public class FacesServerTest {
 
 
-	private FacesEnvironment environment;
+	private HtmlUnitEnvironment environment;
 
     /**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-	    this.environment = new FacesEnvironment();
+	    this.environment = new HtmlUnitEnvironment();
 	    this.environment.withResource("/WEB-INF/faces-config.xml", "org/jboss/test/WEB-INF/faces-config.xml").
 	    withResource("/hello.xhtml", "org/jboss/test/hello.xhtml").withResource("/response.xhtml", "org/jboss/test/response.xhtml").
 	    withResource("/wave.med.gif", "org/jboss/test/wave.med.gif").start();
@@ -60,7 +61,7 @@ public class FacesServerTest {
 	 */
 	@Test
 	public void testHelloFacelets() throws Exception {
-		HtmlPage page = getPage("/hello.jsf");
+		HtmlPage page = environment.getPage("/hello.jsf");
 		System.out.println(page.asXml());		
 		Element submitElement = page.getElementById("helloForm:submit");
 		HtmlForm htmlForm = page.getFormByName("helloForm");
@@ -82,17 +83,5 @@ public class FacesServerTest {
 		assertEquals("foo", span.getTextContent().trim());		
 	}
 
-	/**
-	 * <p class="changed_added_2_0"></p>
-	 * @param url TODO
-	 * @return
-	 * @throws IOException
-	 * @throws MalformedURLException
-	 */
-	protected HtmlPage getPage(String url) throws Exception {
-		WebClient webClient = new LocalWebClient(environment.getServer());
-		HtmlPage page = webClient.getPage("http://localhost"+url);
-		return page;
-	}
 
 }

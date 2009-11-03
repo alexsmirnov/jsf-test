@@ -93,6 +93,11 @@ public class FacesEnvironment {
             return this;
         }
         
+        public byte[] execute(){
+            connection.execute();
+            return connection.getResponseBody();
+        }
+        
         public FacesRequest withViewId(String viewId) {
             this.viewId = viewId;
             return this;
@@ -115,6 +120,14 @@ public class FacesEnvironment {
                 connection = null;
             }
             requests.remove(this);
+        }
+
+        /**
+         * <p class="changed_added_4_0"></p>
+         * @return the connection
+         */
+        public StagingConnection getConnection() {
+            return this.connection;
         }
     }
 
@@ -264,6 +277,17 @@ public class FacesEnvironment {
 
     public FacesEnvironment withResource(String path, URL resource) {
         this.facesServer.addResource(path, resource);
+        return this;
+    }
+
+    /**
+     * <p class="changed_added_4_0"></p>
+     * @param path
+     * @param resource
+     * @see org.jboss.test.faces.staging.StagingServer#addResource(java.lang.String, java.lang.String)
+     */
+    public FacesEnvironment withContent(String path, String pageContent) {
+        this.facesServer.addContent(path, pageContent);
         return this;
     }
 

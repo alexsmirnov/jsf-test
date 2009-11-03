@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.jboss.test.faces;
+package org.jboss.test.faces.htmlunit;
 
 import org.jboss.test.faces.staging.StagingServer;
 

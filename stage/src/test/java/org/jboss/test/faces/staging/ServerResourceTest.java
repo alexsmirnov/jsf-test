@@ -118,7 +118,7 @@ public class ServerResourceTest {
 	@Test
 	public void testGetAsStream() throws IOException {
 		ClasspathServerResource resource = new ClasspathServerResource(
-				"org/jboss/test/resource.txt");
+				"resource.txt");
 		InputStream inputStream = resource.getAsStream();
 		assertNotNull(inputStream);
 		try {
@@ -138,7 +138,7 @@ public class ServerResourceTest {
 	@Test
 	public void testGetURL() {
 		ClasspathServerResource resource = new ClasspathServerResource(
-		"org/jboss/test/resource.txt");
+		"resource.txt");
 		assertNotNull(resource.getURL());
 	}
 

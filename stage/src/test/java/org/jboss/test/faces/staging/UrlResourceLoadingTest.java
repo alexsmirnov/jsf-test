@@ -30,13 +30,13 @@ public class UrlResourceLoadingTest {
 
 	@Test
 	public void testAddFromFile() throws Exception {
-		URL resource = this.getClass().getClassLoader().getResource("org/jboss/test/resource.txt");
+		URL resource = this.getClass().getClassLoader().getResource("resource.txt");
 		assertNotNull(resource);
 		StagingServer server = new StagingServer();
 		ServerResourcesDirectory baseDir = new ServerResourcesDirectory();
 		server.addResourcesFromFile(resource, baseDir);
-		assertNotNull(baseDir.getResource(new ServerResourcePath("/logging.properties")));
-		assertNotNull(baseDir.getResource(new ServerResourcePath("/WEB-INF/faces-config.xml")));
+		assertNotNull(baseDir.getResource(new ServerResourcePath("/foo.txt")));
+		assertNotNull(baseDir.getResource(new ServerResourcePath("/baz/bar.txt")));
 	}
 
 	

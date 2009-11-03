@@ -373,6 +373,11 @@ public class StagingServer {
 		mimeTypes.put(extension, mimeType);
 	}
 
+    public void addContent(String path, String content) {
+        ServerResourcePath resourcePath = new ServerResourcePath(path);
+        serverRoot.addResource(resourcePath, new StringContentServerResource(content));
+    }
+	
 	/**
 	 * Add java resource to the virtual web application content. This method
 	 * makes all parent directories as needed.

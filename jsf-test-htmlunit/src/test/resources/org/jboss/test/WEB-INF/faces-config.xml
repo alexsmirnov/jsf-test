@@ -43,7 +43,7 @@
     <!-- our NumberBean we created before -->
     <managed-bean>
         <managed-bean-name>HelloBean</managed-bean-name>
-        <managed-bean-class>org.jboss.test.faces.HelloBean</managed-bean-class>
+        <managed-bean-class>org.jboss.test.faces.htmlunit.HelloBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 

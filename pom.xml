@@ -195,11 +195,6 @@
                         </exclusions>
                 </dependency>
                 <dependency>
-                        <groupId>javax.el</groupId>
-                        <artifactId>el-api</artifactId>
-                        <version>1.0</version>
-                </dependency>
-                <dependency>
                         <groupId>javax.servlet.jsp</groupId>
                         <artifactId>jsp-api</artifactId>
                         <version>2.1</version>
@@ -235,6 +230,7 @@
 		<module>mock</module>
 		<module>stage</module>
     <module>maven-mockgenerator-plugin</module>
+    <module>jsf-test-htmlunit</module>
   </modules>
 
 	

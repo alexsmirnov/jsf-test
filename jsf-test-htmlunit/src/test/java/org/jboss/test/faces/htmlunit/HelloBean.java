@@ -1,4 +1,4 @@
-package org.jboss.test.faces;
+package org.jboss.test.faces.htmlunit;
 
 import java.io.Serializable;
 
