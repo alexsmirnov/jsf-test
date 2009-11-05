@@ -254,6 +254,16 @@ public class FacesEnvironment {
 
     /**
      * <p class="changed_added_4_0"></p>
+     * @param root
+     * @return
+     */
+    public FacesEnvironment withWebRoot(String root) {
+        checkNotInitialized();
+        return withWebRoot(FacesEnvironment.class.getClassLoader().getResource(root));
+    }
+
+    /**
+     * <p class="changed_added_4_0"></p>
      * @param name
      * @param value
      * @see org.jboss.test.faces.staging.StagingServer#addInitParameter(java.lang.String, java.lang.String)
