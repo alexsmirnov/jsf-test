@@ -64,7 +64,6 @@
       <defaultGoal>package</defaultGoal>
       <pluginManagement>
          <plugins>
-      
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-compiler-plugin</artifactId>
@@ -75,6 +74,20 @@
             </plugin>
          </plugins>
        </pluginManagement>
+		<plugins>
+			<plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-source</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
     </build>
 
 	<dependencyManagement>
