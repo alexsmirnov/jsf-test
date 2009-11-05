@@ -39,9 +39,7 @@ public class FacesServerTest {
 	@Before
 	public void setUp() throws Exception {
 	    this.environment = new HtmlUnitEnvironment();
-	    this.environment.withResource("/WEB-INF/faces-config.xml", "org/jboss/test/WEB-INF/faces-config.xml").
-	    withResource("/hello.xhtml", "org/jboss/test/hello.xhtml").withResource("/response.xhtml", "org/jboss/test/response.xhtml").
-	    withResource("/wave.med.gif", "org/jboss/test/wave.med.gif").start();
+	    this.environment.withWebRoot("org/jboss/test/hello.xhtml").start();
 	}
 
 	/**

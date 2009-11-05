@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -39,6 +40,7 @@ import com.gargoylesoftware.htmlunit.WebResponse;
  * @author asmirnov
  * 
  */
+@SuppressWarnings("serial")
 public class LocalWebResponse implements WebResponse {
 	
 	private WebRequestSettings settings;
@@ -224,7 +226,24 @@ public class LocalWebResponse implements WebResponse {
 	 * @see com.gargoylesoftware.htmlunit.WebResponse#getRequestUrl()
 	 */
 	public URL getRequestUrl() {
-		// TODO Auto-generated method stub
 		return serverConnection.getUrl();
 	}
+
+    /* (non-Javadoc)
+     * @see com.gargoylesoftware.htmlunit.WebResponse#getContentCharset()
+     */
+    public String getContentCharset() {
+        String encoding = serverConnection.getResponseCharacterEncoding();
+        if(null==encoding){
+            encoding = Charset.defaultCharset().name();
+        }
+        return encoding;
+    }
+
+    /* (non-Javadoc)
+     * @see com.gargoylesoftware.htmlunit.WebResponse#getContentCharsetOrNull()
+     */
+    public String getContentCharsetOrNull() {
+        return serverConnection.getResponseCharacterEncoding();
+    }
 }
