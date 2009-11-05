@@ -28,6 +28,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -183,15 +184,16 @@ public class GenerateMockMojo extends AbstractMojo {
 
     protected List<Method> getPublicMethods(Class<?> baseClass) {
         Method[] declaredMethods = baseClass.getMethods();
-        ArrayList<Method> publicMethods = new ArrayList<Method>(
-                declaredMethods.length);
+        List<Method> publicMethods = new LinkedList<Method>();
         for (Method method : declaredMethods) {
+            List<Method> overridenPublicMethods = new ArrayList<Method>();
+
             boolean visible = true;
             if (systemMethods.contains(method.getName())
-                    || 0 != (method.getModifiers() & (Modifier.STATIC|Modifier.FINAL))) {
+            		|| 0 != (method.getModifiers() & (Modifier.STATIC|Modifier.FINAL))) {
                 visible = false;
             } else {
-                for (Method otherMethod : publicMethods) {
+            	for (Method otherMethod : publicMethods) {
                     if (method.getName().equals(otherMethod.getName())
                             && method != otherMethod) {
                         // two different methods with same name, check arguments
@@ -205,15 +207,34 @@ public class GenerateMockMojo extends AbstractMojo {
                             // classes.
                             if (method.getDeclaringClass().isAssignableFrom(
                                     otherMethod.getDeclaringClass())) {
-                                // otherMetood overrides method, so we should
-                                // skip
-                                // first declaration.
-                                visible = false;
+                            	
+                            	if (!method.getDeclaringClass().equals(otherMethod.getDeclaringClass())) {
+                                    // otherMetood overrides method, so we should
+                                    // skip
+                                    // first declaration.
+                                    visible = false;
+                                    break;
+                            	} else {
+                                    if (method.getReturnType().isAssignableFrom(
+                                    		otherMethod.getReturnType())) {
+
+                                    	//Java 5+ permits methods that return subtypes of parent's return type
+                                        visible = false;
+                                        break;
+                                    } else {
+                                        overridenPublicMethods.add(otherMethod);
+                                    }
+                            	}
+                            } else {
+                                overridenPublicMethods.add(otherMethod);
                             }
                         }
                     }
                 }
             }
+
+            publicMethods.removeAll(overridenPublicMethods);
+
             if (visible) {
                 publicMethods.add(method);
             }
