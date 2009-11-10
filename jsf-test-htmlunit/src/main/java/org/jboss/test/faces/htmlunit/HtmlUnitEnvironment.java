@@ -50,9 +50,10 @@ public class HtmlUnitEnvironment extends FacesEnvironment {
     }
 
     @Override
-    public void start() {
+    public FacesEnvironment start() {
         super.start();
         this.webClient = new LocalWebClient(getServer());
+        return this;
     }
     
     public HtmlPage getPage(String url) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
@@ -62,7 +63,7 @@ public class HtmlUnitEnvironment extends FacesEnvironment {
     }
     
     @Override
-    public void release() throws Exception {
+    public void release(){
         webClient.closeAllWindows();
         webClient = null;
         super.release();
