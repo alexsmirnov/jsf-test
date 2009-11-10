@@ -191,5 +191,21 @@
        <name>org.jboss.test.faces.mock.view.MockStateManagementStrategy</name>
        <class-name>javax.faces.view.StateManagementStrategy</class-name>
     </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.el.MockValueExpression</name>
+       <class-name>javax.el.ValueExpression</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.el.MockMethodExpression</name>
+       <class-name>javax.el.MethodExpression</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.el.MockExpressionFactory</name>
+       <class-name>javax.el.ExpressionFactory</class-name>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.el.MockELContext</name>
+       <class-name>javax.el.ELContext</class-name>
+    </mock>
     
 </mock-config>

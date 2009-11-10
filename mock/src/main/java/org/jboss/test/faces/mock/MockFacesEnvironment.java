@@ -23,6 +23,8 @@
 
 package org.jboss.test.faces.mock;
 
+import static org.easymock.EasyMock.*;
+
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.application.ViewHandler;
@@ -44,6 +46,8 @@ import org.jboss.test.faces.mock.FacesMockController.MockObject;
  *
  */
 public class MockFacesEnvironment implements FacesMockController.MockObject {
+    
+    static MockFacesEnvironment instance;
 
     private final IMocksControl mocksControl;
     
@@ -68,6 +72,20 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
     private RenderKit renderKit;
 
     private ResponseStateManager responseStateManager;
+    
+    // Factory methods
+    
+    public static MockFacesEnvironment createEnvironment(){
+        return new MockFacesEnvironment(createControl());
+    }
+
+    public static MockFacesEnvironment createStrictEnvironment(){
+        return new MockFacesEnvironment(createStrictControl());
+    }
+
+    public static MockFacesEnvironment createNiceEnvironment(){
+        return new MockFacesEnvironment(createNiceControl());
+    }
 
     MockFacesEnvironment(IMocksControl mocksControl) {
         this.mocksControl = mocksControl;
@@ -107,8 +125,12 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
 
     public MockFacesEnvironment withFactories(){
         FactoryFinder.releaseFactories();
+        FactoryFinder.setFactory(FactoryFinder.APPLICATION_FACTORY, MockApplicationFactory.class.getName());
+        FactoryFinder.setFactory(FactoryFinder.FACES_CONTEXT_FACTORY, MockFacesContextFactory.class.getName());
+        FactoryFinder.setFactory(FactoryFinder.RENDER_KIT_FACTORY, MockRenderKitFactory.class.getName());
         // TODO - register FacesContext factory.
         withFactories = true;
+        instance = this;
         return this;
     }
 
@@ -146,6 +168,7 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
     public void release() {
         facesContext.release();
         if(withFactories){
+            instance = null;
             FactoryFinder.releaseFactories();
         }
     }
