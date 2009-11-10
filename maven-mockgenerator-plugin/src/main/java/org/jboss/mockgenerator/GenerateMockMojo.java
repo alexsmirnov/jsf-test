@@ -189,8 +189,10 @@ public class GenerateMockMojo extends AbstractMojo {
             List<Method> overridenPublicMethods = new ArrayList<Method>();
 
             boolean visible = true;
-            if (systemMethods.contains(method.getName())
-            		|| 0 != (method.getModifiers() & (Modifier.STATIC|Modifier.FINAL))) {
+            int modifiers = method.getModifiers();
+            // Do not generate non-abstract system , static, and final methods.
+            if ( (systemMethods.contains(method.getName()) && 0==(modifiers&Modifier.ABSTRACT))
+            		|| 0 != (modifiers & (Modifier.STATIC|Modifier.FINAL))) {
                 visible = false;
             } else {
             	for (Method otherMethod : publicMethods) {
