@@ -33,6 +33,7 @@ import java.util.EventListener;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.LogManager;
 
 import javax.faces.FacesException;
@@ -161,7 +162,7 @@ public class FacesEnvironment {
 
     private File webRoot;
     
-    private List<FacesRequest> requests = new ArrayList<FacesRequest>(2);
+    private List<FacesRequest> requests = new CopyOnWriteArrayList<FacesRequest>();
 
     /**
      * <p class="changed_added_4_0">
@@ -318,7 +319,7 @@ public class FacesEnvironment {
      * 
      * @throws java.lang.Exception
      */
-    public void start() {
+    public FacesEnvironment start() {
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(
                 this.getClass().getClassLoader());
@@ -336,6 +337,7 @@ public class FacesEnvironment {
         lifecycle = lifecycleFactory
                 .getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
         initialized = true;
+        return this;
     }
 
     /**
@@ -486,7 +488,7 @@ public class FacesEnvironment {
      * 
      * @throws java.lang.Exception
      */
-    public void release() throws Exception {
+    public void release() {
         checkInitialized();
         for (FacesRequest request : this.requests) {
             request.release();
@@ -535,5 +537,9 @@ public class FacesEnvironment {
         } catch (Exception e) {
             throw new TestException(e);
         }
+    }
+
+    public static FacesEnvironment createEnvironment() {
+        return new FacesEnvironment();
     }
 }
