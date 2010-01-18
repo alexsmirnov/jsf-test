@@ -29,6 +29,8 @@ import java.io.File;
 
 
 
+
+
 /**
  * <p class="changed_added_4_0"></p>
  * @author asmirnov@exadel.com
@@ -90,6 +92,34 @@ public class MockControlSource extends JavaSource {
     		"        return createMock(name, clazz, createControl());\n" + 
     		"    }\n" + 
     		"    \n" + 
+    		"    public static <T> T invokeCurrent(MockObject target,Object... args){\n" + 
+    		"        StackTraceElement traceElement = Thread.currentThread().getStackTrace()[3];\n" + 
+    		"        String methodName = traceElement.getMethodName();\n" + 
+    		"        Method[] methods = target.getClass().getDeclaredMethods();\n" + 
+    		"        for (Method method : methods) {\n" + 
+    		"            if(method.getName().equals(methodName)){\n" + 
+    		"                Class<?>[] parameterTypes = method.getParameterTypes();\n" + 
+    		"                boolean acceptParameters = false;\n" + 
+    		"                if(null == args){\n" + 
+    		"                    acceptParameters = parameterTypes.length == 0;\n" + 
+    		"                } else if(parameterTypes.length == args.length){\n" + 
+    		"                    acceptParameters = true;\n" + 
+    		"                    for (int i = 0; i < parameterTypes.length; i++) {\n" + 
+    		"                        if(null != args[i] && !parameterTypes[i].isInstance(args[i]) && !parameterTypes[i].isPrimitive()){\n" + 
+    		"                            acceptParameters = false;\n" + 
+    		"                            break;\n" + 
+    		"                        }\n" + 
+    		"                        \n" + 
+    		"                    }\n" + 
+    		"                }\n" + 
+    		"                if(acceptParameters){\n" + 
+    		"                    return FacesMockController.<T>invokeMethod(target, method, args);\n" + 
+    		"                }\n" + 
+    		"            }\n" + 
+    		"        }\n" + 
+    		"        throw new RuntimeException(\"cannot find current method\");\n" + 
+    		"    }\n" + 
+    		""+
     		"    @SuppressWarnings(\"unchecked\")\n" + 
     		"    public static <T> T invokeMethod(MockObject target,Method method, Object... args) {\n" + 
     		"        MocksControl mcontrol = (MocksControl) target.getControl();\n" + 
