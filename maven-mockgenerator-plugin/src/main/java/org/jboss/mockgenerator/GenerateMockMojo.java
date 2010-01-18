@@ -135,8 +135,9 @@ public class GenerateMockMojo extends AbstractMojo {
         project.addCompileSourceRoot(outputJavaDirectory.getAbsolutePath());
     }
 
-    private static final List<String> systemMethods = Arrays.asList("toString",
-            "equals", "hashCode", "getClass", "wait", "notify", "notifyAll");
+    private static final List<String> requiredSystemMethods = Arrays.asList("toString", "equals", "hashCode");
+
+    private static final List<String> systemMethods = Arrays.asList("getClass", "wait", "notify", "notifyAll");
 
     /**
      * <p class="changed_added_4_0">
@@ -191,7 +192,8 @@ public class GenerateMockMojo extends AbstractMojo {
             boolean visible = true;
             int modifiers = method.getModifiers();
             // Do not generate non-abstract system , static, and final methods.
-            if ( (systemMethods.contains(method.getName()) && 0==(modifiers&Modifier.ABSTRACT))
+            if (requiredSystemMethods.contains(method.getName()) 
+                || (systemMethods.contains(method.getName()) && 0 == (modifiers&Modifier.ABSTRACT))
             		|| 0 != (modifiers & (Modifier.STATIC|Modifier.FINAL))) {
                 visible = false;
             } else {

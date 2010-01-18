@@ -72,12 +72,12 @@ public class MockControlSource extends JavaSource {
     		"\n" + 
     		"    \n" + 
     		"    \n" + 
-    		"    public static <T> T createMock(Class<T> clazz,IMocksControl control) throws ClassNotFoundException {\n" + 
+    		"    static <T> T createMock(String name, Class<T> clazz, IMocksControl control) throws ClassNotFoundException {\n" + 
     		"        for (Class<?> mockClass : mockClasses) {\n" + 
     		"            if(clazz.isAssignableFrom(mockClass)){\n" + 
     		"                try {\n" + 
-    		"                    Constructor<?> constructor = mockClass.getConstructor(IMocksControl.class);\n" + 
-    		"                    return (T) constructor.newInstance(control);\n" + 
+    		"                    Constructor<?> constructor = mockClass.getConstructor(IMocksControl.class, String.class);\n" + 
+    		"                    return (T) constructor.newInstance(control, name);\n" + 
     		"                } catch (Exception e) {\n" + 
     		"                    continue;\n" + 
     		"                }\n" + 
@@ -86,8 +86,8 @@ public class MockControlSource extends JavaSource {
     		"        throw new ClassNotFoundException(\"Mock object for class \"+clazz.getName()+\" not found\");\n" + 
     		"    }\n" + 
     		"    \n" + 
-    		"    public static <T> T createMock(Class<T> clazz) throws ClassNotFoundException {\n" + 
-    		"        return createMock(clazz, createControl());\n" + 
+    		"    static <T> T createMock(String name, Class<T> clazz) throws ClassNotFoundException {\n" + 
+    		"        return createMock(name, clazz, createControl());\n" + 
     		"    }\n" + 
     		"    \n" + 
     		"    @SuppressWarnings(\"unchecked\")\n" + 
@@ -100,10 +100,22 @@ public class MockControlSource extends JavaSource {
     		"            return (T) mcontrol.getState().invoke(\n" + 
     		"                    new Invocation(target, method, args));\n" + 
     		"\n" + 
-    		"        } catch (Throwable t) {\n" + 
-    		"            throw new RuntimeException(t); \n" + 
-    		"        }\n" + 
-    		"\n" + 
+    		"        } catch (org.easymock.internal.RuntimeExceptionWrapper e) {\n" +
+    		"            throw (RuntimeException) e.getRuntimeException().fillInStackTrace();\n" +
+    		"        } catch (org.easymock.internal.AssertionErrorWrapper e) {\n" +
+    		"            throw (AssertionError) e.getAssertionError().fillInStackTrace();\n" +
+    		"        } catch (org.easymock.internal.ThrowableWrapper t) {\n" +
+    		"            Throwable wrappedThrowable = t.getThrowable().fillInStackTrace();\n" +
+    		"            if (wrappedThrowable instanceof RuntimeException) {\n" +
+    		"                throw (RuntimeException) wrappedThrowable;\n" +
+    		"            } else if (wrappedThrowable instanceof Error) {\n" +
+    		"                throw (Error) wrappedThrowable;\n" +
+    		"            } else {\n" +
+    		"                throw new RuntimeException(t.fillInStackTrace()); \n" +
+    		"            }\n" +
+    		"        } catch (Throwable t) {\n" +
+    		"            throw new RuntimeException(t.fillInStackTrace()); \n" +
+    		"        }\n" +
     		"    }\n" + 
     		"    \n" + 
     		"    public static Method findMethod(Class<?> clazz,String name,Class<?>...classes ){\n" + 

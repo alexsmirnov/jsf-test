@@ -100,13 +100,16 @@ public class MockJavaSource extends JavaSource {
     		"public class %2$s extends %3$s implements MockObject {\n" + 
     		"\n" + 
     		"    private final IMocksControl control;\n" + 
+            "\n" + 
+            "    private final String name;\n" + 
     		"\n" + 
     		"    /**\n" + 
     		"     * @param control\n" + 
     		"     */\n" + 
-    		"    public %2$s(IMocksControl control) {\n" + 
+    		"    public %2$s(IMocksControl control, String name) {\n" + 
     		"        super();\n" + 
     		"        this.control = control;\n" + 
+            "        this.name = name;\n" + 
             "        %5$s" + 
     		"    }\n" + 
     		"\n" + 
@@ -115,7 +118,29 @@ public class MockJavaSource extends JavaSource {
     		"    }\n" + 
     		"";
     
-    private static final String fileFooter = "\n}\n";
+    //private static final String fileFooter = "\n}\n";
+    private static final String fileFooter = "\n" +
+    "\n" +
+    "    public String toString() {\n" +
+    "        return getClass().getSimpleName() + (name != null ? name : \"\");\n" +
+    "    }\n" +
+    "\n" +
+    "    public boolean equals(Object obj) {\n" +
+    "        return this == obj;\n" +
+    "    }\n" +
+    "\n" +
+    "    public int hashCode() {\n" +
+    "        if (name != null) {\n" +
+    "           final int prime = 31;\n" +
+    "           int result = 1;\n" +
+    "           result = prime * result + name.hashCode();\n" +
+    "           result = prime * result + getClass().getName().hashCode();\n" +
+    "           return result;\n" +
+    "        } else {" +
+    "           return System.identityHashCode(this);\n" +
+    "        }\n" +
+    "    }\n" +
+    "\n}\n";
 
     private final String mockController; 
     
