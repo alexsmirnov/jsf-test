@@ -23,7 +23,9 @@
 
 package org.jboss.test.faces.mock;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createControl;
+import static org.easymock.EasyMock.createNiceControl;
+import static org.easymock.EasyMock.createStrictControl;
 
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -38,7 +40,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
-import org.jboss.test.faces.mock.FacesMockController.MockObject;
 
 /**
  * <p class="changed_added_4_0"></p>
@@ -92,10 +93,13 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         facesContext = createMock(FacesContext.class);
     }
 
-    public <T>  T createMock(Class<T> mock) {
-            return FacesMock.createMock(mock, mocksControl);
+    public <T> T createMock(Class<T> mock) {
+        return createMock(null, mock);
     }
 
+    public <T> T createMock(String name, Class<T> mock) {
+        return FacesMock.createMock(name, mock, mocksControl);
+    }
 /*
     public MockFacesEnvironment _(){
         return this;
@@ -160,6 +164,21 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         return this;
     }
 
+    public MockFacesEnvironment resetToStrict() {
+        mocksControl.resetToStrict();
+        return this;
+    }
+
+    public MockFacesEnvironment resetToDefault() {
+        mocksControl.resetToDefault();
+        return this;
+    }
+    
+    public MockFacesEnvironment resetToNice() {
+        mocksControl.resetToNice();
+        return this;
+    }
+    
     public void verify() {
         mocksControl.verify();
     }
