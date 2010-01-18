@@ -24,6 +24,7 @@
 package org.jboss.test.faces.mock;
 import static org.jboss.test.faces.mock.FacesMockController.findMethod;
 import static org.jboss.test.faces.mock.FacesMockController.invokeMethod;
+import static org.jboss.test.faces.mock.FacesMockController.invokeCurrent;
 
 import javax.faces.component.ValueHolder;
 import javax.faces.convert.Converter;
@@ -60,7 +61,7 @@ public class MockUIOutput extends MockUIComponent implements ValueHolder {
      * @see javax.faces.component.ValueHolder#getValue()
      */
     public Object getValue() {
-        return invokeMethod(this, findMethod(ValueHolder.class, "getValue"));
+        return invokeCurrent(this);
     }
 
     /* (non-Javadoc)
@@ -74,7 +75,11 @@ public class MockUIOutput extends MockUIComponent implements ValueHolder {
      * @see javax.faces.component.ValueHolder#setValue(java.lang.Object)
      */
     public void setValue(Object value) {
-        invokeMethod(this, findMethod(ValueHolder.class, "setValue",Object.class),value);
+        invokeCurrent(this,value);
+    }
+    
+    public String concat(Object left, int num) {
+        return invokeCurrent(this,left,num);
     }
 
 }

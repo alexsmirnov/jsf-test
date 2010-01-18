@@ -42,9 +42,11 @@ public class CustomMockTest {
         Object value = "FOO";
         uiOutput.setValue(value);expectLastCall();
         expect(uiOutput.getValue()).andReturn(value );
+        expect(uiOutput.concat(value, 3)).andReturn("FOO3" );
         FacesMock.replay(uiOutput);
         uiOutput.setValue(value);
         assertSame(value,    uiOutput.getValue());
+        assertEquals("FOO3", uiOutput.concat(value, 3));
         FacesMock.verify(uiOutput);
     }
 
