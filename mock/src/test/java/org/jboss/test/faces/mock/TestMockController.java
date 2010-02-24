@@ -21,27 +21,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-package org.jboss.mockgenerator;
+package org.jboss.test.faces.mock;
 
-import java.lang.reflect.Method;
-import java.util.List;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import javax.faces.component.UIData;
+
+import org.jboss.test.faces.mock.component.MockUIData;
+import org.junit.Test;
+
 
 /**
  * <p class="changed_added_4_0"></p>
  * @author asmirnov@exadel.com
  *
  */
-public class MojoTest extends TestCase {
-
-    /**
-     * Test method for {@link org.jboss.mockgenerator.AbstractMockMojo#getPublicMethods(java.lang.Class)}.
-     */
-    public void testGetPublicMethods() {
-        AbstractMockMojo mojo = new GenerateMockMojo();
-        List<Method> methods = mojo.getPublicMethods(Bean.class);
-        assertEquals(4, methods.size());
+public class TestMockController {
+    
+    @Test
+    public void testCreateMock() throws Exception {
+        UIData uiData = FacesTestMockController.createMock("data", UIData.class);
+        assertEquals(MockUIData.class, uiData.getClass());
+        expect(uiData.getClientId()).andReturn("foo");
+        expect(uiData.getRowCount()).andReturn(5);
+        FacesMock.replay(uiData);
+        assertEquals("foo", uiData.getClientId());
+        assertEquals(5, uiData.getRowCount());
+        FacesMock.verify(uiData);
     }
 
 }

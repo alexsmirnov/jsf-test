@@ -25,7 +25,6 @@ package org.jboss.mockgenerator;
 
 
 import java.io.File;
-import java.lang.reflect.Method;
 
 
 
@@ -76,23 +75,27 @@ public class MockControlSource extends JavaSource {
     		"\n" + 
     		"    \n" + 
     		"    \n" + 
-    		"    static <T> T createMock(String name, Class<T> clazz, IMocksControl control) throws ClassNotFoundException {\n" + 
+    		"    public static <T> T createMock(String name, Class<T> clazz, IMocksControl control) throws ClassNotFoundException {\n" + 
     		"        for (Class<?> mockClass : mockClasses) {\n" + 
     		"            if(clazz.isAssignableFrom(mockClass)){\n" + 
     		"                try {\n" + 
     		"                    Constructor<?> constructor = mockClass.getConstructor(IMocksControl.class, String.class);\n" + 
     		"                    return (T) constructor.newInstance(control, name);\n" + 
     		"                } catch (Exception e) {\n" + 
-    		"                    continue;\n" + 
+    		"                    throw new ClassNotFoundException(\"Cannot instantiate object for class \"+clazz.getName(),e);\n" + 
     		"                }\n" + 
     		"            }\n" + 
     		"        }\n" + 
     		"        throw new ClassNotFoundException(\"Mock object for class \"+clazz.getName()+\" not found\");\n" + 
     		"    }\n" + 
     		"    \n" + 
-    		"    static <T> T createMock(String name, Class<T> clazz) throws ClassNotFoundException {\n" + 
+    		"    public static <T> T createMock(String name, Class<T> clazz) throws ClassNotFoundException {\n" + 
     		"        return createMock(name, clazz, createControl());\n" + 
     		"    }\n" + 
+            "    \n" + 
+            "    public static <T> T createMock(Class<T> clazz) throws ClassNotFoundException {\n" + 
+            "        return createMock(null, clazz, createControl());\n" + 
+            "    }\n" + 
     		"    \n" + 
     		"    public static <T> T invokeCurrent(MockObject target,Object... args){\n" + 
     		"        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();\n" + 
@@ -116,7 +119,7 @@ public class MockControlSource extends JavaSource {
     		"                            }\n" + 
     		"                        }\n" + 
     		"                        if(acceptParameters){\n" + 
-    		"                            return FacesMockController.<T>invokeMethod(target, method, args);\n" + 
+    		"                            return %2$s.<T>invokeMethod(target, method, args);\n" + 
     		"                        }\n" + 
     		"                    }\n" + 
     		"                }\n" + 
@@ -125,34 +128,44 @@ public class MockControlSource extends JavaSource {
     		"        throw new RuntimeException(\"cannot find current method\");\n" + 
     		"    }\n" + 
     		""+
-    		"    @SuppressWarnings(\"unchecked\")\n" + 
-    		"    public static <T> T invokeMethod(MockObject target,Method method, Object... args) {\n" + 
-    		"        MocksControl mcontrol = (MocksControl) target.getControl();\n" + 
-    		"        try {\n" + 
-    		"            if (mcontrol.getState() instanceof RecordState) {\n" + 
-    		"                LastControl.reportLastControl(mcontrol);\n" + 
-    		"            }\n" + 
-    		"            return (T) mcontrol.getState().invoke(\n" + 
-    		"                    new Invocation(target, method, args));\n" + 
-    		"\n" + 
-    		"        } catch (org.easymock.internal.RuntimeExceptionWrapper e) {\n" +
-    		"            throw (RuntimeException) e.getRuntimeException().fillInStackTrace();\n" +
-    		"        } catch (org.easymock.internal.AssertionErrorWrapper e) {\n" +
-    		"            throw (AssertionError) e.getAssertionError().fillInStackTrace();\n" +
-    		"        } catch (org.easymock.internal.ThrowableWrapper t) {\n" +
-    		"            Throwable wrappedThrowable = t.getThrowable().fillInStackTrace();\n" +
-    		"            if (wrappedThrowable instanceof RuntimeException) {\n" +
-    		"                throw (RuntimeException) wrappedThrowable;\n" +
-    		"            } else if (wrappedThrowable instanceof Error) {\n" +
-    		"                throw (Error) wrappedThrowable;\n" +
-    		"            } else {\n" +
-    		"                throw new RuntimeException(t.fillInStackTrace()); \n" +
-    		"            }\n" +
-    		"        } catch (Throwable t) {\n" +
-    		"            throw new RuntimeException(t.fillInStackTrace()); \n" +
-    		"        }\n" +
+    		"     public static <T> T invokeMethod(MockObject target, Method method, Object... args) {\n" + 
+    		"        IMocksControl mcontrol = target.getControl();\n" + 
+    		"        return %2$s.<T>invokeMethod(mcontrol, target, method, args);\n" + 
     		"    }\n" + 
-    		"    \n" + 
+    		"\n" + 
+    		"    @SuppressWarnings(\"unchecked\")\n" + 
+    		"    public static <T> T invokeMethod(IMocksControl control, MockObject target, Method method, Object... args)\n" + 
+    		"        throws AssertionError, Error {\n" + 
+    		"        if (null != control) {\n" + 
+    		"            try {\n" + 
+    		"                MocksControl mcontrol = (MocksControl) control;\n" + 
+    		"                if (mcontrol.getState() instanceof RecordState) {" +
+    		"                    LastControl.reportLastControl(mcontrol);\n" + 
+    		"                }\n" + 
+    		"                return (T) mcontrol.getState().invoke(new Invocation(target, method, args));\n" + 
+    		"\n" + 
+    		"            } catch (org.easymock.internal.RuntimeExceptionWrapper e) {\n" + 
+    		"                throw (RuntimeException) e.getRuntimeException().fillInStackTrace();\n" + 
+    		"            } catch (org.easymock.internal.AssertionErrorWrapper e) {\n" + 
+    		"                throw (AssertionError) e.getAssertionError().fillInStackTrace();\n" + 
+    		"            } catch (org.easymock.internal.ThrowableWrapper t) {\n" + 
+    		"                Throwable wrappedThrowable = t.getThrowable().fillInStackTrace();\n" + 
+    		"                if (wrappedThrowable instanceof RuntimeException) {\n" + 
+    		"                    throw (RuntimeException) wrappedThrowable;\n" + 
+    		"                } else if (wrappedThrowable instanceof Error) {\n" + 
+    		"                    throw (Error) wrappedThrowable;\n" + 
+    		"                } else {\n" + 
+    		"                    throw new RuntimeException(t.fillInStackTrace());\n" + 
+    		"                }\n" + 
+    		"            } catch (Throwable t) {\n" + 
+    		"                throw new RuntimeException(t.fillInStackTrace());\n" + 
+    		"            }\n" + 
+    		"\n" + 
+    		"        } else {\n" + 
+    		"            return null;\n" + 
+    		"        }\n" + 
+    		"    }\n" + 
+    		"   \n" + 
     		"    public static Method findMethod(Class<?> clazz,String name,Class<?>...classes ){\n" + 
     		"        try {\n" + 
     		"            return clazz.getMethod(name, classes);\n" + 
@@ -183,7 +196,8 @@ public class MockControlSource extends JavaSource {
     }
 
     public void printFileFooter(){
-        write(fileFooter);
+        sprintf(fileFooter,mockPackage,mockClass);
+//        write(fileFooter);
     }
 
 }

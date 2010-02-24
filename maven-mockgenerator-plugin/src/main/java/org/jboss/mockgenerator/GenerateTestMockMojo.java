@@ -24,24 +24,26 @@
 package org.jboss.mockgenerator;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
  * <p class="changed_added_4_0"></p>
  * Goal which generates EasyMock Java classes.
  * 
- * @goal generate-mock
- * @requiresDependencyResolution compile
- * @phase generate-sources
+ * @goal generate-test-mock
+ * @requiresDependencyResolution test
+ * @phase generate-test-sources
  * @author asmirnov@exadel.com
  *
  */
-public class GenerateMockMojo extends AbstractMockMojo {
+public class GenerateTestMockMojo extends AbstractMockMojo {
 
     /**
      * Location of the plugin configuration file.
      * 
-     * @parameter expression="src/main/config/mocks.xml"
+     * @parameter expression="src/test/config/mocks.xml"
      * @required
      */
     private File config;
@@ -49,9 +51,10 @@ public class GenerateMockMojo extends AbstractMockMojo {
      * Directory where the output Java Files will be located.
      * 
      * @parameter 
-     *            expression="${project.build.directory}/generated-sources/mocks"
+     *            expression="${project.build.directory}/generated-sources/test-mocks"
      */
     private File outputJavaDirectory;
+    
     /**
      * Project classpath.
      * 
@@ -61,10 +64,19 @@ public class GenerateMockMojo extends AbstractMockMojo {
      */
     private List<String> classpathElements;
 
+    /**
+     * Project classpath.
+     * 
+     * @parameter expression="${project.testClasspathElements}"
+     * @required
+     * @readonly
+     */
+    private List<String> testClasspathElements;
+
     @Override
     protected void addGeneratedSourcesToProject() {
         // Tell project about generated files.
-        project.addCompileSourceRoot(getOutputJavaDirectory().getAbsolutePath());
+        project.addTestCompileSourceRoot(getOutputJavaDirectory().getAbsolutePath());
     }
 
     @Override
@@ -78,8 +90,9 @@ public class GenerateMockMojo extends AbstractMockMojo {
     }
 
     @Override
-    protected List<String> getClasspathElements() {
-        return classpathElements;
+    protected Collection<String> getClasspathElements() {
+        HashSet<String> elements = new HashSet<String>(testClasspathElements);
+        return elements;
     }
 
 }

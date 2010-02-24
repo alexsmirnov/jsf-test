@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mock-config>
+    <class-prefix>Mock</class-prefix>
+    <package>org.jboss.test.faces.mock</package>
+    <mock-controller>org.jboss.test.faces.mock.FacesTestMockController</mock-controller>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUIData</name>
+       <class-name>javax.faces.component.UIData</class-name>
+       <method name="getChildren" exclude="true"/>
+       <method name="getChildCount" exclude="true"/>
+       <method name="getFacets" exclude="true"/>
+       <method name="getFacet" exclude="true"/>
+       <method name="getFacetCount" exclude="true"/>
+       <method name="getFacetsAndChildren" exclude="true"/>
+    </mock>
+    
+</mock-config>

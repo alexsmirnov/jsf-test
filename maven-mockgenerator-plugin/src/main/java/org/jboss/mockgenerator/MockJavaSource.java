@@ -109,20 +109,18 @@ public class MockJavaSource extends JavaSource {
             "     * Default constructor\n" + 
             "     */\n" + 
             "    public %2$s() {\n" + 
-            "        super();\n" + 
+            "            %5$s" + 
     		"            this.control =  createControl();\n" + 
             "            this.name = null;\n" + 
-            "            %5$s" + 
             "    }\n" + 
     		"\n"+
     		"    /**\n" + 
     		"     * @param control\n" + 
     		"     */\n" + 
     		"    public %2$s(IMocksControl control, String name) {\n" + 
-    		"        super();\n" + 
+            "        %5$s" + 
     		"        this.control = control;\n" + 
             "        this.name = name;\n" + 
-            "        %5$s" + 
     		"    }\n" + 
     		"\n" + 
     		"    public IMocksControl getControl() {\n" + 
@@ -175,12 +173,12 @@ public class MockJavaSource extends JavaSource {
     
     private static final String voidMethod="//    @Override\n" + 
     		"    public void %2$s(%3$s) {\n" + 
-    		"            invokeMethod(this, %2$sMethod%5$d %4$s);\n" + 
+    		"            invokeMethod(this.control,this, %2$sMethod%5$d %4$s);\n" + 
     		"    }\n" + 
     		"";
     private static final String valueMethod="//    @Override\n" + 
     "    public %1$s %2$s(%3$s) {\n" + 
-    "            return (%6$s)invokeMethod(this, %2$sMethod%5$d %4$s);\n" + 
+    "            return (%6$s)invokeMethod(this.control,this, %2$sMethod%5$d %4$s);\n" + 
     "    }\n" + 
     "";
     

@@ -5,6 +5,8 @@ import static org.easymock.EasyMock.createNiceControl;
 import static org.easymock.EasyMock.createStrictControl;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import org.easymock.IMocksControl;
@@ -80,6 +82,27 @@ public class FacesMock {
             FacesMockController.MockObject mockObject = (FacesMockController.MockObject) mock;
             return mockObject.getControl();
         } else {
+            // Check additional test controlled created mocks.
+            Class<?>[] interfaces = mock.getClass().getInterfaces();
+            for (Class<?> interfaze : interfaces) {
+                if("MockObject".equals(interfaze.getSimpleName()) && null !=interfaze.getEnclosingClass()){
+                    try {
+                        Method getControl = interfaze.getMethod("getControl");
+                        if(IMocksControl.class.equals(getControl.getReturnType())){
+                            return (IMocksControl) getControl.invoke(mock);
+                        }
+                    } catch (SecurityException e) {
+                        continue;
+                    } catch (NoSuchMethodException e) {
+                        continue;
+                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalAccessException e) {
+                        // TODO Auto-generated catch block
+                    } catch (InvocationTargetException e) {
+                        // TODO Auto-generated catch block
+                    }
+                }
+            }
             // Delegate to EazyMock
             return ((ObjectMethodsFilter) Proxy
                 .getInvocationHandler(mock)).getDelegate().getControl();
