@@ -26,7 +26,13 @@ public class FacesMock {
         return new MockFacesEnvironment(createControl());
     }
 
+    public static MockFacesEnvironment createNiceEnvironment(){
+        return new MockFacesEnvironment(createNiceControl());
+    }
 
+    public static MockFacesEnvironment createStrictEnvironment(){
+        return new MockFacesEnvironment(createStrictControl());
+    }
 
     public static <T> T createMock(String name, Class<T> clazz, IMocksControl control) {
         if (MOCK_OBJECT.isAssignableFrom(clazz)) {

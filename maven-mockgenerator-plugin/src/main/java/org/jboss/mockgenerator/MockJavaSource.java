@@ -95,6 +95,7 @@ public class MockJavaSource extends JavaSource {
             "import static %4$s.invokeMethod;\n\n" + 
     		"import java.lang.reflect.Method;\n" + 
     		"import org.easymock.IMocksControl;\n" + 
+            "import org.jboss.test.faces.mock.MockFacesEnvironment;\n" + 
             "import %4$s;\n" + 
             "import %4$s.MockObject;\n\n" + 
     		"public class %2$s extends %3$s implements MockObject {\n" + 
@@ -103,6 +104,18 @@ public class MockJavaSource extends JavaSource {
             "\n" + 
             "    private final String name;\n" + 
     		"\n" + 
+            "    /**\n" + 
+            "     * Default constructor\n" + 
+            "     */\n" + 
+            "    public %2$s() {\n" + 
+            "        super();\n" + 
+    		"        if(null != MockFacesEnvironment.getInstance()){\n" + 
+    		"            this.control =  MockFacesEnvironment.getInstance().getControl();\n" + 
+            "            this.name = null;\n" + 
+            "            %5$s" + 
+    		"        } else { throw new IllegalStateException(\"Mock environment is not initialized\"); }\n" + 
+            "    }\n" + 
+    		"\n"+
     		"    /**\n" + 
     		"     * @param control\n" + 
     		"     */\n" + 

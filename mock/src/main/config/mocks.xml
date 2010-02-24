@@ -24,6 +24,10 @@
        <class-name>javax.faces.context.ExternalContext</class-name>
     </mock>
     <mock>
+       <name>org.jboss.test.faces.mock.context.MockExternalContextFactory</name>
+       <class-name>javax.faces.context.ExternalContextFactory</class-name>
+    </mock>
+    <mock>
        <name>org.jboss.test.faces.mock.context.MockFlash</name>
        <class-name>javax.faces.context.Flash</class-name>
        <method name="put" exclude="true"/>

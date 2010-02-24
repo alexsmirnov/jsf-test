@@ -25,10 +25,15 @@ package org.jboss.test.faces.mock;
 
 import static org.easymock.EasyMock.*;
 
+import javax.faces.FactoryFinder;
 import javax.faces.context.FacesContext;
+import javax.faces.context.FacesContextFactory;
+import javax.faces.lifecycle.Lifecycle;
 
 import static org.junit.Assert.*;
 
+import org.easymock.internal.matchers.InstanceOf;
+import org.jboss.test.faces.mock.context.MockFacesContextFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,4 +68,18 @@ public class MockFacesEnvironmentTest {
         mockEnvironment.verify();
     }
 
+    @Test
+    public void testFactories() throws Exception {
+        mockEnvironment.withFactories();
+        Object factory = FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+        assertTrue(factory instanceof MockFacesContextFactory);
+        FacesContextFactory mockFactory = (FacesContextFactory) factory;
+        expect(mockFactory.getFacesContext(anyObject(), anyObject(), anyObject(), (Lifecycle) anyObject())).andReturn(mockEnvironment.getFacesContext());
+        Lifecycle lifecycle = mockEnvironment.createMock(Lifecycle.class);
+        mockEnvironment.replay();
+        FacesContextFactory factory2 = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+        assertSame(factory, factory2);
+        assertSame(mockEnvironment.getFacesContext(),mockFactory.getFacesContext(new Object(), new Object(), new Object(), lifecycle));
+        mockEnvironment.verify();
+    }
 }
