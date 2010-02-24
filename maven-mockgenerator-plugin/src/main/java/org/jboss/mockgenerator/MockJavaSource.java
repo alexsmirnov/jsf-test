@@ -23,6 +23,7 @@
 
 package org.jboss.mockgenerator;
 
+
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Formattable;
@@ -91,11 +92,11 @@ public class MockJavaSource extends JavaSource {
     		"\n" + 
     		"package %1$s;\n" + 
     		"\n" + 
+            "import static org.easymock.EasyMock.*;\n" + 
             "import static %4$s.findMethod;\n" + 
             "import static %4$s.invokeMethod;\n\n" + 
     		"import java.lang.reflect.Method;\n" + 
     		"import org.easymock.IMocksControl;\n" + 
-            "import org.jboss.test.faces.mock.MockFacesEnvironment;\n" + 
             "import %4$s;\n" + 
             "import %4$s.MockObject;\n\n" + 
     		"public class %2$s extends %3$s implements MockObject {\n" + 
@@ -109,11 +110,9 @@ public class MockJavaSource extends JavaSource {
             "     */\n" + 
             "    public %2$s() {\n" + 
             "        super();\n" + 
-    		"        if(null != MockFacesEnvironment.getInstance()){\n" + 
-    		"            this.control =  MockFacesEnvironment.getInstance().getControl();\n" + 
+    		"            this.control =  createControl();\n" + 
             "            this.name = null;\n" + 
             "            %5$s" + 
-    		"        } else { throw new IllegalStateException(\"Mock environment is not initialized\"); }\n" + 
             "    }\n" + 
     		"\n"+
     		"    /**\n" + 

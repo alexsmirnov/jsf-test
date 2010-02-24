@@ -77,6 +77,7 @@ public class MockFacesEnvironmentTest {
         expect(mockFactory.getFacesContext(anyObject(), anyObject(), anyObject(), (Lifecycle) anyObject())).andReturn(mockEnvironment.getFacesContext());
         Lifecycle lifecycle = mockEnvironment.createMock(Lifecycle.class);
         mockEnvironment.replay();
+        FacesMock.replay(factory);
         FacesContextFactory factory2 = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
         assertSame(factory, factory2);
         assertSame(mockEnvironment.getFacesContext(),mockFactory.getFacesContext(new Object(), new Object(), new Object(), lifecycle));

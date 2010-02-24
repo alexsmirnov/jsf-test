@@ -128,6 +128,100 @@
        <class-name>javax.faces.component.UIViewRoot</class-name>
     </mock>
     <mock>
+       <name>org.jboss.test.faces.mock.component.MockUIInput</name>
+       <class-name>javax.faces.component.UIInput</class-name>
+       <method name="getChildren" exclude="true"/>
+       <method name="getChildCount" exclude="true"/>
+       <method name="getFacets" exclude="true"/>
+       <method name="getFacet" exclude="true"/>
+       <method name="getFacetCount" exclude="true"/>
+       <method name="getFacetsAndChildren" exclude="true"/>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUIOutput</name>
+       <class-name>javax.faces.component.UIOutput</class-name>
+       <method name="getChildren" exclude="true"/>
+       <method name="getChildCount" exclude="true"/>
+       <method name="getFacets" exclude="true"/>
+       <method name="getFacet" exclude="true"/>
+       <method name="getFacetCount" exclude="true"/>
+       <method name="getFacetsAndChildren" exclude="true"/>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUICommand</name>
+       <class-name>javax.faces.component.UICommand</class-name>
+       <method name="getChildren" exclude="true"/>
+       <method name="getChildCount" exclude="true"/>
+       <method name="getFacets" exclude="true"/>
+       <method name="getFacet" exclude="true"/>
+       <method name="getFacetCount" exclude="true"/>
+       <method name="getFacetsAndChildren" exclude="true"/>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUIComponentBase</name>
+       <class-name>javax.faces.component.UIComponentBase</class-name>
+       <method name="getChildren" exclude="true"/>
+       <method name="getChildCount" exclude="true"/>
+       <method name="getFacets" exclude="true"/>
+       <method name="getFacet" exclude="true"/>
+       <method name="getFacetCount" exclude="true"/>
+       <code><![CDATA[
+    private java.util.List<javax.faces.component.UIComponent> children = null;
+    public java.util.List<javax.faces.component.UIComponent> getChildren() {
+
+        if (children == null) {
+            children = new java.util.ArrayList<javax.faces.component.UIComponent>();
+        }
+        return (children);
+
+    }
+    public int getChildCount() {
+
+        if (children != null) {
+            return (children.size());
+        } else {
+            return (0);
+        }
+
+    }
+    private java.util.Map<String, javax.faces.component.UIComponent> facets = null;
+
+
+    public java.util.Map<String, javax.faces.component.UIComponent> getFacets() {
+
+        if (facets == null) {
+            facets = new java.util.HashMap<String, javax.faces.component.UIComponent>();
+        }
+        return (facets);
+
+    }
+
+    // Do not allocate the children List to answer this question
+    public int getFacetCount() {
+
+        if (facets != null) {
+            return (facets.size());
+        } else {
+            return (0);
+        }
+
+    }
+
+
+    // Do not allocate the facets Map to answer this question
+    public javax.faces.component.UIComponent getFacet(String name) {
+
+        if (facets != null) {
+            return (facets.get(name));
+        } else {
+            return (null);
+        }
+
+    }
+
+       ]]></code>
+    </mock>
+    <mock>
        <name>org.jboss.test.faces.mock.component.behavior.MockClientBehaviorContext</name>
        <class-name>javax.faces.component.behavior.ClientBehaviorContext</class-name>
     </mock>
