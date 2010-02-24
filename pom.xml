@@ -10,8 +10,8 @@
 	<packaging>pom</packaging>
 
     <scm>
-      <connection>svn:https://svn.jboss.org/repos/test-utils/jboss-test-jsf/trunk</connection>
-      <developerConnection>svn:http://anonsvn.jboss.org/repos/test-utils/jboss-test-jsf/trunk</developerConnection>
+      <connection>scm:svn:https://svn.jboss.org/repos/test-utils/jboss-test-jsf/trunk</connection>
+      <developerConnection>scm:svn:http://anonsvn.jboss.org/repos/test-utils/jboss-test-jsf/trunk</developerConnection>
       <tag>trunk</tag>      
     </scm>
 	<distributionManagement>
