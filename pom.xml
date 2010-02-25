@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jboss.test-jsf</groupId>
 	<artifactId>parent</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>JSF test framework</name>
 	<packaging>pom</packaging>
 
     <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/test-utils/jboss-test-jsf/tags/jsf_test1_0_0</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/test-utils/jboss-test-jsf/tags/jsf_test1_0_0</developerConnection>      
+      <connection>scm:svn:http://anonsvn.jboss.org/repos/test-utils/jboss-test-jsf/trunk</connection>
+      <developerConnection>scm:svn:https://svn.jboss.org/repos/test-utils/jboss-test-jsf/trunk</developerConnection>      
     </scm>
 	<distributionManagement>
 		<repository>
