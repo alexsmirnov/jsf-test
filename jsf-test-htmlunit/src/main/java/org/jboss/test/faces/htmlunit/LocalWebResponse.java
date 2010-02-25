@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.httpclient.NameValuePair;
 import org.jboss.test.faces.staging.StagingConnection;
 
 import com.gargoylesoftware.htmlunit.WebRequestSettings;
 import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 /**
  * This implementation realise WebResponse wrapper for a staging server

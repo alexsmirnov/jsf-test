@@ -124,40 +124,6 @@
        ]]></code>
     </mock>
     <mock>
-       <name>org.jboss.test.faces.mock.component.MockUIViewRoot</name>
-       <class-name>javax.faces.component.UIViewRoot</class-name>
-    </mock>
-    <mock>
-       <name>org.jboss.test.faces.mock.component.MockUIInput</name>
-       <class-name>javax.faces.component.UIInput</class-name>
-       <method name="getChildren" exclude="true"/>
-       <method name="getChildCount" exclude="true"/>
-       <method name="getFacets" exclude="true"/>
-       <method name="getFacet" exclude="true"/>
-       <method name="getFacetCount" exclude="true"/>
-       <method name="getFacetsAndChildren" exclude="true"/>
-    </mock>
-    <mock>
-       <name>org.jboss.test.faces.mock.component.MockUIOutput</name>
-       <class-name>javax.faces.component.UIOutput</class-name>
-       <method name="getChildren" exclude="true"/>
-       <method name="getChildCount" exclude="true"/>
-       <method name="getFacets" exclude="true"/>
-       <method name="getFacet" exclude="true"/>
-       <method name="getFacetCount" exclude="true"/>
-       <method name="getFacetsAndChildren" exclude="true"/>
-    </mock>
-    <mock>
-       <name>org.jboss.test.faces.mock.component.MockUICommand</name>
-       <class-name>javax.faces.component.UICommand</class-name>
-       <method name="getChildren" exclude="true"/>
-       <method name="getChildCount" exclude="true"/>
-       <method name="getFacets" exclude="true"/>
-       <method name="getFacet" exclude="true"/>
-       <method name="getFacetCount" exclude="true"/>
-       <method name="getFacetsAndChildren" exclude="true"/>
-    </mock>
-    <mock>
        <name>org.jboss.test.faces.mock.component.MockUIComponentBase</name>
        <class-name>javax.faces.component.UIComponentBase</class-name>
        <method name="getChildren" exclude="true"/>
@@ -220,6 +186,46 @@
     }
 
        ]]></code>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUIViewRoot</name>
+       <class-name>javax.faces.component.UIViewRoot</class-name>
+       <method name="getChildren" exclude="true"/>
+       <method name="getChildCount" exclude="true"/>
+       <method name="getFacets" exclude="true"/>
+       <method name="getFacet" exclude="true"/>
+       <method name="getFacetCount" exclude="true"/>
+       <method name="getFacetsAndChildren" exclude="true"/>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUIOutput</name>
+       <class-name>javax.faces.component.UIOutput</class-name>
+       <method name="getChildren" exclude="true"/>
+       <method name="getChildCount" exclude="true"/>
+       <method name="getFacets" exclude="true"/>
+       <method name="getFacet" exclude="true"/>
+       <method name="getFacetCount" exclude="true"/>
+       <method name="getFacetsAndChildren" exclude="true"/>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUIInput</name>
+       <class-name>javax.faces.component.UIInput</class-name>
+       <method name="getChildren" exclude="true"/>
+       <method name="getChildCount" exclude="true"/>
+       <method name="getFacets" exclude="true"/>
+       <method name="getFacet" exclude="true"/>
+       <method name="getFacetCount" exclude="true"/>
+       <method name="getFacetsAndChildren" exclude="true"/>
+    </mock>
+    <mock>
+       <name>org.jboss.test.faces.mock.component.MockUICommand</name>
+       <class-name>javax.faces.component.UICommand</class-name>
+       <method name="getChildren" exclude="true"/>
+       <method name="getChildCount" exclude="true"/>
+       <method name="getFacets" exclude="true"/>
+       <method name="getFacet" exclude="true"/>
+       <method name="getFacetCount" exclude="true"/>
+       <method name="getFacetsAndChildren" exclude="true"/>
     </mock>
     <mock>
        <name>org.jboss.test.faces.mock.component.behavior.MockClientBehaviorContext</name>
