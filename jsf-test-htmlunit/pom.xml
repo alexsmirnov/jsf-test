@@ -4,18 +4,18 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.jboss.test-jsf</groupId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 	<groupId>org.jboss.test-jsf</groupId>
 	<artifactId>htmlunit-client</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>jsf-test-htmlunit</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.test-jsf</groupId>
 			<artifactId>jsf-test-stage</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
         <dependency>
             <groupId>com.sun.faces</groupId>
