@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.w3c.dom.Element;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -61,14 +62,14 @@ public class FacesServerTest {
 	public void testHelloFacelets() throws Exception {
 		HtmlPage page = environment.getPage("/hello.jsf");
 		System.out.println(page.asXml());		
-		Element submitElement = page.getElementById("helloForm:submit");
+		HtmlElement submitElement = page.getElementById("helloForm:submit");
 		HtmlForm htmlForm = page.getFormByName("helloForm");
 		htmlForm.getInputByName("helloForm:username");
 		assertNotNull(htmlForm);
 		HtmlInput input = htmlForm.getInputByName("helloForm:username");
 		assertNotNull(input);
 		input.setValueAttribute("foo");
-		HtmlPage responsePage = (HtmlPage) htmlForm.submit((SubmittableElement) submitElement);
+		HtmlPage responsePage = submitElement.click();
 		assertNotNull(responsePage);
 		System.out.println(responsePage.asXml());		
 		HttpSession session = environment.getServer().getSession(false);

@@ -5,7 +5,6 @@ package org.jboss.test.faces.htmlunit;
 
 import java.io.IOException;
 
-import org.apache.commons.httpclient.NameValuePair;
 import org.jboss.test.faces.staging.HttpMethod;
 import org.jboss.test.faces.staging.StagingConnection;
 import org.jboss.test.faces.staging.StagingServer;
@@ -14,6 +13,7 @@ import com.gargoylesoftware.htmlunit.FormEncodingType;
 import com.gargoylesoftware.htmlunit.WebConnection;
 import com.gargoylesoftware.htmlunit.WebRequestSettings;
 import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 /**
  * This implementation of the HtmlUnit {@link WebConnection} execute http requests on the local
