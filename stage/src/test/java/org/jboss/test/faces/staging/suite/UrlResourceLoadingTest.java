@@ -18,7 +18,6 @@ public class UrlResourceLoadingTest {
 		try {
 	        server.init();
 	        assertNotNull(server.getContext().getResource("/Map.class"));
-            assertNotNull(server.getContext().getResource("/concurrent/atomic/"));
 	        assertNotNull(server.getContext().getResource("/concurrent/atomic/AtomicBoolean.class"));
 		} finally {
 	        server.destroy();
