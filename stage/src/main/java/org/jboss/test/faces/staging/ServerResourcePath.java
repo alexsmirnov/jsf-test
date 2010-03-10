@@ -36,7 +36,7 @@ public class ServerResourcePath {
 	}
 
 	/**
-	 * Create path from string representation. Path have to started with training slash, as required for
+	 * Create path from string representation. Path must begin with '/' slash symbol, as required for
 	 * {@link ServletContext#getResource(String)} 
 	 * @param path 
 	 */
@@ -61,17 +61,17 @@ public class ServerResourcePath {
     }
 	
 	/**
-	 * Method to detect last element in the path.
-	 * @return true for a last element in the path.
+	 * Method to detect existence of next element in the path.
+	 * @return true if next element exists in the path.
 	 */
 	public boolean hasNextPath() {
 		return pathIndex < pathElements.length - 1;
 	}
 
 	/**
-	 * Name of the next element ( directory or file ) name. 
-	 * For the "/foo/bar/baz" it should be "foo/" ,  /bar/baz : "bar/" , "/" : null.
-	 * @return name of the next element or null if it is last element in the chain ( file ).
+	 * File name of the element. 
+	 * For the "/foo/bar/baz" it should be "foo", "bar", "baz", null.
+	 * @return file name of the element or null for root element.
 	 */
 	public String getFileName() {
 	    if (pathIndex < pathElements.length) {
@@ -83,7 +83,7 @@ public class ServerResourcePath {
 
 	/**
 	 * Create next path of the path chain.
-	 * Path /foo/bar/baz should be converted to /bar/baz , /bar/baz -> /baz -> / ( empty path )
+	 * Path /foo/bar/baz should be converted to /bar/baz , /bar/baz -> /baz -> null
 	 * @return next subdirectory path or null.
 	 */
 	public ServerResourcePath getNextPath() {
