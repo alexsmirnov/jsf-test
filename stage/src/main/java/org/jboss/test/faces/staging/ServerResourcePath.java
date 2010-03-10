@@ -14,23 +14,25 @@ import javax.servlet.ServletContext;
  */
 public class ServerResourcePath {
 	
-	private static final Pattern SLASH = Pattern.compile("/");
+	private static final Pattern SLASH = Pattern.compile("/+");
 
-	public static final ServerResourcePath WEB_INF=new ServerResourcePath("/WEB-INF/");
+	public static final ServerResourcePath WEB_INF = new ServerResourcePath("/WEB-INF/");
 
-	public static final ServerResourcePath META_INF=new ServerResourcePath("/META-INF/");
-	public static final ServerResourcePath WEB_XML=new ServerResourcePath("/WEB-INF/web.xml");
-	public static final ServerResourcePath FACES_CONFIG=new ServerResourcePath("/WEB-INF/faces-config.xml");
+	public static final ServerResourcePath META_INF = new ServerResourcePath("/META-INF/");
+	public static final ServerResourcePath WEB_XML = new ServerResourcePath("/WEB-INF/web.xml");
+	public static final ServerResourcePath FACES_CONFIG = new ServerResourcePath("/WEB-INF/faces-config.xml");
 
-
+	private final int pathIndex;
+	
 	private final String[] pathElements;
 
 	/**
 	 * Private constructor for next sub - path.
 	 * @param pathElements
 	 */
-	private ServerResourcePath(String[] pathElements) {
+	private ServerResourcePath(String[] pathElements, int pathIndex) {
 		this.pathElements = pathElements;
+		this.pathIndex = pathIndex;
 	}
 
 	/**
@@ -39,27 +41,31 @@ public class ServerResourcePath {
 	 * @param path 
 	 */
 	public ServerResourcePath(String path) {
-		if (null == path) {
-			throw new NullPointerException();
-		}
-		if (!path.startsWith("/")) {
-			throw new IllegalArgumentException();
-		}
-		String[] split = SLASH.split(path);
-		if(split.length >1 && path.endsWith("/")){
-			pathElements = new String[split.length+1];
-			System.arraycopy(split, 0, pathElements, 0, split.length);
-		} else {
-			pathElements = split;
-		}
+	    this(splitPath(path), 1);
 	}
 
+	private static void checkPath(String path) {
+        if (null == path) {
+            throw new NullPointerException();
+        }
+        
+        if (!path.startsWith("/")) {
+            throw new IllegalArgumentException(path);
+        }
+	}
+
+    private static String[] splitPath(String path) {
+        checkPath(path);
+        
+        return SLASH.split(path);
+    }
+	
 	/**
 	 * Method to detect last element in the path.
 	 * @return true for a last element in the path.
 	 */
-	public boolean isFile() {
-		return pathElements.length <= 1 || null == pathElements[1];
+	public boolean hasNextPath() {
+		return pathIndex < pathElements.length - 1;
 	}
 
 	/**
@@ -67,16 +73,12 @@ public class ServerResourcePath {
 	 * For the "/foo/bar/baz" it should be "foo/" ,  /bar/baz : "bar/" , "/" : null.
 	 * @return name of the next element or null if it is last element in the chain ( file ).
 	 */
-	public String getNextElementName() {
-		if (pathElements.length > 1) {
-			String name = pathElements[1];
-			if(pathElements.length>2){
-				name+='/';
-			}
-			return name;
-		} else {
-			return null;
-		}
+	public String getFileName() {
+	    if (pathIndex < pathElements.length) {
+	        return pathElements[pathIndex];
+	    } else {
+	        return null;
+	    }
 	}
 
 	/**
@@ -85,29 +87,25 @@ public class ServerResourcePath {
 	 * @return next subdirectory path or null.
 	 */
 	public ServerResourcePath getNextPath() {
-		if (pathElements.length > 1 && null != pathElements[1]) {
-		String[] nextElenemts = new String[pathElements.length - 1];
-		System.arraycopy(pathElements, 1, nextElenemts, 0, nextElenemts.length);
-		return new ServerResourcePath(nextElenemts);
-		} else {
-			return null;
-		}
+	    if (hasNextPath()) {
+	        return new ServerResourcePath(pathElements, pathIndex + 1);
+	    } else {
+	        return null;
+	    }
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		if (pathElements.length > 1) {
-		for (int i = 1; i < pathElements.length; i++) {
-			String element = pathElements[i];
-			str.append("/");
-			if(null != element){
-				str.append(element);
-			}
+		for (int i = pathIndex; i < pathElements.length; i++) {
+            str.append("/");
+            str.append(pathElements[i]);
+        }
+
+		if (str.length() == 0) {
+		    str.append("/");
 		}
-		} else {
-			str.append("/");
-		}
+		
 		return str.toString();
 	}
 }

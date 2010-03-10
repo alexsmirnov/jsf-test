@@ -28,9 +28,6 @@ public class UrlServerResource extends AbstractServerResource {
 		this.resource = resource;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jboss.test.faces.staging.ServerResource#getURL()
-	 */
 	public URL getURL() {
 		return resource;
 	}

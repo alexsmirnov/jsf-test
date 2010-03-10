@@ -1,9 +1,10 @@
 package org.jboss.test.faces;
 
+import java.util.concurrent.CountDownLatch;
+
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-import java.util.concurrent.CountDownLatch;
 
 public final class ThreadsRule implements MethodRule {
 

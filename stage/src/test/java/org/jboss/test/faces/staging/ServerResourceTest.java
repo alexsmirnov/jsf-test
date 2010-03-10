@@ -3,7 +3,10 @@
  */
 package org.jboss.test.faces.staging;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,8 +15,8 @@ import java.util.Set;
 
 import org.jboss.test.faces.staging.ClasspathServerResource;
 import org.jboss.test.faces.staging.ServerResource;
+import org.jboss.test.faces.staging.ServerResourceDirectoryImpl;
 import org.jboss.test.faces.staging.ServerResourcePath;
-import org.jboss.test.faces.staging.ServerResourcesDirectory;
 import org.junit.Test;
 
 /**
@@ -36,7 +39,7 @@ public class ServerResourceTest {
 		}
 
 		public ServerResource getResource(ServerResourcePath path) {
-			if (null != path && path.isFile()) {
+			if (null != path && path.hasNextPath()) {
 				return this;
 			}
 			return null;
@@ -50,12 +53,12 @@ public class ServerResourceTest {
 
 	/**
 	 * Test method for
-	 * {@link org.jboss.test.faces.staging.ServerResourcesDirectory#addResource(org.jboss.test.faces.staging.ServerResourcePath, org.jboss.test.faces.staging.ServerResource)}
+	 * {@link org.jboss.test.faces.staging.ServerResourceDirectoryImpl#addResource(org.jboss.test.faces.staging.ServerResourcePath, org.jboss.test.faces.staging.ServerResource)}
 	 * .
 	 */
 	@Test
 	public void testAddResource() {
-		ServerResourcesDirectory root = new ServerResourcesDirectory();
+		ServerResourceDirectoryImpl root = new ServerResourceDirectoryImpl();
 		MockResource webXml = new MockResource();
 		root.addResource(ServerResourcePath.WEB_XML, webXml);
 		assertEquals(1, root.getPaths().size());
@@ -70,15 +73,26 @@ public class ServerResourceTest {
 		assertSame(facesConfig, webInf.getResource(new ServerResourcePath(
 				"/faces-config.xml")));
 	}
+	
+	@Test
+    public void testAddDirectory() throws Exception {
+        ServerResourceDirectoryImpl root = new ServerResourceDirectoryImpl();
+        ServerResource directory = root.addDirectory(new ServerResourcePath("/foo/bar"));
+        assertSame(directory, root.getResource(new ServerResourcePath("/foo//bar/")));
+        
+        ServerResource bazDirectory = root.addDirectory(new ServerResourcePath("/foo/bar/baz"));
+        assertSame(directory, root.getResource(new ServerResourcePath("/foo//bar/")));
+        assertSame(bazDirectory, root.getResource(new ServerResourcePath("/foo//bar/baz")));
+    }
 
 	/**
 	 * Test method for
-	 * {@link org.jboss.test.faces.staging.ServerResourcesDirectory#getResource(org.jboss.test.faces.staging.ServerResourcePath)}
+	 * {@link org.jboss.test.faces.staging.ServerResourceDirectoryImpl#getResource(org.jboss.test.faces.staging.ServerResourcePath)}
 	 * .
 	 */
 	@Test
 	public void testGetResource() {
-		ServerResourcesDirectory root = new ServerResourcesDirectory();
+		ServerResourceDirectoryImpl root = new ServerResourceDirectoryImpl();
 		MockResource webXml = new MockResource();
 		root.addResource(ServerResourcePath.WEB_XML, webXml);
 		ServerResource webInf = root.getResource(ServerResourcePath.WEB_INF);
@@ -94,12 +108,12 @@ public class ServerResourceTest {
 
 	/**
 	 * Test method for
-	 * {@link org.jboss.test.faces.staging.ServerResourcesDirectory#getResource(org.jboss.test.faces.staging.ServerResourcePath)}
+	 * {@link org.jboss.test.faces.staging.ServerResourceDirectoryImpl#getResource(org.jboss.test.faces.staging.ServerResourcePath)}
 	 * .
 	 */
 	@Test
 	public void testGetResourceRoot() {
-		ServerResourcesDirectory root = new ServerResourcesDirectory();
+		ServerResourceDirectoryImpl root = new ServerResourceDirectoryImpl();
 		MockResource indexXhtml = new MockResource();
 		root.addResource(new ServerResourcePath("/index.xhtml"), indexXhtml);
 		ServerResource index = root.getResource(new ServerResourcePath("/index.xhtml"));
@@ -111,7 +125,7 @@ public class ServerResourceTest {
 	
 	/**
 	 * Test method for
-	 * {@link org.jboss.test.faces.staging.ServerResourcesDirectory#getAsStream()}.
+	 * {@link org.jboss.test.faces.staging.ServerResourceDirectoryImpl#getAsStream()}.
 	 * 
 	 * @throws IOException
 	 */
@@ -133,7 +147,7 @@ public class ServerResourceTest {
 
 	/**
 	 * Test method for
-	 * {@link org.jboss.test.faces.staging.ServerResourcesDirectory#getURL()}.
+	 * {@link org.jboss.test.faces.staging.ServerResourceDirectoryImpl#getURL()}.
 	 */
 	@Test
 	public void testGetURL() {

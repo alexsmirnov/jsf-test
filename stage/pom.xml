@@ -14,6 +14,36 @@
 	<packaging>jar</packaging>
 	<name>JSF test framework</name>
 
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/org/jboss/test/faces/staging/suite/**</exclude>
+					</excludes>
+					<includes>
+						<include>**/Test*.java</include>						
+						<include>**/*Test.java</include>						
+						<include>**/*TestSuite.java</include>						
+						<include>**/*TestCase.java</include>						
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>test-jar</id>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.sun.faces</groupId>

@@ -1,25 +1,19 @@
 package org.jboss.test.faces.staging;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.naming.NamingException;
 import javax.naming.spi.NamingManager;
@@ -45,6 +39,9 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import javax.servlet.jsp.JspFactory;
 
+import org.jboss.test.faces.ApplicationServer;
+import org.jboss.test.faces.FilterHolder;
+import org.jboss.test.faces.ServletHolder;
 import org.jboss.test.faces.TestException;
 
 /**
@@ -63,7 +60,7 @@ import org.jboss.test.faces.TestException;
  * It is main part of the test framework.
  * 
  */
-public class StagingServer {
+public class StagingServer extends ApplicationServer {
 
 	private static final Class<ServletRequestListener> REQUEST_LISTENER_CLASS = ServletRequestListener.class;
 
@@ -86,7 +83,7 @@ public class StagingServer {
 
 	private final Map<String, String> initParameters = new HashMap<String, String>();
 
-	private final ServerResource serverRoot = new ServerResourcesDirectory();
+	private final ServerResourceDirectory serverRoot = new ServerResourceDirectoryImpl();
 
 	private final Map<String, String> mimeTypes = new HashMap<String, String>();
 
@@ -104,6 +101,7 @@ public class StagingServer {
 	
 	private boolean sessionPerThread = false;
 
+	private int port = 0 /* this server doesn't operate with network ports, so any will suit */;
 
 	private boolean initialised = false;
 
@@ -299,37 +297,53 @@ public class StagingServer {
 		return errorsCount;
 	}
 
-	/**
-	 * Append executable server object ( {@link Filter} or {@link Servlet} to
-	 * the server.
-	 * 
-	 * @param servlet
-	 */
+	@Override
+	protected void addDirectory(String directoryPath) {
+	    serverRoot.addDirectory(new ServerResourcePath(directoryPath));
+	}
+	
+    /**
+     * Append executable server object ( {@link Filter} or {@link Servlet} to
+     * the server.
+     * 
+     * @see ApplicationServer#addFilter(FilterHolder)
+     * @see ApplicationServer#addServlet(ServletHolder)
+     * 
+     * @param servlet
+     */
 	public void addServlet(RequestChain servlet) {
 		servlets.add(servlet);
 	}
 
-	/**
-	 * Add servlet to the server.
-	 * 
-	 * @param mapping
-	 *            servlet mapping
-	 * @param servlet
-	 *            {@link Servlet} instance.
-	 */
+    public void replaceServlet(RequestChain oldHandler, RequestChain newHandler) {
+        servlets.remove(oldHandler);
+        servlets.add(newHandler);
+    }
+
+    /**
+     * Add servlet to the server.
+     * 
+     * @see ApplicationServer#addFilter(FilterHolder)
+     * @see ApplicationServer#addServlet(ServletHolder)
+     * 
+     * @param mapping
+     *            servlet mapping
+     * @param servlet
+     *            {@link Servlet} instance.
+     */
 	public void addServlet(String mapping, Servlet servlet) {
 		servlets.add(new ServletContainer(mapping, servlet));
 	}
 
-	/**
-	 * Get appropriate object ( Filter or Servlet ) for a given path.
-	 * 
-	 * @param path
-	 *            request path relative to web application context.
-	 * @return Appropriate Filter or Servlet executable object to serve given
-	 *         request. If no servlet was registered for the given path, try to
-	 *         send requested object directly.
-	 */
+    /**
+     * Get appropriate object ( Filter or Servlet ) for a given path.
+     * 
+     * @param path
+     *            request path relative to web application context.
+     * @return Appropriate Filter or Servlet executable object to serve given
+     *         request. If no servlet was registered for the given path, try to
+     *         send requested object directly.
+     */
 	public RequestChain getServlet(String path) {
 		RequestChain result = null;
 		for (RequestChain servlet : servlets) {
@@ -353,22 +367,10 @@ public class StagingServer {
 		return result;
 	}
 
-	/**
-	 * Add web application init parameter.
-	 * 
-	 * @param name
-	 * @param value
-	 */
 	public void addInitParameter(String name, String value) {
 		initParameters.put(name, value);
 	}
 
-	/**
-	 * Add default mime type for serve files with given extension.
-	 * 
-	 * @param extension
-	 * @param mimeType
-	 */
 	public void addMimeType(String extension, String mimeType) {
 		mimeTypes.put(extension, mimeType);
 	}
@@ -378,231 +380,39 @@ public class StagingServer {
         serverRoot.addResource(resourcePath, new StringContentServerResource(content));
     }
 	
-	/**
-	 * Add java resource to the virtual web application content. This method
-	 * makes all parent directories as needed.
-	 * 
-	 * @param path
-	 *            path to the file in the virtual web server.
-	 * @param resource
-	 *            path to the resource in the classpath, as required by the
-	 *            {@link ClassLoader#getResource(String)}.
-	 */
 	public void addResource(String path, String resource) {
 		ServerResourcePath resourcePath = new ServerResourcePath(path);
 		serverRoot.addResource(resourcePath, new ClasspathServerResource(
 				resource));
 	}
 
-	/**
-	 * Add resource to the virtual veb application content. This method makes
-	 * all parent directories as needed.
-	 * 
-	 * @param path
-	 *            path to the file in the virtual web server.
-	 * @param resource
-	 *            {@code URL} to the file content.
-	 */
 	public void addResource(String path, URL resource) {
 		serverRoot.addResource(new ServerResourcePath(path),
 				new UrlServerResource(resource));
 	}
 
-	/**
-	 * Add all resources from the directory to the virtual web application
-	 * content.
-	 * 
-	 * @param path
-	 *            name of the target directory in the virtual web application.
-	 *            If no such directory exists, it will be created, as well as
-	 *            all parent directories as needed.
-	 * @param resource
-	 *            {@code URL} to the source directory or any file in the source
-	 *            directory. Only 'file' or 'jar' protocols are supported. If
-	 *            this parameter points to a file, it will be converted to a
-	 *            enclosing directory.
-	 */
-	public void addResourcesFromDirectory(String path, URL resource) {
-		ServerResourcePath resourcePath = new ServerResourcePath(path);
-		ServerResource baseDirectory = serverRoot.getResource(resourcePath);
-		if (null == baseDirectory) {
-			// Create target directory.
-			baseDirectory = new ServerResourcesDirectory();
-			serverRoot.addResource(resourcePath, baseDirectory);
-		}
-		String protocol = resource.getProtocol();
-		if ("jar".equals(protocol)) {
-			addResourcesFromJar(resource, baseDirectory);
-		} else if ("file".equals(protocol)) {
-			addResourcesFromFile(resource, baseDirectory);
-		} else {
-			throw new TestException("Unsupported protocol " + protocol);
-		}
-	}
-
-	/**
-	 * Add all files from the directory to the virtual web application
-	 * content.
-	 * 
-	 * @param path
-	 *            name of the target directory in the virtual web application.
-	 *            If no such directory exists, it will be created, as well as
-	 *            all parent directories as needed.
-	 * @param resource
-	 *            {@code File} of the source directory or any file in the source
-	 *            directory. If this parameter points to a file, it will be converted to a
-	 *            enclosing directory.
-	 */
-	public void addResourcesFromDirectory(String path, File directory) {
-		ServerResourcePath resourcePath = new ServerResourcePath(path);
-		ServerResource baseDirectory = serverRoot.getResource(resourcePath);
-		if (null == baseDirectory) {
-			// Create target directory.
-			baseDirectory = new ServerResourcesDirectory();
-			serverRoot.addResource(resourcePath, baseDirectory);
-		}
-		if (!directory.isDirectory()) {
-			directory = directory.getParentFile();
-		}
-		if(!directory.exists()){
-			throw new TestException("directory does not exist:"+directory.getAbsolutePath());
-		}
-		try {
-			addFiles(baseDirectory, directory);
-		} catch (MalformedURLException e) {
-			throw new TestException(e);
-		}
-	}
-
-	/**
-	 * Internal method used by the
-	 * {@link #addResourcesFromDirectory(String, URL)} to process 'file'
-	 * protocol.
-	 * 
-	 * @param resource
-	 *            source directory.
-	 * @param baseDirectory
-	 *            target virtual directory.
-	 */
-	protected void addResourcesFromFile(URL resource,
-			ServerResource baseDirectory) {
-		File file = new File(resource.getPath());
-		if (!file.isDirectory()) {
-			file = file.getParentFile();
-		}
-		try {
-			addFiles(baseDirectory, file);
-		} catch (MalformedURLException e) {
-			throw new TestException(e);
-		}
-	}
-
-	/**
-	 * Internal method used by the
-	 * {@link #addResourcesFromDirectory(String, URL)} to process 'jar'
-	 * protocol.
-	 * 
-	 * @param resource
-	 *            URL to the any object in the source directory.
-	 * @param baseDirectory
-	 *            target virtual directory.
-	 */
-	protected void addResourcesFromJar(URL resource,
-			ServerResource baseDirectory) {
-		try {
-			String jarPath = resource.getPath();
-			String entry = jarPath.substring(jarPath.indexOf('!') + 2);
-			jarPath = jarPath.substring(0, jarPath.indexOf('!'));
-			File file = new File(new URI(jarPath));
-			ZipFile zip = new ZipFile(file);
-			Enumeration<? extends ZipEntry> entries = zip.entries();
-			entry = entry.substring(0, entry.lastIndexOf('/') + 1);
-			while (entries.hasMoreElements()) {
-				ZipEntry zzz = (ZipEntry) entries.nextElement();
-				if (zzz.getName().startsWith(entry) && !zzz.isDirectory()) {
-					String relativePath = zzz.getName().substring(
-							entry.length());
-					URL relativeResource = new URL(resource, relativePath);
-					baseDirectory.addResource(new ServerResourcePath("/"
-							+ relativePath), new UrlServerResource(
-							relativeResource));
-				}
-			}
-
-		} catch (IOException e) {
-			throw new TestException("Error read Jar content", e);
-		} catch (URISyntaxException e) {
-			throw new TestException(e);
-		}
-	}
-
-	/**
-	 * Internal reccursive method process directory content and all
-	 * subdirectories.
-	 * 
-	 * @param baseDirectory
-	 * @param file
-	 * @throws MalformedURLException
-	 */
-	protected void addFiles(ServerResource baseDirectory, File file)
-			throws MalformedURLException {
-		File[] files = file.listFiles();
-		for (File subfile : files) {
-			if (subfile.isDirectory()) {
-				ServerResourcePath serverResourcePath = new ServerResourcePath("/"
-						+ subfile.getName()+"/");
-				ServerResourcesDirectory subDir = new ServerResourcesDirectory();
-				baseDirectory.addResource(serverResourcePath, subDir);
-				addFiles(subDir, subfile);
-			} else {
-				ServerResourcePath serverResourcePath = new ServerResourcePath("/"
-						+ subfile.getName());
-				UrlServerResource resource = new UrlServerResource(subfile
-						.toURL());
-				baseDirectory.addResource(serverResourcePath, resource);
-
-			}
-		}
-	}
-
-	/**
-	 * Add web-application wide listenes, same as it is defined by the
-	 * &lt;listener&gt; element in the web.xml file for a real server. Supported
-	 * listener types:
-	 * <ul>
-	 * <li>{@link ServletContextListener}</li>
-	 * <li>{@link ServletContextAttributeListener}</li>
-	 * <li>{@link HttpSessionListener}</li>
-	 * <li>{@link HttpSessionAttributeListener}</li>
-	 * <li>{@link ServletRequestListener}</li>
-	 * <li>{@link ServletRequestAttributeListener}</li>
-	 * </ul>
-	 * 
-	 * @param listener
-	 *            web listener instance.
-	 */
 	public void addWebListener(EventListener listener) {
 		contextListeners.add(listener);
 	}
 
-	/**
-	 * Getter method for 'interceptor' events listener.
-	 * 
-	 * @return the invocationListener
-	 */
+    /**
+     * Getter method for 'interceptor' events listener.
+     * 
+     * @return the invocationListener
+     */
 	public InvocationListener getInvocationListener() {
 		return invocationListener;
 	}
 
-	/**
-	 * Set listener which gets events on all calls to any methods of the
-	 * {@link ServletContext}, {@link HttpSession}, {@link HttpServletRequest},
-	 * {@link HttpServletResponse} instances in the virtual server. this
-	 * interceptor can be used to check internal calls in the tests .
-	 * 
-	 * @param invocationListener
-	 *            the invocationListener to set
-	 */
+    /**
+     * Set listener which gets events on all calls to any methods of the
+     * {@link ServletContext}, {@link HttpSession}, {@link HttpServletRequest},
+     * {@link HttpServletResponse} instances in the virtual server. this
+     * interceptor can be used to check internal calls in the tests .
+     * 
+     * @param invocationListener
+     *            the invocationListener to set
+     */
 	public void setInvocationListener(InvocationListener invocationListener) {
 		this.invocationListener = invocationListener;
 	}
@@ -666,39 +476,10 @@ public class StagingServer {
 		
 	}
 
-	/**
-	 * Get virtual server session object. Create new one if necessary.
-	 * 
-	 * @return instance of the virtual server session.
-	 */
-	public HttpSession getSession() {
-		return getSession(true);
-	}
+    public HttpSession getSession() {
+        return getSession(true);
+    }
 
-	/**
-	 * 
-	 * Returns the current <code>HttpSession</code> associated with this server
-	 * or, if there is no current session and <code>create</code> is true,
-	 * returns a new session. Staging server supports only one session per
-	 * instance, different clients for the same server instance does not
-	 * supported.
-	 * 
-	 * <p>
-	 * If <code>create</code> is <code>false</code> and the request has no valid
-	 * <code>HttpSession</code>, this method returns <code>null</code>.
-	 * 
-	 * 
-	 * @param create
-	 *            <code>true</code> to create a new session for this request if
-	 *            necessary; <code>false</code> to return <code>null</code> if
-	 *            there's no current session
-	 * 
-	 * 
-	 * @return the <code>HttpSession</code> associated with this server instance
-	 *         or <code>null</code> if <code>create</code> is <code>false</code>
-	 *         and the server has no session
-	 * 
-	 */
 	public synchronized HttpSession getSession(boolean create) {
 		if (!initialised) {
 			throw new TestException("Staging server have not been initialised");
@@ -728,13 +509,6 @@ public class StagingServer {
 		return httpSession;
 	}
 
-	/**
-	 * Virtual server initialization. This method creates instances of the
-	 * {@link ServletContext}, {@link JspFactory}, informs
-	 * {@link ServletContextListener} ind inits all {@link Filter} and
-	 * {@link Servlet} instances. It should be called from test setUp method to
-	 * prepare testing environment.
-	 */
 	public void init() {
 		log.info("Init staging server");
 		// Create Jsp factory
@@ -780,13 +554,6 @@ public class StagingServer {
 		this.initialised = true;
 	}
 
-	/**
-	 * Stop wirtual server. This method informs {@link ServletContextListener}
-	 * ind inits all {@link Filter} and {@link Servlet} instances, as well
-	 * remove all internal objects. It should be called from the testt thearDown
-	 * method to clean up testing environment.
-	 * 
-	 */
 	public void destroy() {
 		if (!initialised) {
 			throw new TestException("Staging server have not been initialised");
@@ -827,17 +594,17 @@ public class StagingServer {
 		log.info("Staging server have been destroyed");
 	}
 
-	/**
-	 * Get virtual connection to the given URL. Even thought for an http request
-	 * to the external servers, only local connection to the virtual server will
-	 * be created.
-	 * 
-	 * @param url
-	 *            request url.
-	 * @return local connection to the appropriate servlet in the virtual
-	 *         server.
-	 * @throws {@link TestException} if no servlet found to process given URL.
-	 */
+    /**
+     * Get virtual connection to the given URL. Even thought for an http request
+     * to the external servers, only local connection to the virtual server will
+     * be created.
+     * 
+     * @param url
+     *            request url.
+     * @return local connection to the appropriate servlet in the virtual
+     *         server.
+     * @throws {@link TestException} if no servlet found to process given URL.
+     */
 	public StagingConnection getConnection(URL url) {
 		if (!initialised) {
 			throw new TestException("Staging server have not been initialised");
@@ -845,11 +612,6 @@ public class StagingServer {
 		return new StagingConnection(this, url);
 	}
 
-	/**
-	 * Get instance of virtual web application context.
-	 * 
-	 * @return context instance.
-	 */
 	public ServletContext getContext() {
 		if (!initialised) {
 			throw new TestException("Staging server have not been initialised");
@@ -926,4 +688,46 @@ public class StagingServer {
 					}
 				});
 	}
+
+    public void addFilter(FilterHolder filterHolder) {
+        Map<String, String> initParameters = filterHolder.getInitParameters();
+        String mapping = filterHolder.getMapping();
+        String name = filterHolder.getName();
+        Filter filter = filterHolder.getFilter();
+        
+        RequestChain oldHandler = getServlet(mapping);
+        FilterContainer newHandler = new FilterContainer(filter, oldHandler);
+        newHandler.setName(name);
+        
+        if (initParameters != null) {
+            for (Entry<String, String> initEntry : initParameters.entrySet()) {
+                newHandler.addInitParameter(initEntry.getKey(), initEntry.getValue());
+            }
+        }
+        
+        replaceServlet(oldHandler, newHandler);
+    }
+
+    public void addServlet(ServletHolder servletHolder) {
+        Map<String, String> initParameters = servletHolder.getInitParameters();
+        String mapping = servletHolder.getMapping();
+        String name = servletHolder.getName();
+        Servlet servlet = servletHolder.getServlet();
+        
+        ServletContainer servletContainer = new ServletContainer(mapping, servlet);
+        servletContainer.setName(name);
+        
+        if (initParameters != null) {
+            for (Entry<String, String> initEntry : initParameters.entrySet()) {
+                servletContainer.addInitParameter(initEntry.getKey(), initEntry.getValue());
+            }
+        }
+    
+        addServlet(servletContainer);
+    }
+    
+    public int getPort() {
+        return port;
+    }
+    
 }

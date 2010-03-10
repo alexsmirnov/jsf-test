@@ -25,45 +25,63 @@ package org.jboss.test.faces.htmlunit;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.MessageFormat;
 
+import org.jboss.test.faces.ApplicationServer;
 import org.jboss.test.faces.FacesEnvironment;
+import org.jboss.test.faces.staging.StagingServer;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 /**
- * <p class="changed_added_4_0"></p>
+ * <p class="changed_added_4_0">
+ * </p>
+ * 
  * @author asmirnov@exadel.com
- *
+ * 
  */
 public class HtmlUnitEnvironment extends FacesEnvironment {
-    
-    
 
-    private LocalWebClient webClient;
+    private WebClient webClient;
 
-    /**
-     * <p class="changed_added_4_0"></p>
-     */
     public HtmlUnitEnvironment() {
-        // TODO Auto-generated constructor stub
+        super();
     }
 
+    public HtmlUnitEnvironment(ApplicationServer applicationServer) {
+        super(applicationServer);
+    }
+
+    private WebClient createWebClient() {
+        WebClient result;
+        
+        ApplicationServer server = getServer();
+        if (server instanceof StagingServer) {
+            result = new LocalWebClient((StagingServer) server);
+        } else {
+            result = new WebClient();
+        }
+
+        return result;
+    }
+    
     @Override
     public FacesEnvironment start() {
         super.start();
-        this.webClient = new LocalWebClient(getServer());
+        this.webClient = createWebClient();
         return this;
     }
-    
-    public HtmlPage getPage(String url) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
-        HtmlPage page = webClient.getPage("http://localhost"+url);
-        return page;
 
+    public HtmlPage getPage(String url) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+        String hostAddress = MessageFormat.format("http://localhost:{0,number,#####}", getServer().getPort());
+        HtmlPage page = webClient.getPage(hostAddress + url);
+        return page;
     }
-    
+
     @Override
-    public void release(){
+    public void release() {
         webClient.closeAllWindows();
         webClient = null;
         super.release();

@@ -1,8 +1,9 @@
 package org.jboss.test.faces.staging;
 
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 import javax.faces.render.ResponseStateManager;
 
@@ -24,7 +25,7 @@ public class EnvironmentTest {
     public ThreadsRule threadRule = new ThreadsRule();
     
     @Before
-    public void setUp(){
+    public void setUp() {
         environment = FacesEnvironment.createEnvironment().withContent("/test.xhtml", 
                 "<html xmlns=\"http://www.w3.org/1999/xhtml\"\n" + 
         		"      xmlns:ui=\"http://java.sun.com/jsf/facelets\"\n" + 

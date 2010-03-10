@@ -5,6 +5,7 @@ package org.jboss.test.faces.staging;
 
 import java.util.EventListener;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;

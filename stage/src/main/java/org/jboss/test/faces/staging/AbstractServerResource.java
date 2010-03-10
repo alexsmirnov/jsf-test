@@ -56,7 +56,7 @@ public abstract class AbstractServerResource implements ServerResource {
 			throw new NullPointerException();
 		}
 		// If path points to the resource itself, returns this instance.
-		if(path.isFile()){
+		if (!path.hasNextPath()) {
 			return this;
 		}
 		return null;

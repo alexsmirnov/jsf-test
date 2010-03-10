@@ -238,6 +238,16 @@
 				</exclusions>
 			</dependency>
 
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty</artifactId>
+				<version>6.1.22</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>start</artifactId>
+				<version>6.1.22</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -246,6 +256,7 @@
 		<module>maven-mockgenerator-plugin</module>
 		<module>mock</module>
 		<module>stage</module>
+		<module>jetty</module>
 		<module>jsf-test-htmlunit</module>
 	</modules>
 

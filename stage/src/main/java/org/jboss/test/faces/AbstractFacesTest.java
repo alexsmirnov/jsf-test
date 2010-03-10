@@ -31,8 +31,6 @@ import javax.servlet.Filter;
 
 import junit.framework.TestCase;
 
-import org.jboss.test.faces.staging.FilterContainer;
-import org.jboss.test.faces.staging.ServletContainer;
 import org.jboss.test.faces.staging.StagingConnection;
 import org.jboss.test.faces.staging.StagingServer;
 import org.junit.After;
@@ -164,25 +162,24 @@ public abstract class AbstractFacesTest extends TestCase {
 	 * Default mapping to the FacesServlet instance is "*.jsf"
 	 */
 	protected void setupFacesServlet() {
-		ServletContainer facesServletContainer = new ServletContainer("*.jsf",
-				new FacesServlet());
+	    ServletHolder facesServletContainer = new ServletHolder("*.jsf", new FacesServlet());
 		facesServletContainer.setName("Faces Servlet");
+        facesServer.addServlet(facesServletContainer);
 		try {
 			// Check for an ajax4jsf filter.
 			Class<? extends Filter> ajaxFilterClass = contextClassLoader
 					.loadClass("org.ajax4jsf.Filter").asSubclass(Filter.class);
 			Filter ajaxFilter = ajaxFilterClass.newInstance();
-			FilterContainer filterContainer = new FilterContainer(ajaxFilter,
-					facesServletContainer);
-			filterContainer.setName("ajax4jsf");
-			facesServer.addResource("/WEB-INF/web.xml",
-					"org/jboss/test/faces/ajax-web.xml");
-			facesServer.addServlet(filterContainer);
+			
+			FilterHolder filterHolder = new FilterHolder("*.jsf", ajaxFilter);
+			filterHolder.setName("ajax4jsf");
+            facesServer.addResource("/WEB-INF/web.xml",
+                "org/jboss/test/faces/ajax-web.xml");
+			facesServer.addFilter(filterHolder);
 		} catch (ClassNotFoundException e) {
 			// No Richfaces filter, uses servlet directly.
 			facesServer.addResource("/WEB-INF/web.xml",
 					"org/jboss/test/faces/web.xml");
-			facesServer.addServlet(facesServletContainer);
 		} catch (Exception e) {
 			throw new TestException(e);
 		}

@@ -17,6 +17,11 @@
 			<artifactId>jsf-test-stage</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.test-jsf</groupId>
+			<artifactId>jsf-test-jetty</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
         <dependency>
             <groupId>com.sun.faces</groupId>
             <artifactId>jsf-api</artifactId>
