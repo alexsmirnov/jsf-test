@@ -125,7 +125,6 @@ public class VirtualDirectoryResource extends Resource {
         for (Resource childResource : directoryMap.getResources()) {
             childResource.release();
         }
-        directoryMap.clear();
     }
 
     @Override
