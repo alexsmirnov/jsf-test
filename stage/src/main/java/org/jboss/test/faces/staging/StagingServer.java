@@ -367,31 +367,37 @@ public class StagingServer extends ApplicationServer {
 		return result;
 	}
 
-	public void addInitParameter(String name, String value) {
+	@Override
+    public void addInitParameter(String name, String value) {
 		initParameters.put(name, value);
 	}
 
-	public void addMimeType(String extension, String mimeType) {
+	@Override
+    public void addMimeType(String extension, String mimeType) {
 		mimeTypes.put(extension, mimeType);
 	}
 
+    @Override
     public void addContent(String path, String content) {
         ServerResourcePath resourcePath = new ServerResourcePath(path);
         serverRoot.addResource(resourcePath, new StringContentServerResource(content));
     }
 	
-	public void addResource(String path, String resource) {
+	@Override
+    public void addResource(String path, String resource) {
 		ServerResourcePath resourcePath = new ServerResourcePath(path);
 		serverRoot.addResource(resourcePath, new ClasspathServerResource(
 				resource));
 	}
 
-	public void addResource(String path, URL resource) {
+	@Override
+    public void addResource(String path, URL resource) {
 		serverRoot.addResource(new ServerResourcePath(path),
 				new UrlServerResource(resource));
 	}
 
-	public void addWebListener(EventListener listener) {
+	@Override
+    public void addWebListener(EventListener listener) {
 		contextListeners.add(listener);
 	}
 
@@ -450,11 +456,13 @@ public class StagingServer extends ApplicationServer {
 
 	}
 
-	public boolean isSessionPerThread() {
+	@Override
+    public boolean isSessionPerThread() {
 		return sessionPerThread;
 	}
 
-	public void setSessionPerThread(boolean sessionPerThread) {
+	@Override
+    public void setSessionPerThread(boolean sessionPerThread) {
 		this.sessionPerThread = sessionPerThread;
 	}
 	
@@ -476,11 +484,13 @@ public class StagingServer extends ApplicationServer {
 		
 	}
 
+    @Override
     public HttpSession getSession() {
         return getSession(true);
     }
 
-	public synchronized HttpSession getSession(boolean create) {
+	@Override
+    public synchronized HttpSession getSession(boolean create) {
 		if (!initialised) {
 			throw new TestException("Staging server have not been initialised");
 		}
@@ -509,7 +519,8 @@ public class StagingServer extends ApplicationServer {
 		return httpSession;
 	}
 
-	public void init() {
+	@Override
+    public void init() {
 		log.info("Init staging server");
 		// Create Jsp factory
 		JspFactory.setDefaultFactory(new StaggingJspFactory(this.context));
@@ -554,7 +565,8 @@ public class StagingServer extends ApplicationServer {
 		this.initialised = true;
 	}
 
-	public void destroy() {
+	@Override
+    public void destroy() {
 		if (!initialised) {
 			throw new TestException("Staging server have not been initialised");
 		}
@@ -605,14 +617,16 @@ public class StagingServer extends ApplicationServer {
      *         server.
      * @throws {@link TestException} if no servlet found to process given URL.
      */
-	public StagingConnection getConnection(URL url) {
+	@Override
+    public StagingConnection getConnection(URL url) {
 		if (!initialised) {
 			throw new TestException("Staging server have not been initialised");
 		}
 		return new StagingConnection(this, url);
 	}
 
-	public ServletContext getContext() {
+	@Override
+    public ServletContext getContext() {
 		if (!initialised) {
 			throw new TestException("Staging server have not been initialised");
 		}
@@ -689,6 +703,7 @@ public class StagingServer extends ApplicationServer {
 				});
 	}
 
+    @Override
     public void addFilter(FilterHolder filterHolder) {
         Map<String, String> initParameters = filterHolder.getInitParameters();
         String mapping = filterHolder.getMapping();
@@ -708,6 +723,7 @@ public class StagingServer extends ApplicationServer {
         replaceServlet(oldHandler, newHandler);
     }
 
+    @Override
     public void addServlet(ServletHolder servletHolder) {
         Map<String, String> initParameters = servletHolder.getInitParameters();
         String mapping = servletHolder.getMapping();
@@ -726,6 +742,7 @@ public class StagingServer extends ApplicationServer {
         addServlet(servletContainer);
     }
     
+    @Override
     public int getPort() {
         return port;
     }

@@ -25,6 +25,7 @@
 			<groupId>org.jboss.test-jsf</groupId>
 			<artifactId>jsf-test-jetty</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
+			<optional>true</optional>
 		</dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -52,21 +53,9 @@
                 <groupId>org.jboss.el</groupId>
                 <artifactId>jboss-el</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>start</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>net.sourceforge.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.htmlunit</groupId>

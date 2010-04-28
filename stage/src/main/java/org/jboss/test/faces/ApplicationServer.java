@@ -98,7 +98,7 @@ public abstract class ApplicationServer {
             Enumeration<? extends ZipEntry> entries = zip.entries();
             entry = entry.substring(0, entry.lastIndexOf('/') + 1);
             while (entries.hasMoreElements()) {
-                ZipEntry zzz = (ZipEntry) entries.nextElement();
+                ZipEntry zzz = entries.nextElement();
                 if (zzz.getName().startsWith(entry) && !zzz.isDirectory()) {
                     String relativePath = zzz.getName().substring(entry.length());
                     URL relativeResource = new URL(resource, relativePath);

@@ -67,6 +67,10 @@ public class HtmlUnitEnvironment extends FacesEnvironment {
         return result;
     }
     
+    public WebClient getWebClient() {
+        return this.webClient;
+    }
+    
     @Override
     public FacesEnvironment start() {
         super.start();

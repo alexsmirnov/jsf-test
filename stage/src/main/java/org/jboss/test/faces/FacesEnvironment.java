@@ -48,7 +48,6 @@ import javax.faces.webapp.FacesServlet;
 import javax.servlet.Filter;
 
 import org.jboss.test.faces.staging.HttpConnection;
-import org.jboss.test.faces.staging.HttpConnection;
 
 /**
  * <p class="changed_added_4_0">

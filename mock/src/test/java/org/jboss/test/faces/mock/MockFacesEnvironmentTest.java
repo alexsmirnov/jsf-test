@@ -32,7 +32,6 @@ import javax.faces.lifecycle.Lifecycle;
 
 import static org.junit.Assert.*;
 
-import org.easymock.internal.matchers.InstanceOf;
 import org.jboss.test.faces.mock.context.MockFacesContextFactory;
 import org.junit.After;
 import org.junit.Before;

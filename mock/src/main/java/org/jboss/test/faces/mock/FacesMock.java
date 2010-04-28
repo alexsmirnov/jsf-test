@@ -40,7 +40,7 @@ public class FacesMock {
         if (MOCK_OBJECT.isAssignableFrom(clazz)) {
             try {
                 Constructor<T> constructor = clazz.getConstructor(IMocksControl.class, String.class);
-                return (T) constructor.newInstance(control, name);
+                return constructor.newInstance(control, name);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Class " + clazz.getName() + " cannot be created", e);
             }

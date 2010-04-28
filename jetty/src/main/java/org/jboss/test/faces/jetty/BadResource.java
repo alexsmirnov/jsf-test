@@ -48,42 +48,52 @@ final class BadResource extends Resource {
         this.path = name;
     }
 
+    @Override
     public boolean exists() {
         return false;
     }
 
+    @Override
     public long lastModified() {
         return -1;
     }
 
+    @Override
     public boolean isDirectory() {
         return false;
     }
 
+    @Override
     public long length() {
         return -1;
     }
 
+    @Override
     public File getFile() {
         return null;
     }
 
+    @Override
     public InputStream getInputStream() throws IOException {
         throw new FileNotFoundException(path);
     }
 
+    @Override
     public OutputStream getOutputStream() throws IOException, SecurityException {
         throw new FileNotFoundException(path);
     }
 
+    @Override
     public boolean delete() throws SecurityException {
         return false;
     }
 
+    @Override
     public boolean renameTo(Resource dest) throws SecurityException {
         return false;
     }
 
+    @Override
     public String[] list() {
         return null;
     }

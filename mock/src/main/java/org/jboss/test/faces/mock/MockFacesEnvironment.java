@@ -40,13 +40,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
-import org.easymock.internal.MocksControl.MockType;
 import org.jboss.test.faces.mock.application.MockApplicationFactory;
-import org.jboss.test.faces.mock.context.MockExceptionHandlerFactory;
-import org.jboss.test.faces.mock.context.MockExternalContext;
-import org.jboss.test.faces.mock.context.MockExternalContextFactory;
 import org.jboss.test.faces.mock.context.MockFacesContextFactory;
-import org.jboss.test.faces.mock.context.MockPartialViewContextFactory;
 import org.jboss.test.faces.mock.lifecycle.MockLifecycleFactory;
 import org.jboss.test.faces.mock.render.MockRenderKitFactory;
 

@@ -83,7 +83,8 @@ public abstract class AbstractFacesTest extends TestCase {
 	 * Also, if the resource "logging.properties" is exist in the test class package, The Java {@link LogManager} will be configured with its content.  
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		contextClassLoader = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(
@@ -311,7 +312,8 @@ public abstract class AbstractFacesTest extends TestCase {
 	 * Virtual server instance cleanup.
 	 * @throws java.lang.Exception
 	 */
-	@After
+	@Override
+    @After
 	public void tearDown() throws Exception {
 		if (null != facesContext) {
 			facesContext.release();

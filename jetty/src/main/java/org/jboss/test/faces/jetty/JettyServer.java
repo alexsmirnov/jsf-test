@@ -25,17 +25,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.EventListener;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.el.ExpressionFactory;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,7 +40,6 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -87,36 +82,44 @@ public class JettyServer extends ApplicationServer {
             this.url = url;
         }
 
+        @Override
         public void start() {
             throw new UnsupportedOperationException("Jetty server does not allow in-process requests");
             
         }
 
+        @Override
         public void setRequestContentType(String contentType) {
             this.requestContentType = contentType;
         }
 
+        @Override
         public void setRequestCharacterEncoding(String charset) throws UnsupportedEncodingException {
             this.requestEncoding = charset;
         }
 
+        @Override
         public void setRequestBody(String body) {
             this.requestBody = body;
             
         }
 
+        @Override
         public boolean isStarted() {
             return null != httpClientMethod;
         }
 
+        @Override
         public boolean isFinished() {
             return null != httpClientMethod && httpClientMethod.isRequestSent();
         }
 
+        @Override
         public int getResponseStatus() {
             return statusCode;
         }
 
+        @Override
         public Map<String, String[]> getResponseHeaders() {
             Header[] headers = httpClientMethod.getResponseHeaders();
             HashMap<String, String[]> map = new HashMap<String, String[]>(headers.length);
@@ -126,19 +129,23 @@ public class JettyServer extends ApplicationServer {
             return map;
         }
 
+        @Override
         public String getResponseContentType() {
             Header responseHeader = httpClientMethod.getResponseHeader("Content-Type");
             return null!=responseHeader?responseHeader.getValue():null;
         }
 
+        @Override
         public long getResponseContentLength() {
             return httpClientMethod.getResponseContentLength();
         }
 
+        @Override
         public String getResponseCharacterEncoding() {
             return httpClientMethod.getResponseCharSet();
         }
 
+        @Override
         public byte[] getResponseBody() {
             try {
                 return httpClientMethod.getResponseBody();
@@ -147,19 +154,23 @@ public class JettyServer extends ApplicationServer {
             }
         }
 
+        @Override
         public HttpServletResponse getResponse() {
             throw new UnsupportedOperationException("Jetty server does not allow in-process requests");
         }
 
+        @Override
         public HttpServletRequest getRequest() {
             throw new UnsupportedOperationException("Jetty server does not allow in-process requests");
         }
 
+        @Override
         public String getErrorMessage() {
             return httpClientMethod.getStatusText();
         }
 
 
+        @Override
         public String getContentAsString() {
             try {
                 return httpClientMethod.getResponseBodyAsString();
@@ -168,6 +179,7 @@ public class JettyServer extends ApplicationServer {
             }
         }
 
+        @Override
         public void finish() {
             if(null != httpClientMethod){
                 httpClientMethod.releaseConnection();
@@ -175,6 +187,7 @@ public class JettyServer extends ApplicationServer {
             
         }
 
+        @Override
         public void execute() {
             switch (getRequestMethod()) {
                 case GET:
@@ -211,6 +224,7 @@ public class JettyServer extends ApplicationServer {
             }
         }
 
+        @Override
         public void addRequestHeaders(Map<String, String> headers) {
             requestHeaders.putAll(headers);
         }
@@ -290,6 +304,7 @@ public class JettyServer extends ApplicationServer {
         }
     }
 
+    @Override
     public void init() {
         server = new Server(port);
 
@@ -323,6 +338,7 @@ public class JettyServer extends ApplicationServer {
         }
     }
 
+    @Override
     public void destroy() {
         try {
             server.stop();
@@ -336,15 +352,18 @@ public class JettyServer extends ApplicationServer {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void addInitParameter(String name, String value) {
         webAppContext.getInitParams().put(name, value);
     }
 
+    @Override
     public void addWebListener(EventListener listener) {
         webAppContext.addEventListener(listener);
     }
 
+    @Override
     public ServletContext getContext() {
         if (!webAppContext.isStarted()) {
             throw new IllegalStateException("Server should be started before getContext() can be called!");
@@ -352,18 +371,22 @@ public class JettyServer extends ApplicationServer {
         return webAppContext.getServletContext();
     }
 
+    @Override
     public void addMimeType(String extension, String mimeType) {
         webAppContext.getMimeTypes().addMimeMapping(extension, mimeType);
     }
 
+    @Override
     public void addContent(String path, String content) {
         serverRoot.addResource(path, new StringContentResource(content, path));
     }
 
+    @Override
     public void addResource(String path, String resource) {
         serverRoot.addResource(path, Resource.newClassPathResource(resource));
     }
 
+    @Override
     public void addResource(String path, URL resource) {
         try {
             serverRoot.addResource(path, Resource.newResource(resource));
@@ -372,6 +395,7 @@ public class JettyServer extends ApplicationServer {
         }
     }
 
+    @Override
     public void addFilter(FilterHolder filerHolder) {
         Map<String, String> initParameters = filerHolder.getInitParameters();
         String mapping = filerHolder.getMapping();
@@ -385,6 +409,7 @@ public class JettyServer extends ApplicationServer {
         webAppContext.addFilter(jettyFilterHolder, mapping, Handler.ALL);
     }
 
+    @Override
     public void addServlet(ServletHolder servletHolder) {
         Map<String, String> initParameters = servletHolder.getInitParameters();
         String mapping = servletHolder.getMapping();
@@ -399,18 +424,22 @@ public class JettyServer extends ApplicationServer {
         webAppContext.addServlet(jettyServletHolder, mapping);
     }
     
+    @Override
     public int getPort() {
         return port;
     }
     
+    @Override
     public HttpConnection getConnection(URL url) {
         return new JettyConnection(url);
     }
 
+    @Override
     public HttpSession getSession() {
         return getSession(true);
     }
 
+    @Override
     public HttpSession getSession(boolean create) {
         if (session == null && create) {
             throw new UnsupportedOperationException("Session creation is not supported by JettyServer");
@@ -419,10 +448,12 @@ public class JettyServer extends ApplicationServer {
         return session;
     }
 
+    @Override
     public boolean isSessionPerThread() {
         return false;
     }
 
+    @Override
     public void setSessionPerThread(boolean sessionPerThread) {
         //do nothing
     }

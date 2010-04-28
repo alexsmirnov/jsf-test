@@ -4,12 +4,10 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 
-import org.easymock.IMocksControl;
 import org.junit.Test;
 
 public class MockFacesContextTest {

@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -104,14 +103,16 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#isFinished()
      */
-	public boolean isFinished() {
+	@Override
+    public boolean isFinished() {
 		return finished;
 	}
 
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#isStarted()
      */
-	public boolean isStarted() {
+	@Override
+    public boolean isStarted() {
 		return started;
 	}
 
@@ -130,7 +131,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#execute()
      */
-	public void execute() {
+	@Override
+    public void execute() {
 		if (isStarted() || isFinished()) {
 			throw new TestException(
 					"request have already been executed");
@@ -150,7 +152,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#finish()
      */
-	public void finish() {
+	@Override
+    public void finish() {
 		server.requestFinished(request);
 		finished = true;
 	}
@@ -158,7 +161,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#start()
      */
-	public void start() {
+	@Override
+    public void start() {
 		log.fine("start " + getRequestMethod() + " request processing for file "
 				+ url.getFile());
 		log.fine("request parameters: " + getRequestParameters());
@@ -177,7 +181,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#getContentAsString()
      */
-	public String getContentAsString() {
+	@Override
+    public String getContentAsString() {
 //		checkStarted();
 		String content = response.getWriterContent();
 		if (null == content) {
@@ -201,7 +206,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#getResponseBody()
      */
-	public byte[] getResponseBody() {
+	@Override
+    public byte[] getResponseBody() {
 //		checkStarted();
 		byte[] content = response.getStreamContent();
 		if (null == content) {
@@ -231,6 +237,7 @@ public class StagingConnection extends HttpConnection {
 	 * request object for the this connection.
 	 * @return the request
 	 */
+    @Override
     public HttpServletRequest getRequest() {
 		return requestProxy;
 	}
@@ -239,6 +246,7 @@ public class StagingConnection extends HttpConnection {
 	 * response object for the this connection.
 	 * @return the response
 	 */
+    @Override
     public HttpServletResponse getResponse() {
 		return responseProxy;
 	}
@@ -246,7 +254,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#getResponseCharacterEncoding()
      */
-	public String getResponseCharacterEncoding() {
+	@Override
+    public String getResponseCharacterEncoding() {
 //		checkStarted();
 		return response.getCharacterEncoding();
 	}
@@ -254,7 +263,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#getResponseContentType()
      */
-	public String getResponseContentType() {
+	@Override
+    public String getResponseContentType() {
 //		checkStarted();
 		return response.getContentType();
 	}
@@ -262,7 +272,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#getResponseStatus()
      */
-	public int getResponseStatus() {
+	@Override
+    public int getResponseStatus() {
 //		checkStarted();
 		return response.getStatus();
 	}
@@ -270,7 +281,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#getErrorMessage()
      */
-	public String getErrorMessage() {
+	@Override
+    public String getErrorMessage() {
 //		checkStarted();
 		return response.getErrorMessage();
 	}
@@ -278,7 +290,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#getResponseHeaders()
      */
-	public Map<String, String[]> getResponseHeaders() {
+	@Override
+    public Map<String, String[]> getResponseHeaders() {
 //		checkStarted();
 		return response.getHeaders();
 	}
@@ -286,7 +299,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#setRequestCharacterEncoding(java.lang.String)
      */
-	public void setRequestCharacterEncoding(String charset) throws UnsupportedEncodingException {
+	@Override
+    public void setRequestCharacterEncoding(String charset) throws UnsupportedEncodingException {
 //		checkNotStarted();
 		request.setCharacterEncoding(charset);		
 	}
@@ -294,7 +308,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#setRequestBody(java.lang.String)
      */
-	public void setRequestBody(String body) {
+	@Override
+    public void setRequestBody(String body) {
 //		checkNotStarted();
 		request.setRequestBody(body);		
 	}
@@ -302,7 +317,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#setRequestContentType(java.lang.String)
      */
-	public void setRequestContentType(String contentType) {
+	@Override
+    public void setRequestContentType(String contentType) {
 //		checkNotStarted();
 		request.setContentType(contentType);
 		
@@ -312,6 +328,7 @@ public class StagingConnection extends HttpConnection {
 	 * Append additional HTTP request headers.
 	 * @param headers
 	 */
+    @Override
     public void addRequestHeaders(Map<String, String> headers) {
 //		checkNotStarted();
 		request.addHeaders(headers);		
@@ -507,7 +524,8 @@ public class StagingConnection extends HttpConnection {
 		 * javax.servlet.http.HttpServletResponse#addCookie(javax.servlet.http
 		 * .Cookie )
 		 */
-		public void addCookie(Cookie cookie) {
+		@Override
+        public void addCookie(Cookie cookie) {
 		    super.addCookie(cookie);
 			cookies.add(cookie);
 	
@@ -518,7 +536,8 @@ public class StagingConnection extends HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#getResponseContentLength()
      */
-	public long getResponseContentLength() {
+	@Override
+    public long getResponseContentLength() {
 		return response.getContentLength();		
 	}
 
