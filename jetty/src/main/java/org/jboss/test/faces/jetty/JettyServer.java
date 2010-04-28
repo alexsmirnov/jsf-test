@@ -48,12 +48,13 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.jboss.test.faces.ApplicationServer;
 import org.jboss.test.faces.FilterHolder;
 import org.jboss.test.faces.ServletHolder;
 import org.jboss.test.faces.TestException;
 import org.jboss.test.faces.staging.HttpConnection;
-import org.jboss.test.faces.staging.HttpMethod;
 import org.jboss.test.faces.staging.ServerResourcePath;
 import org.jboss.test.faces.staging.StaggingJspApplicationContext;
 import org.mortbay.jetty.Handler;
@@ -70,17 +71,14 @@ import org.mortbay.resource.Resource;
  */
 public class JettyServer extends ApplicationServer {
 
-    private final class JettyConnection implements HttpConnection {
+    private final class JettyConnection extends HttpConnection {
         private final URL url;
-        private HttpMethod method = HttpMethod.GET;
         private String requestContentType;
         private String requestEncoding="UTF-8";
         private String requestBody;
         private final HttpClient client;
         private HttpMethodBase httpClientMethod;
         private int statusCode;
-        private String queryString;
-        private Map<String,String> requestParameters = new HashMap<String, String>();
         private Map<String,String> requestHeaders = new HashMap<String, String>();
 
         public JettyConnection(URL url) {
@@ -94,10 +92,6 @@ public class JettyServer extends ApplicationServer {
             
         }
 
-        public void setRequestMethod(HttpMethod method) {
-            this.method = method;
-        }
-
         public void setRequestContentType(String contentType) {
             this.requestContentType = contentType;
         }
@@ -109,14 +103,6 @@ public class JettyServer extends ApplicationServer {
         public void setRequestBody(String body) {
             this.requestBody = body;
             
-        }
-
-        public void setQueryString(String queryString) {
-            this.queryString = queryString;
-        }
-
-        public void parseFormParameters(String queryString) {
-            this.queryString = queryString;
         }
 
         public boolean isStarted() {
@@ -150,8 +136,7 @@ public class JettyServer extends ApplicationServer {
         }
 
         public String getResponseCharacterEncoding() {
-            // TODO Auto-generated method stub
-            return null;
+            return httpClientMethod.getResponseCharSet();
         }
 
         public byte[] getResponseBody() {
@@ -174,9 +159,6 @@ public class JettyServer extends ApplicationServer {
             return httpClientMethod.getStatusText();
         }
 
-        public List<Cookie> getCookies() {
-            return Collections.emptyList();
-        }
 
         public String getContentAsString() {
             try {
@@ -194,20 +176,27 @@ public class JettyServer extends ApplicationServer {
         }
 
         public void execute() {
-            switch (method) {
+            switch (getRequestMethod()) {
                 case GET:
                     this.httpClientMethod = new GetMethod(url.toExternalForm());
                     break;
                 case POST:
-                    this.httpClientMethod = new PostMethod(url.toExternalForm());
+                    PostMethod postMethod = new PostMethod(url.toExternalForm());
                     if(null != requestBody){
-                        httpClientMethod.setQueryString(requestBody);
+                        try {
+                            RequestEntity body = new StringRequestEntity(requestBody,requestContentType,requestEncoding);
+                            postMethod.setRequestEntity(body);
+                        } catch (UnsupportedEncodingException e) {
+                            throw new TestException(e);
+                        }
                     } 
+                    this.httpClientMethod = postMethod;
                     break;
 
                 default:
-                    throw new UnsupportedOperationException("Http Method "+method+" is not supported");
+                    throw new UnsupportedOperationException("Http Method "+getRequestMethod()+" is not supported");
             }
+            String queryString = getRequestQueryString();
             try {
                 if (null != queryString) {
                     httpClientMethod.setQueryString(queryString);
@@ -222,13 +211,15 @@ public class JettyServer extends ApplicationServer {
             }
         }
 
-        public void addRequestParameter(String name, String value) {
-            requestParameters.put(name, value);            
-        }
-
         public void addRequestHeaders(Map<String, String> headers) {
             requestHeaders.putAll(headers);
         }
+
+        @Override
+        protected String getRequestCharacterEncoding() {
+            return requestEncoding;
+        }
+
         
     }
 

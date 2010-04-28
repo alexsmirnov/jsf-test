@@ -77,7 +77,6 @@
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

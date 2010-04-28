@@ -329,29 +329,32 @@ public abstract class ApplicationServer {
     public static ApplicationServer createApplicationServer() {
         String applicationServerClassName = System.getProperty(APPLICATION_SERVER_PROPERTY);
         if (applicationServerClassName != null) {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            if (classLoader == null) {
-                classLoader = ApplicationServer.class.getClassLoader();
-            }
-
-            Class<?> applicationServer;
-            try {
-                applicationServer = Class.forName(applicationServerClassName, true, classLoader);
-                Class<? extends ApplicationServer> applicationServerClass = 
-                    applicationServer.asSubclass(ApplicationServer.class);
-                
-                return applicationServerClass.newInstance();
-            } catch (ClassNotFoundException e) {
-                log.log(Level.INFO, e.getMessage(), e);
-            } catch (ClassCastException e) {
-                log.log(Level.INFO, e.getMessage(), e);
-            } catch (InstantiationException e) {
-                log.log(Level.INFO, e.getMessage(), e);
-            } catch (IllegalAccessException e) {
-                log.log(Level.INFO, e.getMessage(), e);
-            }
-        }
-        
+            return createApplicationServer(applicationServerClassName);
+        }        
         return new StagingServer();
+    }
+
+    /**
+     * <p class="changed_added_4_0"></p>
+     * @param applicationServerClassName
+     * @return 
+     */
+    private static ApplicationServer createApplicationServer(String applicationServerClassName) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = ApplicationServer.class.getClassLoader();
+        }
+
+        Class<?> applicationServer;
+        try {
+            applicationServer = Class.forName(applicationServerClassName, true, classLoader);
+            Class<? extends ApplicationServer> applicationServerClass = 
+                applicationServer.asSubclass(ApplicationServer.class);
+            
+            return applicationServerClass.newInstance();
+        } catch (Exception e) {
+            log.log(Level.SEVERE, e.getMessage(), e);
+            throw new TestException(e);
+        }
     }
 }

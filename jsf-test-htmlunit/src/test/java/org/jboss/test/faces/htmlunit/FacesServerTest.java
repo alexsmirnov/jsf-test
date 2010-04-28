@@ -34,11 +34,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 @RunWith(Parameterized.class)
 public class FacesServerTest {
 
-    private Class<?> applicationServerClass;
+    private Class<?  extends ApplicationServer> applicationServerClass;
 
     private HtmlUnitEnvironment environment;
 
-    public FacesServerTest(Class<?> applicationServerClass) {
+    public FacesServerTest(Class<? extends ApplicationServer> applicationServerClass) {
         super();
         this.applicationServerClass = applicationServerClass;
     }
@@ -58,7 +58,7 @@ public class FacesServerTest {
     @Before
     public void setUp() throws Exception {
         System.setProperty(ApplicationServer.APPLICATION_SERVER_PROPERTY, applicationServerClass.getName());
-        this.environment = new HtmlUnitEnvironment();
+        this.environment = new HtmlUnitEnvironment(applicationServerClass.newInstance());
         this.environment.withWebRoot("org/jboss/test/hello.xhtml").start();
     }
 

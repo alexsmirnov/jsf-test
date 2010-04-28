@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -104,6 +105,21 @@ abstract class StagingHttpResponse implements HttpServletResponse {
 		addHeader(name, String.valueOf(value));
 	}
 
+	public void addCookie(Cookie cookie) {
+	    StringBuilder content = new StringBuilder();
+	    String name = cookie.getName();
+	    String value = cookie.getValue();
+	    if(null !=name && null !=value){
+	        content.append(name).append('=').append(value);
+	        if(null != cookie.getPath()){
+	            content.append("; path=").append(cookie.getPath());
+	        }
+            if(null != cookie.getDomain()){
+                content.append("; domain=").append(cookie.getDomain());
+            }
+	    }
+	    addHeader("Set-Cookie", content.toString());
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -12,7 +12,6 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -35,7 +34,7 @@ import org.jboss.test.faces.TestException;
  * @author asmirnov
  * 
  */
-public class StagingConnection implements HttpConnection {
+public class StagingConnection extends HttpConnection {
 
 	private static final Logger log = ServerLogger.SERVER.getLogger();
 
@@ -49,13 +48,9 @@ public class StagingConnection implements HttpConnection {
 
 	private final RequestChain servlet;
 
-	private HttpMethod method = HttpMethod.GET;
-
 	private static final Cookie[] COOKIE = new Cookie[] {};
 
 	private List<Cookie> cookies = new ArrayList<Cookie>();
-
-	private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
 
 	private final String pathInfo;
 
@@ -64,8 +59,6 @@ public class StagingConnection implements HttpConnection {
 	private boolean finished = false;
 
 	private boolean started = false;
-
-	private String queryString;
 
 	private HttpServletRequest requestProxy;
 
@@ -93,8 +86,8 @@ public class StagingConnection implements HttpConnection {
 				this.pathInfo);
 		this.request.setAttribute("javax.servlet.include.servlet_path",
 				this.servletPath);
-		setQueryString(url.getQuery());
-		if (null != getQueryString()) {
+		String queryString = url.getQuery();
+		if (null != queryString) {
 			parseFormParameters(queryString);
 		}
 		
@@ -107,32 +100,6 @@ public class StagingConnection implements HttpConnection {
 		responseProxy = (HttpServletResponse) Proxy.newProxyInstance(loader, new Class[]{HttpServletResponse.class}, server.getInvocationHandler(response));
 	}
 
-	/* (non-Javadoc)
-     * @see org.jboss.test.faces.staging.HttpConnection#parseFormParameters(java.lang.String)
-     */
-	public void parseFormParameters(String queryString) {
-		String[] queryParams = queryString.split("&");
-		for (int i = 0; i < queryParams.length; i++) {
-			try {
-				String par = queryParams[i];
-				int eqIndex = par.indexOf('=');
-				if (eqIndex >= 0) {
-					// decode url-decoded values.
-					String name = URLDecoder.decode(par.substring(0, eqIndex),
-							request.getCharacterEncoding());
-					String value = URLDecoder.decode(
-							par.substring(eqIndex + 1), request
-									.getCharacterEncoding());
-					addRequestParameter(name, value);
-				} else {
-					addRequestParameter(URLDecoder.decode(par, request
-							.getCharacterEncoding()), null);
-				}
-			} catch (UnsupportedEncodingException e) {
-				throw new TestException(e);
-			}
-		}
-	}
 
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#isFinished()
@@ -194,25 +161,9 @@ public class StagingConnection implements HttpConnection {
 	public void start() {
 		log.fine("start " + getRequestMethod() + " request processing for file "
 				+ url.getFile());
-		log.fine("request parameters: " + requestParameters);
+		log.fine("request parameters: " + getRequestParameters());
 		server.requestStarted(request);
 		started = true;
-	}
-
-	/**
-	 * Get request HTTP methos ( GET, POST etc ).
-	 * @return the method
-	 */
-	public HttpMethod getRequestMethod() {
-		return method;
-	}
-
-	/* (non-Javadoc)
-     * @see org.jboss.test.faces.staging.HttpConnection#setRequestMethod(org.jboss.test.faces.staging.HttpMethod)
-     */
-	public void setRequestMethod(HttpMethod method) {
-//		checkNotStarted();
-		this.method = method;
 	}
 
 	/**
@@ -221,23 +172,6 @@ public class StagingConnection implements HttpConnection {
 	 */
 	public URL getUrl() {
 		return url;
-	}
-
-	/* (non-Javadoc)
-     * @see org.jboss.test.faces.staging.HttpConnection#addRequestParameter(java.lang.String, java.lang.String)
-     */
-	public void addRequestParameter(String name, String value) {
-//		checkNotStarted();
-		String[] values = requestParameters.get(name);
-		if (null == values) {
-			values = new String[1];
-		} else {
-			String[] newValues = new String[values.length + 1];
-			System.arraycopy(values, 0, newValues, 0, values.length);
-			values = newValues;
-		}
-		values[values.length - 1] = value;
-		requestParameters.put(name, values);
 	}
 
 	/* (non-Javadoc)
@@ -289,7 +223,7 @@ public class StagingConnection implements HttpConnection {
 	/* (non-Javadoc)
      * @see org.jboss.test.faces.staging.HttpConnection#getCookies()
      */
-	public List<Cookie> getCookies() {
+	private List<Cookie> getCookies() {
 		return cookies;
 	}
 
@@ -339,21 +273,6 @@ public class StagingConnection implements HttpConnection {
 	public String getErrorMessage() {
 //		checkStarted();
 		return response.getErrorMessage();
-	}
-
-	/* (non-Javadoc)
-     * @see org.jboss.test.faces.staging.HttpConnection#setQueryString(java.lang.String)
-     */
-	public void setQueryString(String queryString) {
-//		checkNotStarted();
-		this.queryString = queryString;
-	}
-
-	/**
-	 * @return the queryString
-	 */
-	public String getQueryString() {
-		return queryString;
 	}
 
 	/* (non-Javadoc)
@@ -410,7 +329,7 @@ public class StagingConnection implements HttpConnection {
 		 * @see javax.servlet.http.HttpServletRequest#getMethod()
 		 */
 		public String getMethod() {
-			return method.toString();
+			return getRequestMethod().toString();
 		}
 	
 		/*
@@ -437,10 +356,10 @@ public class StagingConnection implements HttpConnection {
 		 * @see javax.servlet.http.HttpServletRequest#getQueryString()
 		 */
 		public String getQueryString() {
-			return queryString;
+		    return getRequestQueryString();
 		}
-	
-		/*
+
+        /*
 		 * (non-Javadoc)
 		 * 
 		 * @see javax.servlet.http.HttpServletRequest#getRequestURI()
@@ -472,7 +391,7 @@ public class StagingConnection implements HttpConnection {
 		 * @see javax.servlet.ServletRequest#getParameter(java.lang.String)
 		 */
 		public String getParameter(String name) {
-			String[] values = requestParameters.get(name);
+			String[] values = getRequestParameters().get(name);
 			if (null != values && values.length > 0) {
 				return values[0];
 			}
@@ -486,7 +405,7 @@ public class StagingConnection implements HttpConnection {
 		 */
 		@SuppressWarnings("unchecked")
 		public Map getParameterMap() {
-			return Collections.unmodifiableMap(requestParameters);
+			return Collections.unmodifiableMap(getRequestParameters());
 		}
 	
 		/*
@@ -496,7 +415,7 @@ public class StagingConnection implements HttpConnection {
 		 */
 		@SuppressWarnings("unchecked")
 		public Enumeration getParameterNames() {
-			return Collections.enumeration(requestParameters.keySet());
+			return Collections.enumeration(getRequestParameters().keySet());
 		}
 	
 		/*
@@ -506,7 +425,7 @@ public class StagingConnection implements HttpConnection {
 		 * javax.servlet.ServletRequest#getParameterValues(java.lang.String)
 		 */
 		public String[] getParameterValues(String name) {
-			return requestParameters.get(name);
+			return getRequestParameters().get(name);
 		}
 	
 		/*
@@ -589,6 +508,7 @@ public class StagingConnection implements HttpConnection {
 		 * .Cookie )
 		 */
 		public void addCookie(Cookie cookie) {
+		    super.addCookie(cookie);
 			cookies.add(cookie);
 	
 		}
@@ -601,5 +521,11 @@ public class StagingConnection implements HttpConnection {
 	public long getResponseContentLength() {
 		return response.getContentLength();		
 	}
+
+
+    @Override
+    protected String getRequestCharacterEncoding() {
+        return getRequest().getCharacterEncoding();
+    }
 
 }
