@@ -46,8 +46,8 @@ import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionListener;
 import javax.servlet.jsp.JspFactory;
 
+import org.jboss.test.faces.staging.HttpConnection;
 import org.jboss.test.faces.staging.ServerLogger;
-import org.jboss.test.faces.staging.StagingConnection;
 import org.jboss.test.faces.staging.StagingServer;
 
 /**
@@ -285,7 +285,7 @@ public abstract class ApplicationServer {
      * @return local connection to the appropriate servlet in the virtual server.
      * @throws {@link TestException} if no servlet found to process given URL.
      */
-    public abstract StagingConnection getConnection(URL url);
+    public abstract HttpConnection getConnection(URL url);
 
     public abstract boolean isSessionPerThread();
 

@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-            <scope>provided</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.faces</groupId>
@@ -39,8 +39,8 @@
 			<artifactId>el-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>el-ri</artifactId>
+			<groupId>org.jboss.el</groupId>
+			<artifactId>jboss-el</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>

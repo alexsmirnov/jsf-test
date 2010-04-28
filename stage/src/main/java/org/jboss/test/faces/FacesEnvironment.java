@@ -47,7 +47,8 @@ import javax.faces.lifecycle.LifecycleFactory;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.Filter;
 
-import org.jboss.test.faces.staging.StagingConnection;
+import org.jboss.test.faces.staging.HttpConnection;
+import org.jboss.test.faces.staging.HttpConnection;
 
 /**
  * <p class="changed_added_4_0">
@@ -62,7 +63,7 @@ public class FacesEnvironment {
         /**
          * Current virtual connection. This field populated by the {@link #setupWebContent()} method only.
          */
-        private StagingConnection connection;
+        private HttpConnection connection;
 
         /**
          * Current {@link FacesContext} instance. This field populated by the {@link #setupWebContent()} method only.
@@ -118,7 +119,7 @@ public class FacesEnvironment {
          * 
          * @return the connection
          */
-        public StagingConnection getConnection() {
+        public HttpConnection getConnection() {
             return this.connection;
         }
     }

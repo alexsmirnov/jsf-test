@@ -22,24 +22,40 @@
 package org.jboss.test.faces.jetty;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.EventListener;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.el.ExpressionFactory;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.jboss.test.faces.ApplicationServer;
 import org.jboss.test.faces.FilterHolder;
 import org.jboss.test.faces.ServletHolder;
 import org.jboss.test.faces.TestException;
+import org.jboss.test.faces.staging.HttpConnection;
+import org.jboss.test.faces.staging.HttpMethod;
 import org.jboss.test.faces.staging.ServerResourcePath;
-import org.jboss.test.faces.staging.StagingConnection;
+import org.jboss.test.faces.staging.StaggingJspApplicationContext;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.DefaultHandler;
@@ -53,6 +69,168 @@ import org.mortbay.resource.Resource;
  * 
  */
 public class JettyServer extends ApplicationServer {
+
+    private final class JettyConnection implements HttpConnection {
+        private final URL url;
+        private HttpMethod method = HttpMethod.GET;
+        private String requestContentType;
+        private String requestEncoding="UTF-8";
+        private String requestBody;
+        private final HttpClient client;
+        private HttpMethodBase httpClientMethod;
+        private int statusCode;
+        private String queryString;
+        private Map<String,String> requestParameters = new HashMap<String, String>();
+        private Map<String,String> requestHeaders = new HashMap<String, String>();
+
+        public JettyConnection(URL url) {
+            client = new HttpClient();
+            // TODO set default values for host, port, protocol.
+            this.url = url;
+        }
+
+        public void start() {
+            throw new UnsupportedOperationException("Jetty server does not allow in-process requests");
+            
+        }
+
+        public void setRequestMethod(HttpMethod method) {
+            this.method = method;
+        }
+
+        public void setRequestContentType(String contentType) {
+            this.requestContentType = contentType;
+        }
+
+        public void setRequestCharacterEncoding(String charset) throws UnsupportedEncodingException {
+            this.requestEncoding = charset;
+        }
+
+        public void setRequestBody(String body) {
+            this.requestBody = body;
+            
+        }
+
+        public void setQueryString(String queryString) {
+            this.queryString = queryString;
+        }
+
+        public void parseFormParameters(String queryString) {
+            this.queryString = queryString;
+        }
+
+        public boolean isStarted() {
+            return null != httpClientMethod;
+        }
+
+        public boolean isFinished() {
+            return null != httpClientMethod && httpClientMethod.isRequestSent();
+        }
+
+        public int getResponseStatus() {
+            return statusCode;
+        }
+
+        public Map<String, String[]> getResponseHeaders() {
+            Header[] headers = httpClientMethod.getResponseHeaders();
+            HashMap<String, String[]> map = new HashMap<String, String[]>(headers.length);
+            for (Header header : headers) {
+                map.put(header.getName(), new String[]{header.getValue()});
+            }
+            return map;
+        }
+
+        public String getResponseContentType() {
+            Header responseHeader = httpClientMethod.getResponseHeader("Content-Type");
+            return null!=responseHeader?responseHeader.getValue():null;
+        }
+
+        public long getResponseContentLength() {
+            return httpClientMethod.getResponseContentLength();
+        }
+
+        public String getResponseCharacterEncoding() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public byte[] getResponseBody() {
+            try {
+                return httpClientMethod.getResponseBody();
+            } catch (IOException e) {
+                throw new TestException(e);
+            }
+        }
+
+        public HttpServletResponse getResponse() {
+            throw new UnsupportedOperationException("Jetty server does not allow in-process requests");
+        }
+
+        public HttpServletRequest getRequest() {
+            throw new UnsupportedOperationException("Jetty server does not allow in-process requests");
+        }
+
+        public String getErrorMessage() {
+            return httpClientMethod.getStatusText();
+        }
+
+        public List<Cookie> getCookies() {
+            return Collections.emptyList();
+        }
+
+        public String getContentAsString() {
+            try {
+                return httpClientMethod.getResponseBodyAsString();
+            } catch (IOException e) {
+                throw new TestException(e);
+            }
+        }
+
+        public void finish() {
+            if(null != httpClientMethod){
+                httpClientMethod.releaseConnection();
+            }
+            
+        }
+
+        public void execute() {
+            switch (method) {
+                case GET:
+                    this.httpClientMethod = new GetMethod(url.toExternalForm());
+                    break;
+                case POST:
+                    this.httpClientMethod = new PostMethod(url.toExternalForm());
+                    if(null != requestBody){
+                        httpClientMethod.setQueryString(requestBody);
+                    } 
+                    break;
+
+                default:
+                    throw new UnsupportedOperationException("Http Method "+method+" is not supported");
+            }
+            try {
+                if (null != queryString) {
+                    httpClientMethod.setQueryString(queryString);
+                }
+                for (Map.Entry<String,String> entry : requestHeaders.entrySet()) {
+                    httpClientMethod.addRequestHeader(entry.getKey(), entry.getValue());
+                }
+                // TODO - add parameters to request.
+                this.statusCode = client.executeMethod(httpClientMethod);
+            } catch (IOException e) {
+                throw new TestException(e);
+            }
+        }
+
+        public void addRequestParameter(String name, String value) {
+            requestParameters.put(name, value);            
+        }
+
+        public void addRequestHeaders(Map<String, String> headers) {
+            requestHeaders.putAll(headers);
+        }
+        
+    }
 
     private static final String WEB_XML = "/WEB-INF/web.xml";
 
@@ -112,6 +290,15 @@ public class JettyServer extends ApplicationServer {
         });
     }
 
+    private boolean isClassAvailable(String elFactoryClass)  {
+        try {
+            Class.forName(elFactoryClass);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
     public void init() {
         server = new Server(port);
 
@@ -119,7 +306,12 @@ public class JettyServer extends ApplicationServer {
 
         handlers.setHandlers(new Handler[] { webAppContext, new DefaultHandler() });
         server.setHandler(handlers);
-
+        // Try to register EL Expression factory explicitly, because we does not use JSF.
+        if(isClassAvailable(StaggingJspApplicationContext.SUN_EXPRESSION_FACTORY)){
+            addInitParameter(StaggingJspApplicationContext.FACES_EXPRESSION_FACTORY, StaggingJspApplicationContext.SUN_EXPRESSION_FACTORY);
+        } else if(isClassAvailable(StaggingJspApplicationContext.JBOSS_EXPRESSION_FACTORY)){
+            addInitParameter(StaggingJspApplicationContext.FACES_EXPRESSION_FACTORY, StaggingJspApplicationContext.JBOSS_EXPRESSION_FACTORY);
+        }
         //JSF initialization listener requires web.xml file, so add dummy web.xml if none was registered
         Resource webXml;
         try {
@@ -220,8 +412,8 @@ public class JettyServer extends ApplicationServer {
         return port;
     }
     
-    public StagingConnection getConnection(URL url) {
-        throw new UnsupportedOperationException();
+    public HttpConnection getConnection(URL url) {
+        return new JettyConnection(url);
     }
 
     public HttpSession getSession() {

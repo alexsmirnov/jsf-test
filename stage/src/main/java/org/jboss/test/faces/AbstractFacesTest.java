@@ -31,7 +31,7 @@ import javax.servlet.Filter;
 
 import junit.framework.TestCase;
 
-import org.jboss.test.faces.staging.StagingConnection;
+import org.jboss.test.faces.staging.HttpConnection;
 import org.jboss.test.faces.staging.StagingServer;
 import org.junit.After;
 import org.junit.Before;
@@ -53,7 +53,7 @@ public abstract class AbstractFacesTest extends TestCase {
 	/**
 	 * Current virtual connection. This field populated by the {@link #setupWebContent()} method only.
 	 */
-	protected StagingConnection connection;
+	protected HttpConnection connection;
 
 	/**
 	 * Current {@link FacesContext} instance. This field populated by the {@link #setupWebContent()} method only.

@@ -21,6 +21,7 @@
  */
 package org.jboss.test.faces.jetty;
 
+import static junit.framework.Assert.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -31,6 +32,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.jboss.test.faces.FacesEnvironment;
+import org.jboss.test.faces.FacesEnvironment.FacesRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,5 +78,15 @@ public class JettyServerTestCase {
         } finally {
             method.releaseConnection();
         }
+    }
+    
+    @Test
+    public void testJettyConnection() throws Exception {
+        FacesRequest facesRequest = environment.createFacesRequest(new URL("http", "localhost", PORT, "/hello-jetty.jsf?name=JettyServer")
+        .toExternalForm());
+        facesRequest.execute();
+        assertEquals(HttpStatus.SC_OK, facesRequest.getConnection().getResponseStatus());
+        String responseBodyAsString = facesRequest.getConnection().getContentAsString();
+        assertTrue(responseBodyAsString.contains("Hello, JettyServer!"));
     }
 }

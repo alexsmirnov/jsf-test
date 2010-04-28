@@ -35,7 +35,7 @@ import org.jboss.test.faces.TestException;
  * @author asmirnov
  * 
  */
-public class StagingConnection {
+public class StagingConnection implements HttpConnection {
 
 	private static final Logger log = ServerLogger.SERVER.getLogger();
 
@@ -107,11 +107,9 @@ public class StagingConnection {
 		responseProxy = (HttpServletResponse) Proxy.newProxyInstance(loader, new Class[]{HttpServletResponse.class}, server.getInvocationHandler(response));
 	}
 
-	/**
-	 * Parse 'application/x-www-form-urlencoded' string with parameters name/value pairs,
-	 * as it expected after a form submit.
-	 * @param queryString URL query string or POST content.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#parseFormParameters(java.lang.String)
+     */
 	public void parseFormParameters(String queryString) {
 		String[] queryParams = queryString.split("&");
 		for (int i = 0; i < queryParams.length; i++) {
@@ -136,16 +134,16 @@ public class StagingConnection {
 		}
 	}
 
-	/**
-	 * @return the finished
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#isFinished()
+     */
 	public boolean isFinished() {
 		return finished;
 	}
 
-	/**
-	 * @return the started
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#isStarted()
+     */
 	public boolean isStarted() {
 		return started;
 	}
@@ -162,10 +160,9 @@ public class StagingConnection {
 //		}
 //	}
 
-	/**
-	 * Execute this connection request on the associated servlet or filter chain.
-	 * @throws TestException if any errors were during execution.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#execute()
+     */
 	public void execute() {
 		if (isStarted() || isFinished()) {
 			throw new TestException(
@@ -183,18 +180,17 @@ public class StagingConnection {
 		}
 	}
 
-	/**
-	 * Finish request to the this connection, inform server listeners about request status.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#finish()
+     */
 	public void finish() {
 		server.requestFinished(request);
 		finished = true;
 	}
 
-	/**
-	 * Start request to the this connection, inform server listeners about request status.
-	 * No request parameters changes allowed after connection start.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#start()
+     */
 	public void start() {
 		log.fine("start " + getRequestMethod() + " request processing for file "
 				+ url.getFile());
@@ -211,11 +207,9 @@ public class StagingConnection {
 		return method;
 	}
 
-	/**
-	 * Set request HTTP methos ( GET, POST etc ).
-	 * @param method
-	 *            the method to set
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#setRequestMethod(org.jboss.test.faces.staging.HttpMethod)
+     */
 	public void setRequestMethod(HttpMethod method) {
 //		checkNotStarted();
 		this.method = method;
@@ -229,11 +223,9 @@ public class StagingConnection {
 		return url;
 	}
 
-	/**
-	 * Append additional request parameter.
-	 * @param name
-	 * @param value
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#addRequestParameter(java.lang.String, java.lang.String)
+     */
 	public void addRequestParameter(String name, String value) {
 //		checkNotStarted();
 		String[] values = requestParameters.get(name);
@@ -248,12 +240,9 @@ public class StagingConnection {
 		requestParameters.put(name, values);
 	}
 
-	/**
-	 * Get content of the response as String. 
-	 * @return content of the response writer or String created from the ServletOutputStream with current response encoding.
-	 * @throws TestException
-	 * 	          if has an unsupported encoding.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#getContentAsString()
+     */
 	public String getContentAsString() {
 //		checkStarted();
 		String content = response.getWriterContent();
@@ -275,12 +264,9 @@ public class StagingConnection {
 		return content;
 	}
 
-	/**
-	 * Get content of the response as byte array.
-	 * @return content of the ServletOutputStream or convert String, collected by response writer, with current response encoding.
-	 * @throws TestException
-	 * 	          if response has unsupported encoding.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#getResponseBody()
+     */
 	public byte[] getResponseBody() {
 //		checkStarted();
 		byte[] content = response.getStreamContent();
@@ -300,10 +286,9 @@ public class StagingConnection {
 		return content;
 	}
 
-	/**
-	 * List of the {@link Cookie} used by the request or response ( There are same cookies for both request and response ). 
-	 * @return the cookies
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#getCookies()
+     */
 	public List<Cookie> getCookies() {
 		return cookies;
 	}
@@ -312,7 +297,7 @@ public class StagingConnection {
 	 * request object for the this connection.
 	 * @return the request
 	 */
-	public HttpServletRequest getRequest() {
+    public HttpServletRequest getRequest() {
 		return requestProxy;
 	}
 
@@ -320,47 +305,45 @@ public class StagingConnection {
 	 * response object for the this connection.
 	 * @return the response
 	 */
-	public HttpServletResponse getResponse() {
+    public HttpServletResponse getResponse() {
 		return responseProxy;
 	}
 
-	/**
-	 * @return encoding used to write response.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#getResponseCharacterEncoding()
+     */
 	public String getResponseCharacterEncoding() {
 //		checkStarted();
 		return response.getCharacterEncoding();
 	}
 
-	/**
-	 * @return content type ( eg 'text/html' ) of the response.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#getResponseContentType()
+     */
 	public String getResponseContentType() {
 //		checkStarted();
 		return response.getContentType();
 	}
 
-	/**
-	 * @return HTTP status code of the response.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#getResponseStatus()
+     */
 	public int getResponseStatus() {
 //		checkStarted();
 		return response.getStatus();
 	}
 
-	/**
-	 * @return HTTP error message.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#getErrorMessage()
+     */
 	public String getErrorMessage() {
 //		checkStarted();
 		return response.getErrorMessage();
 	}
 
-	/**
-	 * Set request Query string. This method does not parse query string, {@link #parseFormParameters(String)} should be used.
-	 * @param queryString
-	 *            the queryString to set
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#setQueryString(java.lang.String)
+     */
 	public void setQueryString(String queryString) {
 //		checkNotStarted();
 		this.queryString = queryString;
@@ -373,38 +356,33 @@ public class StagingConnection {
 		return queryString;
 	}
 
-	/**
-	 * Get HTTP response headers.
-	 * @return headers name-values map.
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#getResponseHeaders()
+     */
 	public Map<String, String[]> getResponseHeaders() {
 //		checkStarted();
 		return response.getHeaders();
 	}
 
-	/**
-	 * Set charset for the request body.
-	 * @param charset
-	 * @throws UnsupportedEncodingException
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#setRequestCharacterEncoding(java.lang.String)
+     */
 	public void setRequestCharacterEncoding(String charset) throws UnsupportedEncodingException {
 //		checkNotStarted();
 		request.setCharacterEncoding(charset);		
 	}
 
-	/**
-	 * Set HTTP POST/PUT methods uploading content.
-	 * @param body
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#setRequestBody(java.lang.String)
+     */
 	public void setRequestBody(String body) {
 //		checkNotStarted();
 		request.setRequestBody(body);		
 	}
 
-	/**
-	 * Set HTTP request content type ( eg 'application/x-www-form-urlencoded' or 'text/xml' ).
-	 * @param contentType
-	 */
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#setRequestContentType(java.lang.String)
+     */
 	public void setRequestContentType(String contentType) {
 //		checkNotStarted();
 		request.setContentType(contentType);
@@ -415,7 +393,7 @@ public class StagingConnection {
 	 * Append additional HTTP request headers.
 	 * @param headers
 	 */
-	public void addRequestHeaders(Map<String, String> headers) {
+    public void addRequestHeaders(Map<String, String> headers) {
 //		checkNotStarted();
 		request.addHeaders(headers);		
 	}
@@ -617,7 +595,10 @@ public class StagingConnection {
 	
 	}
 
-	public int getResponseContentLength() {
+	/* (non-Javadoc)
+     * @see org.jboss.test.faces.staging.HttpConnection#getResponseContentLength()
+     */
+	public long getResponseContentLength() {
 		return response.getContentLength();		
 	}
 

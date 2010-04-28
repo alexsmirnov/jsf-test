@@ -18,27 +18,39 @@ import org.jboss.test.faces.TestException;
  */
 public class StaggingJspApplicationContext implements JspApplicationContext {
 	
-	private static final String DEFAULT_EXPRESSION_FACTORY="com.sun.el.ExpressionFactoryImpl";
+	public static final String FACES_EXPRESSION_FACTORY = "com.sun.faces.expressionFactory";
+    public static final String SUN_EXPRESSION_FACTORY="com.sun.el.ExpressionFactoryImpl";
+    public static final String JBOSS_EXPRESSION_FACTORY="org.jboss.el.ExpressionFactoryImpl";
 	
-	private final ExpressionFactory expressionFactory ;
+	private ExpressionFactory expressionFactory ;
 	private final ServletContext servletContext;
 	
 
 	public StaggingJspApplicationContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
-		String elFactoryClass = servletContext.getInitParameter("com.sun.faces.expressionFactory");
+		String elFactoryClass = servletContext.getInitParameter(FACES_EXPRESSION_FACTORY);
 		if(null == elFactoryClass){
 			elFactoryClass = servletContext.getInitParameter("com.sun.el.ExpressionFactoryImpl");
 		}
+        try {
 		if(null == elFactoryClass){
-			elFactoryClass = DEFAULT_EXPRESSION_FACTORY;
+		    try {
+		        expressionFactory = instantiate(SUN_EXPRESSION_FACTORY);
+		    } catch (ClassNotFoundException e) {
+		        expressionFactory = instantiate(JBOSS_EXPRESSION_FACTORY);
+            }
+		} else {
+			expressionFactory = instantiate(elFactoryClass);
 		}
-		try {
-			expressionFactory = Class.forName(elFactoryClass).asSubclass(ExpressionFactory.class).newInstance();
 		} catch (Exception e) {
 			throw new TestException("Couldn't instantiate EL expression factory",e);
 		}
 	}
+
+    private ExpressionFactory instantiate(String elFactoryClass) throws InstantiationException, IllegalAccessException,
+        ClassNotFoundException {
+        return Class.forName(elFactoryClass).asSubclass(ExpressionFactory.class).newInstance();
+    }
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.jsp.JspApplicationContext#addELContextListener(javax.el.ELContextListener)

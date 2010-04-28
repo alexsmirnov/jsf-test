@@ -11,7 +11,9 @@
 	<packaging>jar</packaging>
 	<version>1.0.1-SNAPSHOT</version>
 	<name>Seam Mock Objects Module</name>
-
+    <properties>
+      <skip-enforce>true</skip-enforce>
+    </properties>
 	<build>
 		<plugins>
 			<plugin>

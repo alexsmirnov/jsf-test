@@ -187,7 +187,7 @@ public class LocalWebResponse implements WebResponse {
 				headers.add(new NameValuePair(entry.getKey(), value));
 			}
 		}
-		int contentLength = serverConnection.getResponseContentLength();
+		long contentLength = serverConnection.getResponseContentLength();
 		if(contentLength>=0){
 			headers.add(new NameValuePair("Content-Length", String.valueOf(contentLength)));
 		}

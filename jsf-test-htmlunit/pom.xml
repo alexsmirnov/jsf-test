@@ -12,6 +12,10 @@
 	<name>jsf-test-htmlunit</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.jboss.test-jsf</groupId>
 			<artifactId>jsf-test-stage</artifactId>
@@ -22,6 +26,14 @@
 			<artifactId>jsf-test-jetty</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.sun.faces</groupId>
             <artifactId>jsf-api</artifactId>
@@ -37,8 +49,8 @@
             <artifactId>el-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>el-ri</artifactId>
+                <groupId>org.jboss.el</groupId>
+                <artifactId>jboss-el</artifactId>
         </dependency>
 		<dependency>
 			<groupId>net.sourceforge.htmlunit</groupId>
