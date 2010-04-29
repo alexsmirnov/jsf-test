@@ -4,11 +4,11 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>org.jboss.test-jsf</groupId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
   </parent>
   <groupId>org.jboss.test-jsf</groupId>
   <artifactId>maven-mockgenerator-plugin</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>maven-mockgenerator-plugin Maven Mojo</name>
   <url>http://maven.apache.org</url>
