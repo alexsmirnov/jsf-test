@@ -34,7 +34,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 @RunWith(Parameterized.class)
 public class FacesServerTest {
 
-    private Class<?  extends ApplicationServer> applicationServerClass;
+    private final Class<?  extends ApplicationServer> applicationServerClass;
 
     private HtmlUnitEnvironment environment;
 

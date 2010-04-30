@@ -44,7 +44,7 @@ public class EnvironmentTest {
 
     @Test
     public void testRequest() throws Exception {
-        FacesRequest request = environment.createFacesRequest("http://localhost/test.jsf");
+        FacesRequest request = environment.createFacesRequest("http://localhost/test.jsf?foo=bar");
         assertNotNull(request.execute());
         String contentAsString = request.getConnection().getContentAsString();
         assertTrue(contentAsString.contains(ResponseStateManager.VIEW_STATE_PARAM));

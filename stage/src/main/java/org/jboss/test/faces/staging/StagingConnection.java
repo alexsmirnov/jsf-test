@@ -39,11 +39,11 @@ public class StagingConnection extends HttpConnection {
 
 	private final StagingServer server;
 
-	final URL url;
+	private final URL url;
 
-	private ConnectionRequest request;
+	private final ConnectionRequest request;
 
-	private ConnectionResponse response;
+	private final ConnectionResponse response;
 
 	private final RequestChain servlet;
 
@@ -59,9 +59,9 @@ public class StagingConnection extends HttpConnection {
 
 	private boolean started = false;
 
-	private HttpServletRequest requestProxy;
+	private final HttpServletRequest requestProxy;
 
-	private HttpServletResponse responseProxy;
+	private final HttpServletResponse responseProxy;
 
 	/**
 	 * Create connection instance.
@@ -544,7 +544,7 @@ public class StagingConnection extends HttpConnection {
 
     @Override
     protected String getRequestCharacterEncoding() {
-        return getRequest().getCharacterEncoding();
+        return request.getCharacterEncoding();
     }
 
 }
