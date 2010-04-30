@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>org.jboss.test-jsf</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.3</version>
+		<version>1.0.4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>jsf-mock</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.3</version>
+	<version>1.0.4-SNAPSHOT</version>
 	<name>Seam Mock Objects Module</name>
     <properties>
       <skip-enforce>true</skip-enforce>
@@ -19,7 +19,7 @@
 			<plugin>
 				<groupId>org.jboss.test-jsf</groupId>
 				<artifactId>maven-mockgenerator-plugin</artifactId>
-				<version>1.0.3</version>
+				<version>1.0.4-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<id>generateMocks</id>
