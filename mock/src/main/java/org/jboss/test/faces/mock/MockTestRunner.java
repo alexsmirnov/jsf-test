@@ -168,7 +168,7 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
                 Binding bind = new Binding();
                 bind.setValue(FacesMock.createStrictMock(notEmpty(field.getAnnotation(Strict.class).value()),field.getType()));
                 mocksAndStubs.put(field, bind);
-            } if (field.isAnnotationPresent(Strict.class)) {
+            } if (field.isAnnotationPresent(Mock.class)) {
                     Binding bind = new Binding();
                     bind.setValue(FacesMock.createMock(notEmpty(field.getAnnotation(Mock.class).value()),field.getType()));
                     mocksAndStubs.put(field, bind);
