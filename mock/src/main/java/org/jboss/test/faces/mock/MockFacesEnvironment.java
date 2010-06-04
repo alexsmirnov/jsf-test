@@ -78,6 +78,8 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
 
     private ResponseStateManager responseStateManager;
 
+    private String name;
+
     // Factory methods
 
     public static MockFacesEnvironment createEnvironment() {
@@ -102,6 +104,11 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         return instance.get();
     }
 
+    MockFacesEnvironment(IMocksControl mocksControl,String name) {
+        this(mocksControl);
+        this.name = name;
+    }
+
     MockFacesEnvironment(IMocksControl mocksControl) {
         this.mocksControl = mocksControl;
         facesContext = createMock(FacesContext.class);
@@ -109,7 +116,7 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
     }
 
     public <T> T createMock(Class<T> mock) {
-        return createMock(null, mock);
+        return createMock(name, mock);
     }
 
     public <T> T createMock(String name, Class<T> mock) {
