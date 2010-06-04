@@ -164,11 +164,11 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
         Map<Field, Binding> mocksAndStubs = new HashMap<Field, Binding>();
         // TODO - create annotation attribute that tells runner to use the scme Mock Controller to create related mocks.
         for (Field field : testFields) {
-            if (field.isAnnotationPresent(StrictMock.class)) {
+            if (field.isAnnotationPresent(Strict.class)) {
                 Binding bind = new Binding();
-                bind.setValue(FacesMock.createStrictMock(notEmpty(field.getAnnotation(StrictMock.class).value()),field.getType()));
+                bind.setValue(FacesMock.createStrictMock(notEmpty(field.getAnnotation(Strict.class).value()),field.getType()));
                 mocksAndStubs.put(field, bind);
-            } if (field.isAnnotationPresent(StrictMock.class)) {
+            } if (field.isAnnotationPresent(Strict.class)) {
                     Binding bind = new Binding();
                     bind.setValue(FacesMock.createMock(notEmpty(field.getAnnotation(Mock.class).value()),field.getType()));
                     mocksAndStubs.put(field, bind);

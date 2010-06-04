@@ -37,6 +37,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.FIELD })
-public @interface StrictMock {
+public @interface Strict {
     public String value() default "";
 }
