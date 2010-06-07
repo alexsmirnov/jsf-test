@@ -104,7 +104,7 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         return instance.get();
     }
 
-    MockFacesEnvironment(IMocksControl mocksControl,String name) {
+    public MockFacesEnvironment(IMocksControl mocksControl,String name) {
         this(mocksControl);
         this.name = name;
     }
