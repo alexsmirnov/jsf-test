@@ -115,20 +115,22 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
             this.fields = fields;
         }
 
-        public void replay() {
+        public void replay(Object ...objects) {
             for (Binding field : fields.values()) {
                 if(field.isMock()){
                     FacesMock.replay(field.getValue());
                 }
             }
+				FacesMock.replay(objects);
         }
 
-        public void verify() {
+        public void verify(Object ...objects) {
             for (Binding field : fields.values()) {
                 if(field.isMock()){
                     FacesMock.verify(field.getValue());
                 }
             }
+            FacesMock.verify(objects);
         }
     }
 

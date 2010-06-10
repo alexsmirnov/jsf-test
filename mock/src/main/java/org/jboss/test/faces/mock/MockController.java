@@ -33,11 +33,11 @@ public interface MockController {
     /**
      * <p class="changed_added_4_0">Repaly all mock objects created by the {@link CdkTestRunner}</p>
      */
-    public void replay();
+    public void replay(Object ...objects);
     
     /**
      * <p class="changed_added_4_0">Verify all mock objects created by the {@link CdkTestRunner}</p>
      */
-    public void verify();
+    public void verify(Object ...objects);
 
 }
