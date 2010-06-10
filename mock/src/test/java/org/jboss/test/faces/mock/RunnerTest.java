@@ -3,6 +3,7 @@ package org.jboss.test.faces.mock;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
+import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
 
 import org.jboss.test.faces.mock.Environment.Feature;
@@ -14,7 +15,7 @@ import org.junit.runner.RunWith;
 public class RunnerTest {
     
     @Mock("foo")
-    @Environment({Feature.APPLICATION,Feature.EXTERNAL_CONTEXT})
+    @Environment({Feature.APPLICATION,Feature.EXTERNAL_CONTEXT,Feature.FACTORIES})
     protected MockFacesEnvironment environment;
     
     @Stub
@@ -28,6 +29,7 @@ public class RunnerTest {
         expect(viewRoot.getViewId()).andReturn("/foo.xhtml");
         controller.replay();
         assertNotNull(environment.getExternalContext());
+        assertNotNull(FactoryFinder.getFactory(FactoryFinder.EXTERNAL_CONTEXT_FACTORY));
         assertSame(viewRoot, environment.getFacesContext().getViewRoot());
         assertEquals("/foo.xhtml", viewRoot.getViewId());
         controller.verify();

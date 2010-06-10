@@ -31,13 +31,22 @@ package org.jboss.test.faces.mock;
 public interface MockController {
     
     /**
-     * <p class="changed_added_4_0">Repaly all mock objects created by the {@link CdkTestRunner}</p>
+     * <p class="changed_added_4_0">Repaly all mock objects created by the {@link CdkTestRunner} and ones from patameters</p>
      */
     public void replay(Object ...objects);
     
     /**
-     * <p class="changed_added_4_0">Verify all mock objects created by the {@link CdkTestRunner}</p>
+     * <p class="changed_added_4_0">Verify all mock objects created by the {@link CdkTestRunner} and ones from patameters</p>
      */
     public void verify(Object ...objects);
 
+    /**
+     * <p class="changed_added_4_0">Reset all mock objects created by the {@link CdkTestRunner} and ones from patameters</p>
+     */
+    public void reset(Object ...objects);
+    public void resetToNice(Object ...objects);
+    public void resetToStrict(Object ...objects);
+    public void resetToDefault(Object ...objects);
+    
+    public void release();
 }

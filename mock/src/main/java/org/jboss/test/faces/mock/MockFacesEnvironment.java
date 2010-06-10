@@ -23,9 +23,7 @@
 
 package org.jboss.test.faces.mock;
 
-import static org.easymock.EasyMock.createControl;
-import static org.easymock.EasyMock.createNiceControl;
-import static org.easymock.EasyMock.createStrictControl;
+import static org.easymock.EasyMock.*;
 
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -40,8 +38,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
+import org.easymock.internal.MocksControl.MockType;
 import org.jboss.test.faces.mock.application.MockApplicationFactory;
+import org.jboss.test.faces.mock.context.MockExceptionHandlerFactory;
+import org.jboss.test.faces.mock.context.MockExternalContextFactory;
 import org.jboss.test.faces.mock.context.MockFacesContextFactory;
+import org.jboss.test.faces.mock.context.MockPartialViewContextFactory;
 import org.jboss.test.faces.mock.lifecycle.MockLifecycleFactory;
 import org.jboss.test.faces.mock.render.MockRenderKitFactory;
 
@@ -80,6 +82,17 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
 
     private String name;
 
+    private static boolean jsf2;
+
+    static {
+        try {
+            Class.forName("javax.faces.component.behavior.Behavior", false, FacesContext.class.getClassLoader());
+            jsf2 = true;
+        } catch (Throwable e) {
+            jsf2 = false;
+        }
+    }
+
     // Factory methods
 
     public static MockFacesEnvironment createEnvironment() {
@@ -104,7 +117,7 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         return instance.get();
     }
 
-    public MockFacesEnvironment(IMocksControl mocksControl,String name) {
+    public MockFacesEnvironment(IMocksControl mocksControl, String name) {
         this(mocksControl);
         this.name = name;
     }
@@ -134,9 +147,6 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
 
     private void recordExternalContext() {
         EasyMock.expect(facesContext.getExternalContext()).andStubReturn(externalContext);
-        if (withFactories) {
-            // TODO -register mock factory.
-        }
     }
 
     public MockFacesEnvironment withServletRequest() {
@@ -162,11 +172,15 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         FactoryFinder.setFactory(FactoryFinder.FACES_CONTEXT_FACTORY, MockFacesContextFactory.class.getName());
         FactoryFinder.setFactory(FactoryFinder.RENDER_KIT_FACTORY, MockRenderKitFactory.class.getName());
         FactoryFinder.setFactory(FactoryFinder.LIFECYCLE_FACTORY, MockLifecycleFactory.class.getName());
-//        FactoryFinder.setFactory(FactoryFinder.TAG_HANDLER_DELEGATE_FACTORY, MockType.class.getName());
-//        FactoryFinder.setFactory(FactoryFinder.EXCEPTION_HANDLER_FACTORY, MockExceptionHandlerFactory.class.getName());
-//        FactoryFinder.setFactory(FactoryFinder.PARTIAL_VIEW_CONTEXT_FACTORY, MockPartialViewContextFactory.class.getName());
-//        FactoryFinder.setFactory(FactoryFinder.EXTERNAL_CONTEXT_FACTORY, MockExternalContextFactory.class.getName());
-        // TODO - detect JSF version and register additional factories.
+        if (jsf2) {
+            FactoryFinder.setFactory(FactoryFinder.TAG_HANDLER_DELEGATE_FACTORY, MockType.class.getName());
+            FactoryFinder.setFactory(FactoryFinder.EXCEPTION_HANDLER_FACTORY, MockExceptionHandlerFactory.class
+                .getName());
+            FactoryFinder.setFactory(FactoryFinder.PARTIAL_VIEW_CONTEXT_FACTORY, MockPartialViewContextFactory.class
+                .getName());
+            FactoryFinder
+                .setFactory(FactoryFinder.EXTERNAL_CONTEXT_FACTORY, MockExternalContextFactory.class.getName());
+        }
         withFactories = true;
         return this;
     }
@@ -207,19 +221,19 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
     }
 
     private void recordEnvironment() {
-        if(null != externalContext){
+        if (null != externalContext) {
             recordExternalContext();
         }
-        if(null != request){
+        if (null != request) {
             recordServletRequest();
         }
         if (null != application) {
             recordApplication();
         }
-        if(null != renderKit){
+        if (null != renderKit) {
             recordRenderKit();
         }
-        if(withFactories){
+        if (withFactories) {
             FactoryFinder.releaseFactories();
             withFactories();
         }

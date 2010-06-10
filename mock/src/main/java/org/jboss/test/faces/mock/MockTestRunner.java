@@ -109,28 +109,120 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
 
  
     protected static final class FieldModule implements MockController {
+        
+        interface Invoker{
+            void perform(Object...objects);
+            void perform(MockFacesEnvironment environment);
+        }
+        
         final Map<Field, Binding> fields;
 
         public FieldModule(Map<Field, Binding> fields) {
             this.fields = fields;
         }
 
-        public void replay(Object ...objects) {
+        private void perform(Invoker invoker, Object ...objects) {
             for (Binding field : fields.values()) {
                 if(field.isMock()){
-                    FacesMock.replay(field.getValue());
+                    if(field.getValue() instanceof MockFacesEnvironment){
+                        invoker.perform((MockFacesEnvironment) field.getValue());
+                    } else {
+                        invoker.perform(field.getValue());
+                    }
                 }
             }
-				FacesMock.replay(objects);
+            invoker.perform(objects);
+        }
+
+        public void reset(Object ...objects) {
+            perform(new Invoker() {
+                
+                public void perform(MockFacesEnvironment environment) {
+                    environment.reset();
+                }
+                
+                public void perform(Object... objects) {
+                    FacesMock.reset(objects);
+                }
+            },objects);
+        }
+
+        public void resetToNice(Object ...objects) {
+            perform(new Invoker() {
+                
+                public void perform(MockFacesEnvironment environment) {
+                    environment.resetToNice();
+                }
+                
+                public void perform(Object... objects) {
+                    FacesMock.resetToNice(objects);
+                }
+            },objects);
+        }
+
+        public void resetToStrict(Object ...objects) {
+            perform(new Invoker() {
+                
+                public void perform(MockFacesEnvironment environment) {
+                    environment.resetToStrict();
+                }
+                
+                public void perform(Object... objects) {
+                    FacesMock.resetToStrict(objects);
+                }
+            },objects);
+        }
+
+        public void resetToDefault(Object ...objects) {
+            perform(new Invoker() {
+                
+                public void perform(MockFacesEnvironment environment) {
+                    environment.resetToDefault();
+                }
+                
+                public void perform(Object... objects) {
+                    FacesMock.resetToDefault(objects);
+                }
+            },objects);
         }
 
         public void verify(Object ...objects) {
-            for (Binding field : fields.values()) {
-                if(field.isMock()){
-                    FacesMock.verify(field.getValue());
+            perform(new Invoker() {
+                
+                public void perform(MockFacesEnvironment environment) {
+                    environment.verify();
                 }
-            }
-            FacesMock.verify(objects);
+                
+                public void perform(Object... objects) {
+                    FacesMock.verify(objects);
+                }
+            },objects);
+        }
+
+        public void replay(Object... objects) {
+            perform(new Invoker() {
+                
+                public void perform(MockFacesEnvironment environment) {
+                    environment.replay();
+                }
+                
+                public void perform(Object... objects) {
+                    FacesMock.replay(objects);
+                }
+            },objects);
+        }
+
+        public void release() {
+            perform(new Invoker() {
+                
+                public void perform(MockFacesEnvironment environment) {
+                    environment.release();
+                }
+                
+                public void perform(Object... objects) {
+                    // do nothing
+                }
+            });
         }
     }
 
