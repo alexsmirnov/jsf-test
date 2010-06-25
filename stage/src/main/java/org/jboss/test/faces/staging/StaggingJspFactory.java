@@ -44,7 +44,6 @@ public class StaggingJspFactory extends JspFactory {
 	 */
 	@Override
 	public JspEngineInfo getEngineInfo() {
-		// TODO Auto-generated method stub
 		return engineInfo;
 	}
 

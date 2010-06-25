@@ -233,7 +233,6 @@ public class StagingInitialContextFactoryBuilder implements
 			InitialContextFactory {
 		public Context getInitialContext(Hashtable<?, ?> environment)
 				throws NamingException {
-			// TODO Auto-generated method stub
 			return new StagingInitialContext();
 		}
 	}
