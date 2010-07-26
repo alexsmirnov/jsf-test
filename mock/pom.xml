@@ -16,6 +16,14 @@
     </properties>
 	<build>
 		<plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <configuration>
+                <!-- this project uses plugin with the same project version, so it should not fail on XXX-SNAPSHOT -->
+                    <fail>false</fail>
+                </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.jboss.test-jsf</groupId>
 				<artifactId>maven-mockgenerator-plugin</artifactId>
