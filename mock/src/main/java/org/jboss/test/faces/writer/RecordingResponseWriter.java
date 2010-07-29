@@ -37,7 +37,7 @@ import org.jboss.test.faces.mock.FacesTestException;
  */
 public class RecordingResponseWriter extends ResponseWriter {
 
-	private Record currentRecord;
+	private Record currentRecord = new RecordBase();
 	private String characterEncoding;
 	private String contentType;
 	/**
