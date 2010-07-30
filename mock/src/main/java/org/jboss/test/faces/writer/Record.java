@@ -23,11 +23,22 @@
  ******************************************************************************/
 package org.jboss.test.faces.writer;
 
+import java.util.List;
+
 /**
  * @author asmirnov
  *
  */
 public interface Record {
+	
+	public enum Kind {
+		root,
+		document,
+		element,
+		text,
+		comment,
+		cdata
+	}
 	
 	Record getParent();
 	
@@ -35,8 +46,12 @@ public interface Record {
 	
 	String getName();
 	
+	String getText();
+	
 	void addAttribute(Attribute attr);
 	
 	Record addRecord(Record next);
+
+	List<Record> getChildren();
 
 }

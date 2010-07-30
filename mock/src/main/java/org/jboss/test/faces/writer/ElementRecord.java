@@ -23,7 +23,9 @@
  ******************************************************************************/
 package org.jboss.test.faces.writer;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import javax.faces.component.UIComponent;
 
@@ -35,7 +37,7 @@ import org.jboss.test.faces.mock.FacesTestException;
  */
 public class ElementRecord extends RecordBase implements Record {
 	
-	private LinkedHashSet<Attribute> attributes = new LinkedHashSet<Attribute>();
+	private LinkedHashMap<String,Attribute> attributes = new LinkedHashMap<String,Attribute>();
 	private final String name;
 	private final UIComponent component;
 
@@ -46,12 +48,43 @@ public class ElementRecord extends RecordBase implements Record {
 
 	@Override
 	public void addAttribute(Attribute attr) {
-	    if(getRecords().size()>0){
+	    if(getChildren().size()>0){
 	    	throw new FacesTestException("Attempt to write attribute after element content");
 	    }
-	    if(attributes.contains(attr)){
+	    if(attributes.containsKey(attr.getName())){
 	    	throw new FacesTestException("Element alresdy has attribute");
 	    }
-	    attributes.add(attr);
+	    attributes.put(attr.getName(),attr);
 	}
+	
+	@Override
+	public String getName() {
+	    return name;
+	}
+	@Override
+	public String toString() {
+	    StringBuilder text = new StringBuilder();
+	    text.append("<").append(name);
+	    if(attributes.size()>0){
+	    	for (Attribute attr : attributes.values()) {
+	            text.append(" ").append(attr.toString());
+            }
+	    }
+	    String content = super.toString();
+	    if(content.length()>0){
+	    	text.append(">").append(content);
+	    	text.append("</").append(name).append(">");
+	    } else {
+			text.append("/>");
+		}
+		return text.toString();
+	}
+
+	public boolean containsAttribute(String name){
+		return attributes.containsKey(name);
+	}
+
+	public Attribute getAttribute(String name2) {
+	    return attributes.get(name2);
+    }
 }

@@ -27,7 +27,7 @@ public class RecordBase implements Record {
 	/**
      * @return the records
      */
-    protected List<Record> getRecords() {
+    public List<Record> getChildren() {
     	return records;
     }
 
@@ -46,4 +46,20 @@ public class RecordBase implements Record {
     	this.parent = parent;
     }
 
+	public String getText() {
+	    StringBuilder text = new StringBuilder();
+	    for (Record record : records) {
+	        text.append(record.getText());
+        }
+	    return text.toString();
+    }
+
+	@Override
+	public String toString() {
+	    StringBuilder text = new StringBuilder();
+	    for (Record record : records) {
+	        text.append(record.toString());
+        }
+	    return text.toString();
+	}
 }

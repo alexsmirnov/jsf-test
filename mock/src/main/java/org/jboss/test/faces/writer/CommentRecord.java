@@ -36,4 +36,10 @@ public class CommentRecord extends TextRecord implements Record {
 	public CommentRecord(Object string) {
 		super(string, null);
 	}
+	
+	@Override
+	public String toString() {
+	    return "<!--"+getText()+"-->";
+	}
+
 }

@@ -307,6 +307,9 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
                     case SERVLET_REQUEST:
                         environment.withServletRequest();
                         break;
+                    case RESPONSE_WRITER:
+                        environment.withReSponseWriter();
+                        break;
                 }
             }
         }

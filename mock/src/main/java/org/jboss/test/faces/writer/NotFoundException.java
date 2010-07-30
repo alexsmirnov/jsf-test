@@ -27,69 +27,35 @@ package org.jboss.test.faces.writer;
  * @author asmirnov
  *
  */
-public class Attribute {
-	private final String name;
-	private final Object value;
-	private final String componentAttribute;
+public class NotFoundException extends Exception {
+
 	/**
-	 * @param name
-	 * @param value
-	 * @param componentAttribute
-	 */
-	public Attribute(String name, Object value, String componentAttribute) {
+     * 
+     */
+    public NotFoundException() {
 	    super();
-	    this.name = name;
-	    this.value = value;
-	    this.componentAttribute = componentAttribute;
-	}
+    }
+
 	/**
-     * @return the name
+     * @param message
+     * @param cause
      */
-    public String getName() {
-    	return name;
+    public NotFoundException(String message, Throwable cause) {
+	    super(message, cause);
     }
+
 	/**
-     * @return the value
+     * @param message
      */
-    public Object getValue() {
-    	return value;
+    public NotFoundException(String message) {
+	    super(message);
     }
+
 	/**
-     * @return the componentAttribute
+     * @param cause
      */
-    public String getComponentAttribute() {
-    	return componentAttribute;
-    }
-    
-    @Override
-    public String toString() {
-        StringBuilder text = new StringBuilder();
-        text.append(name).append("=\"").append(value.toString()).append("\"");
-        return text.toString();
-    }
-	/* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
-    }
-	/* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        Attribute other = (Attribute) obj;
-        if (name == null) {
-    	    if (other.name != null) return false;
-        } else if (!name.equals(other.name)) return false;
-        return true;
+    public NotFoundException(Throwable cause) {
+	    super(cause);
     }
 
 }

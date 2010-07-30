@@ -46,6 +46,7 @@ import org.jboss.test.faces.mock.context.MockFacesContextFactory;
 import org.jboss.test.faces.mock.context.MockPartialViewContextFactory;
 import org.jboss.test.faces.mock.lifecycle.MockLifecycleFactory;
 import org.jboss.test.faces.mock.render.MockRenderKitFactory;
+import org.jboss.test.faces.writer.RecordingResponseWriter;
 
 /**
  * <p class="changed_added_4_0">
@@ -81,6 +82,8 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
     private ResponseStateManager responseStateManager;
 
     private String name;
+
+	private RecordingResponseWriter responseWriter;
 
     private static boolean jsf2;
 
@@ -209,6 +212,16 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         EasyMock.expect(renderKit.getResponseStateManager()).andStubReturn(responseStateManager);
     }
 
+    public MockFacesEnvironment withReSponseWriter() {
+        this.responseWriter = new RecordingResponseWriter("UTF-8", "text/html");
+        recordResponseWrrier();
+        return this;
+    }
+
+    private void recordResponseWrrier() {
+        EasyMock.expect(facesContext.getResponseWriter()).andStubReturn(responseWriter);
+    }
+
     public MockFacesEnvironment replay() {
         mocksControl.replay();
         return this;
@@ -232,6 +245,9 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         }
         if (null != renderKit) {
             recordRenderKit();
+        }
+        if (null != responseWriter) {
+            recordResponseWrrier();
         }
         if (withFactories) {
             FactoryFinder.releaseFactories();
@@ -359,7 +375,14 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         return this.responseStateManager;
     }
 
-    public IMocksControl getControl() {
+    /**
+     * @return the responseWriter
+     */
+    public RecordingResponseWriter getResponseWriter() {
+    	return this.responseWriter;
+    }
+
+	public IMocksControl getControl() {
         return mocksControl;
     }
 }

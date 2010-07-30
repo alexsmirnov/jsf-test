@@ -31,4 +31,5 @@ package org.jboss.test.faces.writer;
  */
 public class DocumentRecord extends RecordBase implements Record {
 
+
 }

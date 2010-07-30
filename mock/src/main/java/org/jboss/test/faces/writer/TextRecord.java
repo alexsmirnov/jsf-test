@@ -16,4 +16,15 @@ public class TextRecord extends RecordBase implements Record {
 	public Record addRecord(Record next) {
     	throw new FacesTestException("Text does not allows children elements");
 	}
+	
+	@Override
+	public String getText() {
+	    return string.toString();
+	}
+	
+	@Override
+	public String toString() {
+	    return string.toString();
+	}
+
 }

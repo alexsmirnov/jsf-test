@@ -42,7 +42,8 @@ public @interface Environment {
         EXTERNAL_CONTEXT,
         SERVLET_REQUEST,
         APPLICATION,
-        RENDER_KIT        
+        RENDER_KIT,
+        RESPONSE_WRITER
     }
 
     public Feature[] value() default {};

@@ -37,7 +37,8 @@ import org.jboss.test.faces.mock.FacesTestException;
  */
 public class RecordingResponseWriter extends ResponseWriter {
 
-	private Record currentRecord = new RecordBase();
+	private Record content = new RecordBase();
+	private Record currentRecord = content;
 	private String characterEncoding;
 	private String contentType;
 	/**
@@ -64,7 +65,10 @@ public class RecordingResponseWriter extends ResponseWriter {
      */
     @Override
     public void startDocument() throws IOException {
-    	currentRecord = new DocumentRecord();
+    	if(currentRecord != content){
+	    	throw new FacesTestException("Start document call not at the root level");
+    	}
+    	currentRecord = content.addRecord(new DocumentRecord());
     }
 
 	/* (non-Javadoc)
@@ -72,8 +76,10 @@ public class RecordingResponseWriter extends ResponseWriter {
 	 */
 	@Override
 	public void endDocument() throws IOException {
-		// TODO Auto-generated method stub
-
+		if(!(currentRecord instanceof DocumentRecord)){
+	    	throw new FacesTestException("End document call does not match start document");
+		}
+		currentRecord = currentRecord.getParent();
 	}
 
 	/* (non-Javadoc)
@@ -90,8 +96,11 @@ public class RecordingResponseWriter extends ResponseWriter {
 	 */
 	@Override
 	public void endElement(String name) throws IOException {
+		if(!(currentRecord instanceof ElementRecord)){
+	    	throw new FacesTestException("End element does not match start element call");
+		}
 		if(!name.equals(currentRecord.getName())){
-	    	throw new FacesTestException("End element does not match current element");
+	    	throw new FacesTestException("End ("+name+") element does not match current element "+currentRecord.getName());
 		}
 		currentRecord = currentRecord.getParent();
 	}
@@ -131,6 +140,24 @@ public class RecordingResponseWriter extends ResponseWriter {
 		currentRecord.addRecord(new TextRecord(String.copyValueOf(text, off, len),null));
 	}
 
+	@Override
+    public void writeComment(Object comment) throws IOException {
+    	currentRecord.addRecord(new CommentRecord(comment));
+    }
+
+	@Override
+	public void startCDATA() throws IOException {
+    	currentRecord = currentRecord.addRecord(new CDATARecord());    
+	}
+	
+	@Override
+	public void endCDATA() throws IOException {
+		if(currentRecord instanceof CDATARecord){
+			currentRecord = currentRecord.getParent();
+		} else {
+	    	throw new FacesTestException("End CDATA does not match startCDATA ");
+		}
+	}
 	/* (non-Javadoc)
      * @see javax.faces.context.ResponseWriter#flush()
      */
@@ -171,10 +198,14 @@ public class RecordingResponseWriter extends ResponseWriter {
 	public void write(char[] cbuf, int off, int len) throws IOException {
 		currentRecord.addRecord(new TextRecord(String.copyValueOf(cbuf, off, len),null));
 	}
-
+	
+	public Criteria find(){
+		return new RecordCriteria(content);
+	}
+	
 	@Override
-    public void writeComment(Object comment) throws IOException {
-		currentRecord.addRecord(new CommentRecord(comment));
-    }
+	public String toString() {
+	    return content.toString();
+	}
 
 }
