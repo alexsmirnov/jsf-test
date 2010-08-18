@@ -1,5 +1,7 @@
 package org.jboss.test.faces.staging;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -12,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -519,9 +522,35 @@ public class StagingServer extends ApplicationServer {
 		return httpSession;
 	}
 
+	private void readDefaultMimeTypes() {
+	    InputStream is = null;
+	    try {
+	        is = Thread.currentThread().getContextClassLoader().getResourceAsStream("org/jboss/test/faces/staging/mime.properties");
+	        Properties props = new Properties();
+	        props.load(is);
+	        
+	        for (Object key : props.keySet()) {
+                mimeTypes.put("." + key, props.getProperty((String) key));
+            }
+	    } catch (IOException e) {
+            log.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+	        if (is != null) {
+	            try {
+                    is.close();
+                } catch (IOException e) {
+                    log.log(Level.WARNING, e.getMessage(), e);
+                }
+	        }
+	    }
+	}
+	
 	@Override
     public void init() {
-		log.info("Init staging server");
+        log.info("Init staging server");
+
+        readDefaultMimeTypes();
+		
 		// Create Jsp factory
 		JspFactory.setDefaultFactory(new StaggingJspFactory(this.context));
 		// Create init parameters
