@@ -36,6 +36,7 @@ public class RunnerTest {
         assertEquals("/foo.xhtml", viewRoot.getViewId());
         controller.verify();
     }
+    
     @Test
     public void testWriter() throws Exception {
         controller.replay();

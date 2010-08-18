@@ -13,6 +13,9 @@ public class ElementCriteria implements Criteria {
 	private int level = Integer.MAX_VALUE;
 	private String attribute;
 	private Pattern attributePattern;
+    private int position= Integer.MAX_VALUE;
+    private Pattern contentPattern;
+    private Pattern namePattern;
 
 	public ElementCriteria(Record base, String name) {
 		this(Collections.singleton(base), name);
@@ -21,6 +24,7 @@ public class ElementCriteria implements Criteria {
 	public ElementCriteria(Collection<? extends Record> base, String name) {
 		this.base = base;
 		this.name = name;
+		this.namePattern = Pattern.compile(name);
 	}
 
 	public ElementCriteria atLevel(int level) {
@@ -29,7 +33,8 @@ public class ElementCriteria implements Criteria {
 	}
 
 	public ElementCriteria atPosition(int position) {
-		return this;
+		this.position = position;
+        return this;
 	}
 
 	public ElementCriteria withAttribute(String name) {
@@ -44,60 +49,106 @@ public class ElementCriteria implements Criteria {
 		return this;
 	}
 
-	public ElementCriteria contains(String regexp) {
+	public ElementCriteria contains(String regex) {
+	    this.contentPattern = Pattern.compile(regex);
 		return this;
 	}
 
+	public String getName() throws NotFoundException {
+        return lookupSingleElement().getName();
+    }
+	
 	public String getText() throws NotFoundException {
 		return lookupSingleElement().getText();
 	}
+	
+	public Object getAttribute(String name) throws NotFoundException {
+    	ElementRecord elementRecord = lookupSingleElement();
+    	if (elementRecord.containsAttribute(name)) {
+    		return elementRecord.getAttribute(name).getValue();
+    	} else {
+    		throw new NotFoundException("Element " + elementRecord.getName()
+    		        + " has no attribute " + name);
+    	}
+    }
 
+    public boolean matches(){
+	    return lookup().size()>0;
+	}
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        if(level != Integer.MAX_VALUE){
+            for(int i=0;i<level;i++){
+                result.append("/*");
+            }
+        }
+        result.append('/').append(name);
+        if(position != Integer.MAX_VALUE){
+            result.append("(").append(position).append(")");
+        }
+        if(null != attribute){
+            result.append("[").append(attribute);
+            if(null != attributePattern){
+                result.append("='").append(attributePattern).append("'");
+            }
+            result.append("]");
+        }
+        if(null != contentPattern){
+            result.append(" '").append(attributePattern).append("'");
+        }
+        return result.toString();
+    }
 	private ElementRecord lookupSingleElement() throws NotFoundException {
 		List<ElementRecord> result = lookup();
 		if (0 == result.size()) {
-			throw new NotFoundException("No elements found for criteria "
+			throw new NotFoundException("No element found for criteria "
 			        + toString());
+		} else if(result.size()>1){
+            throw new NotFoundException("More then one element found for criteria "
+                + toString());
 		}
 		return result.get(0);
-	}
-
-	public Object getAttribute(String name) throws NotFoundException {
-		ElementRecord elementRecord = lookupSingleElement();
-		if (elementRecord.containsAttribute(name)) {
-			return elementRecord.getAttribute(name).getValue();
-		} else {
-			throw new NotFoundException("Element " + elementRecord.getName()
-			        + " has no attribute " + name);
-		}
 	}
 
 	private List<ElementRecord> lookup() {
 		List<ElementRecord> result = new ArrayList<ElementRecord>();
 		for (Record record : base) {
-			result.addAll(lookup(record, 0));
+			result.addAll(lookup(record, 0,0));
 		}
 		return result;
 	}
 
-	private List<ElementRecord> lookup(Record record, int level) {
+	private List<ElementRecord> lookup(Record record, int level,int currentPosition) {
 		List<ElementRecord> result = new ArrayList<ElementRecord>();
-		if (level < this.level) {
+		if (level <= this.level) {
 			if (record instanceof ElementRecord) {
 				ElementRecord element = (ElementRecord) record;
-				if (this.name.equals(element.getName())
+				if (this.namePattern.matcher(element.getName()).matches()
 				        && (this.level == Integer.MAX_VALUE || level == this.level)
+                        && (this.position == Integer.MAX_VALUE || currentPosition == this.position)
 				        && (null == attribute || element
 				                .containsAttribute(attribute))
 				        && (null == attributePattern || attributePattern.matcher(element
-				                .getAttribute(attribute).getValue().toString()).matches())) {
+				                .getAttribute(attribute).getValue().toString()).matches())
+				        && (null == contentPattern || contentPattern.matcher(element.getText()).matches())) {
 					result.add(element);
 				}
+                int childPosition=0;
 				for (Record childRecord : record.getChildren()) {
-					result.addAll(lookup(childRecord, level + 1));
+					result.addAll(lookup(childRecord, level + 1,childPosition));
+                    if (childRecord instanceof ElementRecord) {
+                        childPosition++;
+                    }
 				}
+				;
 			} else {
 				for (Record childRecord : record.getChildren()) {
-					result.addAll(lookup(childRecord, level));
+					result.addAll(lookup(childRecord, level,currentPosition));
+					if (childRecord instanceof ElementRecord) {
+					    currentPosition++;
+					}
 				}
 			}
 		}
@@ -105,7 +156,12 @@ public class ElementCriteria implements Criteria {
 	}
 
 	public ElementCriteria element(String name) {
-		return new ElementCriteria(lookup(), name);
+	    List<Record> records = new ArrayList<Record>();
+	    List<ElementRecord> elements = lookup();
+	    for (ElementRecord elementRecord : elements) {
+            records.addAll(elementRecord.getChildren());
+        }
+		return new ElementCriteria(records, name);
 	}
 
 }

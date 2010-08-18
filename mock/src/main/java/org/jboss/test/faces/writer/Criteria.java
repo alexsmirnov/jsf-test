@@ -31,6 +31,5 @@ package org.jboss.test.faces.writer;
 public interface Criteria {
 
 	ElementCriteria element(String name);
-	
-	
+		
 }

@@ -56,8 +56,7 @@ public class RecordingResponseWriter extends ResponseWriter {
 	 */
 	@Override
 	public ResponseWriter cloneWithWriter(Writer writer) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("cloneWithWriter is not yet implemented");
 	}
 
 	/* (non-Javadoc)
