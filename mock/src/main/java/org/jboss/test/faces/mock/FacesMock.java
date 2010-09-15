@@ -37,7 +37,7 @@ public class FacesMock {
     }
 
     public static <T> T createMock(String name, Class<T> clazz, IMocksControl control) {
-        if (MOCK_OBJECT.isAssignableFrom(clazz)) {
+        if (MOCK_OBJECT.isAssignableFrom(clazz) || isMockClass(clazz)) {
             try {
                 Constructor<T> constructor = clazz.getConstructor(IMocksControl.class, String.class);
                 return constructor.newInstance(control, name);
@@ -83,18 +83,15 @@ public class FacesMock {
             return mockObject.getControl();
         } else {
             // Check additional test controlled created mocks.
-            Class<?>[] interfaces = mock.getClass().getInterfaces();
-            for (Class<?> interfaze : interfaces) {
-                if("MockObject".equals(interfaze.getSimpleName()) && null !=interfaze.getEnclosingClass()){
+                Class<? extends Object> mockClass = mock.getClass();
+                if(isMockClass(mockClass)){
                     try {
-                        Method getControl = interfaze.getMethod("getControl");
+                        Method getControl = mockClass.getMethod("getControl");
                         if(IMocksControl.class.equals(getControl.getReturnType())){
                             return (IMocksControl) getControl.invoke(mock);
                         }
                     } catch (SecurityException e) {
-                        continue;
                     } catch (NoSuchMethodException e) {
-                        continue;
                     } catch (IllegalArgumentException e) {
                     } catch (IllegalAccessException e) {
                         // TODO Auto-generated catch block
@@ -102,11 +99,20 @@ public class FacesMock {
                         // TODO Auto-generated catch block
                     }
                 }
-            }
             // Delegate to EazyMock
             return ((ObjectMethodsFilter) Proxy
                 .getInvocationHandler(mock)).getDelegate().getControl();
         }
+    }
+    
+    private static boolean isMockClass(Class<?> clazz){
+        Class<?>[] interfaces = clazz.getInterfaces();
+        for (Class<?> interfaze : interfaces) {
+            if("MockObject".equals(interfaze.getSimpleName()) && null !=interfaze.getEnclosingClass()){
+                return true;
+            }
+        }
+        return false;   
     }
 
     public static void replay(Object... mocks) {

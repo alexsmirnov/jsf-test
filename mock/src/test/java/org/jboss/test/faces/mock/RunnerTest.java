@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 import org.jboss.test.faces.mock.Environment.Feature;
+import org.jboss.test.faces.mock.component.MockUIData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -22,6 +23,9 @@ public class RunnerTest {
     
     @Stub
     protected UIViewRoot viewRoot;
+    
+    @Mock
+    protected MockUIData data;
     
     protected MockController controller;
     
@@ -54,4 +58,11 @@ public class RunnerTest {
         assertEquals("http://example.com", environment.getResponseWriter().find().element("foo").withAttribute("bar", "bar").element("bar").getAttribute("href"));
     }
 
+    @Test
+    public void testCustomMock() throws Exception {
+        expect(data.getId()).andReturn("foo");
+        controller.replay();
+        assertEquals("foo",data.getId());
+        controller.verify();
+    }
 }
