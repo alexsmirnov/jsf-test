@@ -49,15 +49,15 @@ public class TreeBuilderImpl<C extends UIComponent> implements TreeBuilder<C> {
 
     private final C component;
 
-    private final List<TreeBuilderImpl<?>> childrenBuilders;
-    
+    private final List<TreeBuilder<?>> childrenBuilders;
+
     private final List<UIComponent> children;
-    
-    private final Map<String,UIComponent> facets;
+
+    private final Map<String, UIComponent> facets;
 
     protected TreeBuilderImpl(C component) {
         this.component = component;
-        this.childrenBuilders = new ArrayList<TreeBuilderImpl<?>>();
+        this.childrenBuilders = new ArrayList<TreeBuilder<?>>();
         this.children = new ArrayList<UIComponent>();
         this.facets = new HashMap<String, UIComponent>();
         expect(component.getChildren()).andStubReturn(children);
@@ -91,70 +91,19 @@ public class TreeBuilderImpl<C extends UIComponent> implements TreeBuilder<C> {
         });
     }
 
-
-    /* (non-Javadoc)
-     * @see org.jboss.test.faces.mock.component.TreeBuilder#addChild()
-     */
-    public TreeBuilder<UIComponent> addChild() {
-        return addChild(FacesMock.createMock(UIComponent.class));
-    }
-
-    /* (non-Javadoc)
-     * @see org.jboss.test.faces.mock.component.TreeBuilder#addChild(java.lang.Class)
-     */
-    public <T extends UIComponent> TreeBuilder<T> addChild(Class<T> childType) {
-        return addChild(FacesMock.createMock(childType));
-    }
-
-    /* (non-Javadoc)
-     * @see org.jboss.test.faces.mock.component.TreeBuilder#addChild(javax.faces.component.UIComponent)
-     */
-    public <T extends UIComponent> TreeBuilder<T> addChild(T child) {
-        children.add(child);
-        TreeBuilderImpl<T> treeBuilder = createChild(child);
-        return treeBuilder;
-    }
-
-
-    protected <T extends UIComponent> TreeBuilderImpl<T> createChild(T child) {
-        expect(child.getParent()).andStubReturn(component);
-        TreeBuilderImpl<T> treeBuilder = new TreeBuilderImpl<T>(child);
-        childrenBuilders.add(treeBuilder);
-        return treeBuilder;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jboss.test.faces.mock.component.TreeBuilder#addFacet(java.lang.String)
-     */
-    public TreeBuilder<UIComponent> addFacet(String name) {
-        return addFacet(name, FacesMock.createMock(UIComponent.class));
-    }
-
-    /* (non-Javadoc)
-     * @see org.jboss.test.faces.mock.component.TreeBuilder#addFacet(java.lang.String, java.lang.Class)
-     */
-    public <T extends UIComponent> TreeBuilder<T> addFacet(String name, Class<T> childType) {
-        return addFacet(name, FacesMock.createMock(childType));
-    }
-
-    /* (non-Javadoc)
-     * @see org.jboss.test.faces.mock.component.TreeBuilder#addFacet(java.lang.String, javax.faces.component.UIComponent)
-     */
-    public <T extends UIComponent> TreeBuilder<T> addFacet(String name, T child) {
-        facets.put(name, child);
-        TreeBuilderImpl<T> treeBuilder = createChild(child);
-        return treeBuilder;
-    }
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.test.faces.mock.component.TreeBuilder#setId(java.lang.String)
      */
-    public TreeBuilder<C> setId(String id) {
+    public TreeBuilder<C> id(String id) {
         expect(component.getId()).andStubReturn(id);
         return this;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.test.faces.mock.component.TreeBuilder#replay()
      */
     public void replay() {
@@ -165,7 +114,9 @@ public class TreeBuilderImpl<C extends UIComponent> implements TreeBuilder<C> {
         });
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.test.faces.mock.component.TreeBuilder#verify()
      */
     public void verify() {
@@ -183,10 +134,33 @@ public class TreeBuilderImpl<C extends UIComponent> implements TreeBuilder<C> {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.test.faces.mock.component.TreeBuilder#getComponent()
      */
     public C getComponent() {
         return this.component;
+    }
+
+    public TreeBuilder<C> children(TreeBuilder<?>... builders) {
+        for (TreeBuilder<?> treeBuilder : builders) {
+            children.add(treeBuilder.getComponent());
+            addChildBuilder(treeBuilder);
+        }
+        return this;
+    }
+
+    private void addChildBuilder(TreeBuilder<?> treeBuilder) {
+        childrenBuilders.add(treeBuilder);
+        expect(treeBuilder.getComponent().getParent()).andStubReturn(component);
+    }
+
+    public TreeBuilder<C> facets(Facet<?>... facets) {
+        for (Facet<?> facet : facets) {
+            this.facets.put(facet.getName(), facet.getBuilder().getComponent());
+            addChildBuilder(facet.getBuilder());
+        }
+        return null;
     }
 }

@@ -26,7 +26,8 @@ public class TreeBuilderImplTest {
 
     @Test
     public void testAddChild() {
-        TreeBuilder<UIComponent> child = builder.addChild();
+        TreeBuilder<UIComponent> child = ViewBuilder.component();
+        builder.children(child);
         UIComponent uiComponent = child.getComponent();
         verifySingleChild(uiComponent);
     }
@@ -47,7 +48,8 @@ public class TreeBuilderImplTest {
 
     @Test
     public void testAddChildClassOfT() {
-        TreeBuilder<UIInput> child = builder.addChild(UIInput.class);
+        TreeBuilder<UIInput> child = ViewBuilder.component(UIInput.class);
+        builder.children(child);
         UIInput uiComponent = child.getComponent();
         verifySingleChild(uiComponent);
     }
@@ -55,29 +57,33 @@ public class TreeBuilderImplTest {
     @Test
     public void testAddChildT() {
         UIInput uiComponent = FacesMock.createMock(UIInput.class);
-        TreeBuilder<UIInput> child = builder.addChild(uiComponent);
+        TreeBuilder<UIInput> child = ViewBuilder.component(uiComponent);
+        builder.children(child);
         assertSame(uiComponent, child.getComponent());
         verifySingleChild(uiComponent);
     }
 
     @Test
     public void testAddFacetString() {
-        TreeBuilder<UIComponent> treeBuilder = builder.addFacet(FACET);
-        UIComponent uiComponent = treeBuilder.getComponent();
+        Facet<UIComponent> treeBuilder = ViewBuilder.facet(FACET);
+        builder.facets(treeBuilder);
+        UIComponent uiComponent = treeBuilder.getBuilder().getComponent();
         verifySingleFacet(uiComponent);
     }
 
     @Test
     public void testAddFacetStringClassOfT() {
-        TreeBuilder<UIComponent> treeBuilder = builder.addFacet(FACET,UIComponent.class);
-        UIComponent uiComponent = treeBuilder.getComponent();
+        Facet<UIComponent> treeBuilder = ViewBuilder.facet(FACET,UIComponent.class);
+        builder.facets(treeBuilder);
+        UIComponent uiComponent = treeBuilder.getBuilder().getComponent();
         verifySingleFacet(uiComponent);
     }
 
     @Test
     public void testAddFacetStringT() {
         UIComponent uiComponent = FacesMock.createMock(UIComponent.class);
-        TreeBuilder<UIComponent> treeBuilder = builder.addFacet(FACET,uiComponent);
+        Facet<UIComponent> treeBuilder = ViewBuilder.facet(FACET,uiComponent);
+        builder.facets(treeBuilder);
         verifySingleFacet(uiComponent);
     }
 
@@ -99,7 +105,7 @@ public class TreeBuilderImplTest {
 
     @Test
     public void testSetId() {
-        builder.setId(FACET);
+        builder.id(FACET);
         FacesMock.replay(component);
         assertEquals(FACET, component.getId());
         FacesMock.verify(component);
@@ -122,7 +128,8 @@ public class TreeBuilderImplTest {
     @Test
     public void testVisitTree() {
         final ArrayList<TreeBuilder<?>> builders = new ArrayList<TreeBuilder<?>>();
-        TreeBuilder<UIComponent> child = builder.addChild();
+        TreeBuilder<UIComponent> child = ViewBuilder.component(); 
+        builder.children(child);
         builder.visitTree(new TreeVisitor() {            
             public void visit(TreeBuilder<?> toVisit) {
                 builders.add(toVisit);

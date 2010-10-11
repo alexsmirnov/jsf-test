@@ -25,6 +25,7 @@ package org.jboss.test.faces.mock.component;
 
 import static org.easymock.EasyMock.*;
 
+import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 
 import org.jboss.test.faces.mock.FacesMock;
@@ -54,4 +55,56 @@ public class ViewBuilder extends TreeBuilderImpl<UIViewRoot> {
         expect(getComponent().getViewId()).andStubReturn(viewId);
         return this;
     }
+    
+    public ViewBuilder children(TreeBuilder<?> ... builders) {
+        super.children(builders);
+        return this;
+    };
+
+    public ViewBuilder facets(Facet<?> ... facets) {
+        super.facets(facets);
+        return this;
+    };
+
+    public static TreeBuilder<UIComponent> component() {
+        return component(FacesMock.createMock(UIComponent.class));
+    }
+
+    public static <T extends UIComponent> TreeBuilder<T> component(Class<T> childType) {
+        return component(FacesMock.createMock(childType));
+    }
+
+    public static <T extends UIComponent> TreeBuilder<T> component(T child) {
+        TreeBuilderImpl<T> treeBuilder = createComponent(child);
+        return treeBuilder;
+    }
+
+
+    private static <T extends UIComponent> TreeBuilderImpl<T> createComponent(T child) {
+        TreeBuilderImpl<T> treeBuilder = new TreeBuilderImpl<T>(child);
+        return treeBuilder;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.test.faces.mock.component.TreeBuilder#addFacet(java.lang.String)
+     */
+    public static Facet<UIComponent> facet(String name) {
+        return facet(name, FacesMock.createMock(UIComponent.class));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.test.faces.mock.component.TreeBuilder#addFacet(java.lang.String, java.lang.Class)
+     */
+    public static <T extends UIComponent> Facet<T> facet(String name, Class<T> childType) {
+        return facet(name, FacesMock.createMock(childType));
+    }
+
+    /* (non-Javadoc)
+     * @see org.jboss.test.faces.mock.component.TreeBuilder#addFacet(java.lang.String, javax.faces.component.UIComponent)
+     */
+    public static <T extends UIComponent> Facet<T> facet(String name, T child) {
+        TreeBuilderImpl<T> treeBuilder = createComponent(child);
+        return new Facet<T>(name,treeBuilder);
+    }
+
 }

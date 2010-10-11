@@ -2,6 +2,8 @@ package org.jboss.test.faces.mock.component;
 
 import static org.junit.Assert.*;
 
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
 import javax.faces.component.UIViewRoot;
 
 import org.jboss.test.faces.mock.FacesMock;
@@ -32,4 +34,22 @@ public class ViewBuilderTest {
         checkViewId(viewRoot);
     }
 
+    @Test
+    public void testBuildView() throws Exception {
+        ViewBuilder viewBuilder = ViewBuilder.createView().children(
+                    ViewBuilder.component().id("foo"),
+                    ViewBuilder.component(UIInput.class).id("input")
+                  ).facets(
+                    ViewBuilder.facet("header")
+                  ).setViewId(FOO_XML);
+        viewBuilder.replay();
+        UIViewRoot viewRoot = viewBuilder.getComponent();
+        assertEquals(2, viewRoot.getChildCount());
+        assertEquals(1, viewRoot.getFacetCount());
+        UIComponent facet = viewRoot.getFacet("header");
+        assertNotNull(facet);
+        assertSame(viewRoot,facet.getParent());
+        assertSame(viewRoot,viewRoot.getChildren().get(1).getParent());
+        viewBuilder.verify();
+    }
 }
