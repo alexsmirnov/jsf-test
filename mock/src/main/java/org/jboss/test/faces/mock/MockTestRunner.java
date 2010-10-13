@@ -295,6 +295,9 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
                     case EXTERNAL_CONTEXT:
                         environment.withExternalContext();
                         break;
+                    case EL_CONTEXT:
+                        environment.withELContext();
+                        break;
                     case APPLICATION:
                         environment.withApplication();
                         break;

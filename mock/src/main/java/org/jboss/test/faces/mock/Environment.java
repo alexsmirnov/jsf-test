@@ -40,6 +40,7 @@ public @interface Environment {
         FACTORIES,
         FACES_CONTEXT,
         EXTERNAL_CONTEXT,
+        EL_CONTEXT,
         SERVLET_REQUEST,
         APPLICATION,
         RENDER_KIT,

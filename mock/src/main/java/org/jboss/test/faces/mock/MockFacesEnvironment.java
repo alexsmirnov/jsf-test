@@ -25,6 +25,7 @@ package org.jboss.test.faces.mock;
 
 import static org.easymock.EasyMock.*;
 
+import javax.el.ELContext;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.application.ViewHandler;
@@ -66,6 +67,8 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
     private boolean withFactories = false;
 
     private ExternalContext externalContext;
+    
+    private ELContext elContext;
 
     private ServletContext context;
 
@@ -150,6 +153,19 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
 
     private void recordExternalContext() {
         EasyMock.expect(facesContext.getExternalContext()).andStubReturn(externalContext);
+    }
+
+    /*
+     * public MockFacesEnvironment _(){ return this; }
+     */
+    public MockFacesEnvironment withELContext() {
+        this.elContext = createMock(ELContext.class);
+        recordELContext();
+        return this;
+    }
+
+    private void recordELContext() {
+        EasyMock.expect(facesContext.getELContext()).andStubReturn(elContext);
     }
 
     public MockFacesEnvironment withServletRequest() {
@@ -237,6 +253,9 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
         if (null != externalContext) {
             recordExternalContext();
         }
+        if (null != elContext) {
+            recordELContext();
+        }
         if (null != request) {
             recordServletRequest();
         }
@@ -303,6 +322,14 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
      */
     public ExternalContext getExternalContext() {
         return this.externalContext;
+    }
+
+    /**
+     * <p class="changed_added_4_0"></p>
+     * @return the elContext
+     */
+    public ELContext getElContext() {
+        return this.elContext;
     }
 
     /**
