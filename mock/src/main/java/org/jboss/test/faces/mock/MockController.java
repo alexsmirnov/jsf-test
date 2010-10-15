@@ -23,6 +23,8 @@
 
 package org.jboss.test.faces.mock;
 
+
+
 /**
  * <p class="changed_added_4_0">Instance of an Object implemented this interface can be injected into test class to simplify mock objects manipulations.</p>
  * @author asmirnov@exadel.com
@@ -30,6 +32,17 @@ package org.jboss.test.faces.mock;
  */
 public interface MockController {
     
+    <T> T createMock(Class<T> clazz);
+    
+    <T> T createMock(String name, Class<T> clazz);
+
+    <T> T createNiceMock(Class<T> clazz);
+
+    <T> T createNiceMock(String name, Class<T> clazz);
+    
+    <T> T createStrictMock(Class<T> clazz);
+    
+    <T> T createStrictMock(String name, Class<T> clazz);
     /**
      * <p class="changed_added_4_0">Repaly all mock objects created by the {@link CdkTestRunner} and ones from patameters</p>
      */

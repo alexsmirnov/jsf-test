@@ -26,6 +26,7 @@ package org.jboss.test.faces.mock;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -115,14 +116,14 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
             void perform(MockFacesEnvironment environment);
         }
         
-        final Map<Field, Binding> fields;
+        final Collection<Binding> fields;
 
         public FieldModule(Map<Field, Binding> fields) {
-            this.fields = fields;
+            this.fields = fields.values();
         }
 
         private void perform(Invoker invoker, Object ...objects) {
-            for (Binding field : fields.values()) {
+            for (Binding field : fields) {
                 if(field.isMock()){
                     if(field.getValue() instanceof MockFacesEnvironment){
                         invoker.perform((MockFacesEnvironment) field.getValue());
@@ -224,6 +225,42 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
                 }
             });
         }
+
+        public <T> T createMock(Class<T> clazz) {
+            T mock = FacesMock.createMock(clazz);
+            fields.add(createMockBinding(mock));
+            return mock;
+        }
+
+        public <T> T createMock(String name, Class<T> clazz) {
+            T mock = FacesMock.createMock(name,clazz);
+            fields.add(createMockBinding(mock));
+            return mock;
+        }
+
+        public <T> T createNiceMock(Class<T> clazz) {
+            T mock = FacesMock.createNiceMock(clazz);
+            fields.add(createMockBinding(mock));
+            return mock;
+        }
+
+        public <T> T createNiceMock(String name, Class<T> clazz) {
+            T mock = FacesMock.createNiceMock(name,clazz);
+            fields.add(createMockBinding(mock));
+            return mock;
+        }
+
+        public <T> T createStrictMock(Class<T> clazz) {
+            T mock = FacesMock.createStrictMock(clazz);
+            fields.add(createMockBinding(mock));
+            return mock;
+        }
+
+        public <T> T createStrictMock(String name, Class<T> clazz) {
+            T mock = FacesMock.createStrictMock(name,clazz);
+            fields.add(createMockBinding(mock));
+            return mock;
+        }
     }
 
     /**
@@ -266,7 +303,7 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private Map<Field, Binding> getMockValues(Set<Field> testFields) {
+    private static Map<Field, Binding> getMockValues(Set<Field> testFields) {
         Map<Field, Binding> mocksAndStubs = new HashMap<Field, Binding>();
         // TODO - create annotation attribute that tells runner to use the scme Mock Controller to create related mocks.
         for (Field field : testFields) {
@@ -278,16 +315,15 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
                 mocksAndStubs.put(field, createMockBinding(field, FacesMock.createNiceMock(notEmpty(field.getAnnotation(Stub.class).value()),field.getType())));
             } else if(field.getType().isAssignableFrom(MockController.class)){
                 FieldModule module = new FieldModule(mocksAndStubs);
-                mocksAndStubs.put(field, createBinding(field, module));
+                mocksAndStubs.put(field, createBinding(module));
             }
         }
 
         return mocksAndStubs;
     }
     
-    private Binding createMockBinding(Field field,Object value) {
-        Binding bind = createBinding(field,value);
-        bind.setMock(true);
+    private static Binding createMockBinding(Field field,Object value) {
+        Binding bind = createMockBinding(value);
         if(field.isAnnotationPresent(Environment.class)){
             MockFacesEnvironment environment = (MockFacesEnvironment) value;
             for (Environment.Feature feature : field.getAnnotation(Environment.class).value()) {
@@ -319,13 +355,19 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
         return bind;
     }
 
-    private Binding createBinding(Field field,Object value) {
+    private static Binding createMockBinding(Object value) {
+        Binding bind = createBinding(value);
+        bind.setMock(true);
+        return bind;
+    }
+
+    private static Binding createBinding(Object value) {
         Binding bind = new Binding();
         bind.setValue(value);
         return bind;
     }
 
-    private String notEmpty(String value) {
+    private static String notEmpty(String value) {
         return "".equals(value)?null:value;
     }
 }
