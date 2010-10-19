@@ -22,7 +22,7 @@ public class StaticServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		InputStream inputStream = getServletContext().getResourceAsStream(req.getServletPath());
+		InputStream inputStream = getServletContext().getResourceAsStream(req.getPathInfo());
 		if(null != inputStream){
 			String fileName = req.getServletPath();
 			String mimeType = getServletContext().getMimeType(fileName);
