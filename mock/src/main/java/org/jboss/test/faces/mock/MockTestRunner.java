@@ -25,6 +25,7 @@ package org.jboss.test.faces.mock;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -119,7 +120,7 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
         final Collection<Binding> fields;
 
         public FieldModule(Map<Field, Binding> fields) {
-            this.fields = fields.values();
+            this.fields = new ArrayList<MockTestRunner.Binding>(fields.values());
         }
 
         private void perform(Invoker invoker, Object ...objects) {
