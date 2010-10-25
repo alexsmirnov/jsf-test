@@ -66,7 +66,7 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
         Set<Field> fields = new HashSet<Field>(Arrays.asList(c.getDeclaredFields()));
         while ((c = c.getSuperclass()) != null) {
             for (Field f : c.getDeclaredFields()) {
-                if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isPrivate(f.getModifiers())) {
+                if (!Modifier.isStatic(f.getModifiers())) {
                     fields.add(f);
                 }
             }
@@ -117,12 +117,16 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
             void perform(MockFacesEnvironment environment);
         }
         
-        final Collection<Binding> fields;
+        Collection<Binding> fields;
 
-        public FieldModule(Map<Field, Binding> fields) {
-            this.fields = new ArrayList<MockTestRunner.Binding>(fields.values());
+        public FieldModule() {
+            
         }
 
+        public void setBindings(Collection<Binding> bindings){
+            this.fields = new ArrayList<MockTestRunner.Binding>(bindings);    
+        }
+        
         private void perform(Invoker invoker, Object ...objects) {
             for (Binding field : fields) {
                 if(field.isMock()){
@@ -307,19 +311,19 @@ public class MockTestRunner extends BlockJUnit4ClassRunner {
     private static Map<Field, Binding> getMockValues(Set<Field> testFields) {
         Map<Field, Binding> mocksAndStubs = new HashMap<Field, Binding>();
         // TODO - create annotation attribute that tells runner to use the scme Mock Controller to create related mocks.
+        FieldModule module = new FieldModule();
         for (Field field : testFields) {
             if (field.isAnnotationPresent(Strict.class)) {
                 mocksAndStubs.put(field, createMockBinding(field, FacesMock.createStrictMock(notEmpty(field.getAnnotation(Strict.class).value()),field.getType())));
             } if (field.isAnnotationPresent(Mock.class)) {
-                    mocksAndStubs.put(field, createMockBinding(field, FacesMock.createMock(notEmpty(field.getAnnotation(Mock.class).value()),field.getType())));
+                mocksAndStubs.put(field, createMockBinding(field, FacesMock.createMock(notEmpty(field.getAnnotation(Mock.class).value()),field.getType())));
             } else if (field.isAnnotationPresent(Stub.class)) {
                 mocksAndStubs.put(field, createMockBinding(field, FacesMock.createNiceMock(notEmpty(field.getAnnotation(Stub.class).value()),field.getType())));
             } else if(field.getType().isAssignableFrom(MockController.class)){
-                FieldModule module = new FieldModule(mocksAndStubs);
                 mocksAndStubs.put(field, createBinding(module));
             }
         }
-
+        module.setBindings(mocksAndStubs.values());
         return mocksAndStubs;
     }
     
