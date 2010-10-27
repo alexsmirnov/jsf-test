@@ -51,6 +51,16 @@ public class EnvironmentTest {
     }
 
     @Test
+    public void testSubmit() throws Exception {
+        FacesRequest request = environment.createFacesRequest("http://localhost/test.jsf");
+        assertNotNull(request.execute());
+        FacesRequest submit = request.submit().withParameter("helloForm", "helloForm");
+        assertNotNull(submit.execute());
+        String contentAsString = submit.getConnection().getContentAsString();
+        assertTrue(contentAsString.contains(ResponseStateManager.VIEW_STATE_PARAM));
+    }
+
+    @Test
     @Threads(15)
     public void testConcurrentRequests() throws Exception {
 //        System.out.println("concurrent request");

@@ -28,11 +28,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EventListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.LogManager;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -44,10 +50,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
+import javax.faces.render.ResponseStateManager;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.Filter;
 
 import org.jboss.test.faces.staging.HttpConnection;
+import org.jboss.test.faces.staging.HttpMethod;
 
 /**
  * <p class="changed_added_4_0">
@@ -58,7 +66,11 @@ import org.jboss.test.faces.staging.HttpConnection;
  */
 public class FacesEnvironment {
 
+    public static final String WEB_XML = "/WEB-INF/web.xml";
+    public static final String FACES_CONFIG_XML = "/WEB-INF/faces-config.xml";
+
     public class FacesRequest {
+
         /**
          * Current virtual connection. This field populated by the {@link #setupWebContent()} method only.
          */
@@ -72,6 +84,9 @@ public class FacesEnvironment {
         private String viewId;
 
         public FacesRequest start() {
+            if (connection.isStarted() || connection.isFinished()) {
+                throw new IllegalStateException();
+            }
             connection.start();
             FacesContextFactory facesContextFactory = (FacesContextFactory) FactoryFinder
                 .getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
@@ -84,11 +99,17 @@ public class FacesEnvironment {
         }
 
         public byte[] execute() {
+            if (connection.isStarted() || connection.isFinished()) {
+                throw new IllegalStateException();
+            }
             connection.execute();
             return connection.getResponseBody();
         }
 
         public FacesRequest withViewId(String viewId) {
+            if (connection.isStarted() || connection.isFinished()) {
+                throw new IllegalStateException();
+            }
             this.viewId = viewId;
             return this;
         }
@@ -121,6 +142,25 @@ public class FacesEnvironment {
         public HttpConnection getConnection() {
             return this.connection;
         }
+
+        public FacesRequest submit() throws MalformedURLException, FacesException {
+            if (!connection.isFinished()) {
+                throw new IllegalStateException();
+            }
+            // Extract VIEW_STATE value.
+            Map<String, String> fields = getHiddenFields(connection.getContentAsString());
+            if (!fields.containsKey(ResponseStateManager.VIEW_STATE_PARAM)) {
+                throw new FacesException("No view state field in response");
+            }
+            FacesRequest facesRequest = createFacesRequest(connection.getRequest().getRequestURL().toString())
+                .withViewId(viewId);
+            facesRequest.connection.setRequestMethod(HttpMethod.POST);
+            for (Map.Entry<String, String> entry : fields.entrySet()) {
+                facesRequest.withParameter(entry.getKey(), entry.getValue());
+            }
+            return facesRequest;
+        }
+
     }
 
     private List<FacesRequest> requests = new CopyOnWriteArrayList<FacesRequest>();
@@ -167,7 +207,7 @@ public class FacesEnvironment {
         setupJsfInitParameters();
         setupWebContent();
     }
-    
+
     /**
      * <p class="changed_added_4_0">
      * </p>
@@ -328,7 +368,7 @@ public class FacesEnvironment {
     public FacesEnvironment start() {
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-        facesServer.addResource("/WEB-INF/web.xml", webXmlDefault);
+        facesServer.addResource(WEB_XML, webXmlDefault);
         if (null != webRoot) {
             facesServer.addResourcesFromDirectory("/", webRoot);
         }
@@ -505,7 +545,7 @@ public class FacesEnvironment {
             throw new TestException("JSF test environment has already been initialized");
         }
     }
-    
+
     /**
      * <p class="changed_added_4_0">
      * </p>
@@ -534,6 +574,42 @@ public class FacesEnvironment {
 
     public static FacesEnvironment createEnvironment(ApplicationServer applicationServer) {
         return new FacesEnvironment(applicationServer);
+    }
+
+    
+    static final Pattern INPUT_PATTERN =Pattern.compile("<input([^>]+)>", Pattern.MULTILINE|Pattern.DOTALL);
+    
+    static final Pattern NAME_PATTERN =Pattern.compile("name=[\"']([^\"']*)[\"']");
+
+    static final Pattern VALUE_PATTERN =Pattern.compile("value=[\"']([^\"']*)[\"']");
+
+    public static Collection<String> getInputFields(String content){
+        List<String> inputs = new ArrayList<String>();
+        Matcher matcher = INPUT_PATTERN.matcher(content);
+        while (matcher.find()) {
+            inputs.add(matcher.group(1));
+        }
+        return inputs;
+    }
+    
+    public static Map<String, String> getHiddenFields(String content){
+        Collection<String> inputFields = getInputFields(content);
+        HashMap<String, String> parameters = new HashMap<String, String>(inputFields.size());
+        for (String string : inputFields) {
+            if(string.contains("type='hidden'")||string.contains("type=\"hidden\"")){
+                Matcher matcher = NAME_PATTERN.matcher(string);
+                if(matcher.find()){
+                    String name = matcher.group(1);
+                    Matcher valueMatcher = VALUE_PATTERN.matcher(string);
+                    if(valueMatcher.find()){
+                        parameters.put(name, valueMatcher.group(1));
+                    } else {
+                        parameters.put(name, "");
+                    }
+                }
+            }
+        }
+        return parameters;
     }
 
 }
