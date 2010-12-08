@@ -76,6 +76,16 @@ public class Qunit implements MethodRule {
             return this;
         }
 
+        public Builder loadJsfResource(String name) {
+            rule.addScript(new ResourceRef("/META-INF/resources/"+name));
+            return this;
+        }
+
+        public Builder loadJsfResource(String name,String library) {
+            rule.addScript(new ResourceRef("/META-INF/resources/"+library+"/"+name));
+            return this;
+        }
+
         public Builder loadExternal(String src) {
             rule.addScript(new ExternalRef(src));
             return this;

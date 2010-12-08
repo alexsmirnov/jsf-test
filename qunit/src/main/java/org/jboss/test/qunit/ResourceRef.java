@@ -14,7 +14,11 @@ public class ResourceRef extends URLRefBase implements ScriptRef {
     }
 
     public URL getScript(Object base) {
-        return base.getClass().getResource(src);
+        URL resource = base.getClass().getResource(src);
+        if(null == resource){
+            throw new RuntimeException("Resource not found: "+src);
+        }
+        return resource;
     }
 
     public String getContent(Object base) {
