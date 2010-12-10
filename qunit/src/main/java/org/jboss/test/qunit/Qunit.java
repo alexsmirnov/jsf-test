@@ -121,6 +121,8 @@ public class Qunit implements MethodRule {
     private HtmlPage page;
 
     private MockWebConnection mockConnection;
+
+    public static final String DEFAULT_URL = "http://localhost";
     
     protected Qunit(){
         ;
@@ -150,8 +152,8 @@ public class Qunit implements MethodRule {
         
     }
 
-    protected void setupQunit(FrameworkMethod method, Object target) throws FailingHttpStatusCodeException, IOException {
-        URL URL = new URL("http://localhost/");
+    protected void setupQunit(FrameworkMethod method, Object target) throws FailingHttpStatusCodeException, IOException {        
+        URL URL = new URL(DEFAULT_URL+"/");
         setupWebClient();
         String content = buildContent(method,target);
         mockConnection.setResponse(URL, content);

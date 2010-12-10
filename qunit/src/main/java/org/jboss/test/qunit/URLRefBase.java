@@ -19,7 +19,7 @@ public class URLRefBase {
         String inputLine;
     
         while ((inputLine = reader.readLine()) != null) {
-            content.append(inputLine);
+            content.append(inputLine).append('\n');
         }
         reader.close();
         return content.toString();
