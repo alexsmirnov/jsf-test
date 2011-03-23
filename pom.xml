@@ -13,10 +13,9 @@
 	<packaging>pom</packaging>
 
 	<scm>
-		<connection>scm:svn:http://anonsvn.jboss.org/repos/test-utils/jboss-test-jsf/trunk</connection>
-		<developerConnection>scm:svn:https://svn.jboss.org/repos/test-utils/jboss-test-jsf/trunk</developerConnection>
-		<url>http://fisheye.jboss.org/browse/test-utils/jboss-test-jsf/trunk
-		</url>
+		<connection>scm:git:git://github.com/alexsmirnov/jsf-test.git</connection>
+		<developerConnection>scm:git:git@github.com:alexsmirnov/jsf-test.git</developerConnection>
+		<url>https://github.com/alexsmirnov/jsf-test</url>
 	</scm>
 
 	<repositories>
