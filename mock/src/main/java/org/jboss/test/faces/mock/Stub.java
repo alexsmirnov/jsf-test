@@ -38,5 +38,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.FIELD })
 public @interface Stub {
+    /**
+     * @return
+     */
     public String value() default "";
 }

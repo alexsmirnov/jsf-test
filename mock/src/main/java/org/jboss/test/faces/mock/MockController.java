@@ -44,12 +44,12 @@ public interface MockController {
     
     <T> T createStrictMock(String name, Class<T> clazz);
     /**
-     * <p class="changed_added_4_0">Repaly all mock objects created by the {@link CdkTestRunner} and ones from patameters</p>
+     * <p class="changed_added_4_0">Repaly all mock objects created by the {@link CdkTestRunner} and ones from parameters</p>
      */
     public void replay(Object ...objects);
     
     /**
-     * <p class="changed_added_4_0">Verify all mock objects created by the {@link CdkTestRunner} and ones from patameters</p>
+     * <p class="changed_added_4_0">Verify all mock objects created by the {@link CdkTestRunner} and ones from parameters</p>
      */
     public void verify(Object ...objects);
 
@@ -61,5 +61,8 @@ public interface MockController {
     public void resetToStrict(Object ...objects);
     public void resetToDefault(Object ...objects);
     
+    /**
+     * Release the mock {@link MockFacesEnvironment} environment created by the test runner.
+     */
     public void release();
 }

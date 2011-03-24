@@ -36,6 +36,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.FIELD })
 public @interface Environment {
+    /**
+     * @author asmirnov
+     *
+     */
     public enum Feature {
         FACTORIES,
         FACES_CONTEXT,
@@ -47,6 +51,9 @@ public @interface Environment {
         RESPONSE_WRITER
     }
 
+    /**
+     * @return
+     */
     public Feature[] value() default {};
     
 }
