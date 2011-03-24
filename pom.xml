@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.jboss</groupId>
 		<artifactId>jboss-parent</artifactId>
@@ -125,6 +126,11 @@
 				<version>2.5</version>
 			</dependency>
 			<dependency>
+				<groupId>org.glassfish</groupId>
+				<artifactId>javax.servlet</artifactId>
+				<version>3.0</version>
+			</dependency>
+			<dependency>
 				<groupId>javax.servlet.jsp</groupId>
 				<artifactId>jsp-api</artifactId>
 				<version>2.1</version>
@@ -200,10 +206,8 @@
 						<groupId>xml-apis</groupId>
 						<artifactId>xml-apis</artifactId>
 					</exclusion>
-					<!--
-						<exclusion> <groupId>xerces</groupId>
-						<artifactId>xercesImpl</artifactId> </exclusion>
-					-->
+					<!-- <exclusion> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
+						</exclusion> -->
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -237,8 +241,8 @@
 		<module>stage</module>
 		<module>jetty</module>
 		<module>jsf-test-htmlunit</module>
-    <module>qunit</module>
-  </modules>
+		<module>scriptunit</module>
+	</modules>
 
 
 </project>

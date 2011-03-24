@@ -1,1 +1,0 @@
-function foo(param){ return "foo"+param;}
