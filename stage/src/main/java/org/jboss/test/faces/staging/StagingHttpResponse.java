@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -454,8 +455,32 @@ abstract class StagingHttpResponse implements HttpServletResponse {
 	/**
 	 * @return the status
 	 */
-	int getStatus() {
+	public int getStatus() {
 		return status;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServletResponse#getHeader(java.lang.String)
+	 */
+	public String getHeader(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServletResponse#getHeaderNames()
+	 */
+	public Collection<String> getHeaderNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServletResponse#getHeaders(java.lang.String)
+	 */
+	public Collection<String> getHeaders(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**

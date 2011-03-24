@@ -22,9 +22,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 
 /**
@@ -545,6 +554,144 @@ abstract class StagingHttpRequest implements HttpServletRequest {
 		}
 		this.characterEncoding = env;
 
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#getAsyncContext()
+	 */
+	public AsyncContext getAsyncContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#getDispatcherType()
+	 */
+	public DispatcherType getDispatcherType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#getParameter(java.lang.String)
+	 */
+	public String getParameter(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#getParameterMap()
+	 */
+	public Map<String, String[]> getParameterMap() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#getParameterNames()
+	 */
+	public Enumeration<String> getParameterNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#getParameterValues(java.lang.String)
+	 */
+	public String[] getParameterValues(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#getServletContext()
+	 */
+	public ServletContext getServletContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#isAsyncStarted()
+	 */
+	public boolean isAsyncStarted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#isAsyncSupported()
+	 */
+	public boolean isAsyncSupported() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#startAsync()
+	 */
+	public AsyncContext startAsync() throws IllegalStateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#startAsync(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+	 */
+	public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1)
+			throws IllegalStateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServletRequest#authenticate(javax.servlet.http.HttpServletResponse)
+	 */
+	public boolean authenticate(HttpServletResponse arg0) throws IOException,
+			ServletException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServletRequest#getPart(java.lang.String)
+	 */
+	public Part getPart(String arg0) throws IOException, ServletException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServletRequest#getParts()
+	 */
+	public Collection<Part> getParts() throws IOException, ServletException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServletRequest#getSession(boolean)
+	 */
+	public HttpSession getSession(boolean arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServletRequest#login(java.lang.String, java.lang.String)
+	 */
+	public void login(String arg0, String arg1) throws ServletException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServletRequest#logout()
+	 */
+	public void logout() throws ServletException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

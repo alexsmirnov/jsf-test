@@ -98,6 +98,14 @@ public class FacesEnvironment {
             return this;
         }
 
+        public FacesRequest finish() {
+            if (!connection.isStarted() || connection.isFinished()) {
+                throw new IllegalStateException();
+            }
+            connection.finish();
+            return this;
+		}
+        
         public byte[] execute() {
             if (connection.isStarted() || connection.isFinished()) {
                 throw new IllegalStateException();
@@ -119,6 +127,10 @@ public class FacesEnvironment {
             return this;
         }
 
+        public String getResponseAsString() {
+        	return connection.getContentAsString();
+		}
+        
         public void release() {
             if (null != facesContext) {
                 facesContext.release();
