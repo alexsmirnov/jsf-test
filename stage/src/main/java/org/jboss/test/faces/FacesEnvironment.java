@@ -53,6 +53,7 @@ import javax.faces.lifecycle.LifecycleFactory;
 import javax.faces.render.ResponseStateManager;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.Filter;
+import javax.servlet.Servlet;
 
 import org.jboss.test.faces.staging.HttpConnection;
 import org.jboss.test.faces.staging.HttpMethod;
@@ -349,6 +350,10 @@ public class FacesEnvironment {
         return this;
     }
 
+    public FacesEnvironment withResourcesFromDirectory(String path, URL resource){
+    	this.facesServer.addResourcesFromDirectory(path, resource);
+    	return this;
+    }
     /**
      * <p class="changed_added_4_0">
      * </p>
