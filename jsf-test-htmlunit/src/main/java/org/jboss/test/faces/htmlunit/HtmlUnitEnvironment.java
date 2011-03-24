@@ -32,6 +32,7 @@ import org.jboss.test.faces.FacesEnvironment;
 import org.jboss.test.faces.staging.StagingServer;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
@@ -78,9 +79,9 @@ public class HtmlUnitEnvironment extends FacesEnvironment {
         return this;
     }
 
-    public HtmlPage getPage(String url) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+    public <P extends Page> P getPage(String url) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
         String hostAddress = MessageFormat.format("http://localhost:{0,number,#####}", getServer().getPort());
-        HtmlPage page = webClient.getPage(hostAddress + url);
+        P page = webClient.getPage(hostAddress + url);
         return page;
     }
 
