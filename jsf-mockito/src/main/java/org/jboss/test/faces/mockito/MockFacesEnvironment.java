@@ -24,6 +24,7 @@
 package org.jboss.test.faces.mockito;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import javax.el.ELContext;
@@ -59,7 +60,7 @@ import org.jboss.test.faces.writer.RecordingResponseWriter;
  */
 public class MockFacesEnvironment {
 
-    private FacesContext facesContext;
+    private MockFacesContext facesContext;
 
     private boolean withFactories = false;
 
@@ -102,6 +103,12 @@ public class MockFacesEnvironment {
         } catch (Throwable e) {
             jsf2 = false;
         }
+    }
+    
+    public MockFacesEnvironment() {
+        MockFacesContext mockFacesContext = new MockFacesContext();
+        facesContext = spy(mockFacesContext);
+        mockFacesContext.setCurrentContext(facesContext);
     }
 
     public MockFacesEnvironment withExternalContext() {
@@ -253,7 +260,7 @@ public class MockFacesEnvironment {
         return this.elContext;
     }
 
-    public ServletContext getContext() {
+    public ServletContext getServletContext() {
         return this.context;
     }
 
