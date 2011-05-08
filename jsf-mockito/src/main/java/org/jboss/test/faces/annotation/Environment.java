@@ -20,7 +20,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
-
 package org.jboss.test.faces.annotation;
 
 import java.lang.annotation.ElementType;
@@ -29,31 +28,43 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p class="changed_added_4_0"></p>
+ * Annotation for representation of the mocked JSF environment and its features.
+ * 
  * @author asmirnov@exadel.com
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target( { ElementType.FIELD })
+@Target({ ElementType.FIELD })
 public @interface Environment {
+
     /**
+     * The feature of the mocked JSF environment
+     * 
      * @author asmirnov
-     *
      */
     public enum Feature {
+
         FACTORIES,
+
         FACES_CONTEXT,
+
         EXTERNAL_CONTEXT,
+
         EL_CONTEXT,
+
         SERVLET_REQUEST,
+
         APPLICATION,
+
         RENDER_KIT,
+
         RESPONSE_WRITER
     }
 
     /**
-     * @return
+     * Return the list of features of given mocked JSF environment
+     * 
+     * @return the list of features of given mocked JSF environment
      */
     public Feature[] value() default {};
-    
+
 }

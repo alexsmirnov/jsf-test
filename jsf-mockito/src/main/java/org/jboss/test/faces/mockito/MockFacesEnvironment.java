@@ -20,7 +20,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
-
 package org.jboss.test.faces.mockito;
 
 import static org.mockito.Mockito.mock;
@@ -52,48 +51,80 @@ import org.jboss.test.faces.mockito.factory.FactoryMockingService;
 import org.jboss.test.faces.writer.RecordingResponseWriter;
 
 /**
- * <p class="changed_added_4_0">
+ * <p>
+ * Creates and holds the structure of mocks for mocked JSF environment.
+ * </p>
+ * 
+ * <p>
+ * When constructed, new mocked {@link FacesContext} is created and set to current context.
  * </p>
  * 
  * @author asmirnov@exadel.com
- * 
+ * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  */
 public class MockFacesEnvironment {
 
+    /** The faces context. */
     private MockFacesContext facesContext;
 
+    /** The with factories. */
     private boolean withFactories = false;
 
+    /** The external context. */
     private ExternalContext externalContext;
 
+    /** The el context. */
     private ELContext elContext;
 
+    /** The context. */
     private ServletContext context;
 
+    /** The request. */
     private HttpServletRequest request;
 
+    /** The response. */
     private HttpServletResponse response;
 
+    /** The application. */
     private Application application;
 
+    /** The view handler. */
     private ViewHandler viewHandler;
 
+    /** The render kit. */
     private RenderKit renderKit;
 
+    /** The response state manager. */
     private ResponseStateManager responseStateManager;
 
+    /** The response writer. */
     private RecordingResponseWriter responseWriter;
 
+    /** The application factory. */
     private ApplicationFactory applicationFactory;
 
+    /** The faces context factory. */
     private FacesContextFactory facesContextFactory;
+
+    /** The render kit factory. */
     private RenderKitFactory renderKitFactory;
+
+    /** The lifecycle factory. */
     private LifecycleFactory lifecycleFactory;
+
+    /** The tag handler delegate factory. */
     private TagHandlerDelegateFactory tagHandlerDelegateFactory;
+
+    /** The exception handler factory. */
     private ExceptionHandlerFactory exceptionHandlerFactory;
+
+    /** The partial view context factory. */
     private PartialViewContextFactory partialViewContextFactory;
+
+    /** The external context factory. */
     private ExternalContextFactory externalContextFactory;
 
+    /** The jsf2. */
     private static boolean jsf2;
 
     static {
@@ -104,33 +135,57 @@ public class MockFacesEnvironment {
             jsf2 = false;
         }
     }
-    
+
+    /**
+     * Instantiates a new mock faces environment and setup new mocked {@link FacesContext}.
+     */
     public MockFacesEnvironment() {
         MockFacesContext mockFacesContext = new MockFacesContext();
         facesContext = spy(mockFacesContext);
-        mockFacesContext.setCurrentContext(facesContext);
+        MockFacesContext.setCurrentInstance(facesContext);
     }
 
+    /**
+     * With external context.
+     * 
+     * @return the mock faces environment
+     */
     public MockFacesEnvironment withExternalContext() {
         this.externalContext = mock(ExternalContext.class);
         recordExternalContext();
         return this;
     }
 
+    /**
+     * Record external context.
+     */
     private void recordExternalContext() {
         when(facesContext.getExternalContext()).thenReturn(externalContext);
     }
 
+    /**
+     * With el context.
+     * 
+     * @return the mock faces environment
+     */
     public MockFacesEnvironment withELContext() {
         this.elContext = mock(ELContext.class);
         recordELContext();
         return this;
     }
 
+    /**
+     * Record el context.
+     */
     private void recordELContext() {
         when(facesContext.getELContext()).thenReturn(elContext);
     }
 
+    /**
+     * With servlet request.
+     * 
+     * @return the mock faces environment
+     */
     public MockFacesEnvironment withServletRequest() {
         if (null == externalContext) {
             withExternalContext();
@@ -142,14 +197,23 @@ public class MockFacesEnvironment {
         return this;
     }
 
+    /**
+     * Record servlet request.
+     */
     private void recordServletRequest() {
         when(externalContext.getContext()).thenReturn(context);
         when(externalContext.getRequest()).thenReturn(request);
         when(externalContext.getResponse()).thenReturn(response);
     }
 
+    /** The service. */
     private FactoryMockingService service = FactoryMockingService.getInstance();
 
+    /**
+     * With factories.
+     * 
+     * @return the mock faces environment
+     */
     public MockFacesEnvironment withFactories() {
         FactoryFinder.releaseFactories();
 
@@ -169,6 +233,15 @@ public class MockFacesEnvironment {
         return this;
     }
 
+    /**
+     * Setup and enhance.
+     * 
+     * @param <T>
+     *            the generic type
+     * @param type
+     *            the type
+     * @return the t
+     */
     private <T> T setupAndEnhance(Class<T> type) {
         String factoryName = type.getName();
         FactoryMock<T> factoryMock = service.createFactoryMock(type);
@@ -178,6 +251,11 @@ public class MockFacesEnvironment {
         return mock;
     }
 
+    /**
+     * With application.
+     * 
+     * @return the mock faces environment
+     */
     public MockFacesEnvironment withApplication() {
         this.application = mock(Application.class);
         this.viewHandler = mock(ViewHandler.class);
@@ -185,11 +263,19 @@ public class MockFacesEnvironment {
         return this;
     }
 
+    /**
+     * Record application.
+     */
     private void recordApplication() {
         when(facesContext.getApplication()).thenReturn(application);
         when(application.getViewHandler()).thenReturn(viewHandler);
     }
 
+    /**
+     * With render kit.
+     * 
+     * @return the mock faces environment
+     */
     public MockFacesEnvironment withRenderKit() {
         this.renderKit = mock(RenderKit.class);
         this.responseStateManager = mock(ResponseStateManager.class);
@@ -197,21 +283,35 @@ public class MockFacesEnvironment {
         return this;
     }
 
+    /**
+     * Record render kit.
+     */
     private void recordRenderKit() {
         when(facesContext.getRenderKit()).thenReturn(renderKit);
         when(renderKit.getResponseStateManager()).thenReturn(responseStateManager);
     }
 
+    /**
+     * With response writer.
+     * 
+     * @return the mock faces environment
+     */
     public MockFacesEnvironment withResponseWriter() {
         this.responseWriter = new RecordingResponseWriter("UTF-8", "text/html");
         recordResponseWriter();
         return this;
     }
 
+    /**
+     * Record response writer.
+     */
     private void recordResponseWriter() {
         when(facesContext.getResponseWriter()).thenReturn(responseWriter);
     }
 
+    /**
+     * Record environment.
+     */
     private void recordEnvironment() {
         if (null != externalContext) {
             recordExternalContext();
@@ -236,11 +336,19 @@ public class MockFacesEnvironment {
         }
     }
 
+    /**
+     * Reset.
+     * 
+     * @return the mock faces environment
+     */
     public MockFacesEnvironment reset() {
         recordEnvironment();
         return this;
     }
 
+    /**
+     * Release.
+     */
     public void release() {
         facesContext.release();
         if (withFactories) {
@@ -248,78 +356,173 @@ public class MockFacesEnvironment {
         }
     }
 
+    /**
+     * Gets the faces context.
+     * 
+     * @return the faces context
+     */
     public FacesContext getFacesContext() {
         return this.facesContext;
     }
 
+    /**
+     * Gets the external context.
+     * 
+     * @return the external context
+     */
     public ExternalContext getExternalContext() {
         return this.externalContext;
     }
 
+    /**
+     * Gets the el context.
+     * 
+     * @return the el context
+     */
     public ELContext getElContext() {
         return this.elContext;
     }
 
+    /**
+     * Gets the servlet context.
+     * 
+     * @return the servlet context
+     */
     public ServletContext getServletContext() {
         return this.context;
     }
 
+    /**
+     * Gets the request.
+     * 
+     * @return the request
+     */
     public HttpServletRequest getRequest() {
         return this.request;
     }
 
+    /**
+     * Gets the response.
+     * 
+     * @return the response
+     */
     public HttpServletResponse getResponse() {
         return this.response;
     }
 
+    /**
+     * Gets the application.
+     * 
+     * @return the application
+     */
     public Application getApplication() {
         return this.application;
     }
 
+    /**
+     * Gets the view handler.
+     * 
+     * @return the view handler
+     */
     public ViewHandler getViewHandler() {
         return this.viewHandler;
     }
 
+    /**
+     * Gets the render kit.
+     * 
+     * @return the render kit
+     */
     public RenderKit getRenderKit() {
         return this.renderKit;
     }
 
+    /**
+     * Gets the response state manager.
+     * 
+     * @return the response state manager
+     */
     public ResponseStateManager getResponseStateManager() {
         return this.responseStateManager;
     }
 
+    /**
+     * Gets the response writer.
+     * 
+     * @return the response writer
+     */
     public RecordingResponseWriter getResponseWriter() {
         return this.responseWriter;
     }
 
+    /**
+     * Gets the application factory.
+     * 
+     * @return the application factory
+     */
     public ApplicationFactory getApplicationFactory() {
         return applicationFactory;
     }
 
+    /**
+     * Gets the faces context factory.
+     * 
+     * @return the faces context factory
+     */
     public FacesContextFactory getFacesContextFactory() {
         return facesContextFactory;
     }
 
+    /**
+     * Gets the render kit factory.
+     * 
+     * @return the render kit factory
+     */
     public RenderKitFactory getRenderKitFactory() {
         return renderKitFactory;
     }
 
+    /**
+     * Gets the lifecycle factory.
+     * 
+     * @return the lifecycle factory
+     */
     public LifecycleFactory getLifecycleFactory() {
         return lifecycleFactory;
     }
 
+    /**
+     * Gets the tag handler delegate factory.
+     * 
+     * @return the tag handler delegate factory
+     */
     public TagHandlerDelegateFactory getTagHandlerDelegateFactory() {
         return tagHandlerDelegateFactory;
     }
 
+    /**
+     * Gets the exception handler factory.
+     * 
+     * @return the exception handler factory
+     */
     public ExceptionHandlerFactory getExceptionHandlerFactory() {
         return exceptionHandlerFactory;
     }
 
+    /**
+     * Gets the partial view context factory.
+     * 
+     * @return the partial view context factory
+     */
     public PartialViewContextFactory getPartialViewContextFactory() {
         return partialViewContextFactory;
     }
 
+    /**
+     * Gets the external context factory.
+     * 
+     * @return the external context factory
+     */
     public ExternalContextFactory getExternalContextFactory() {
         return externalContextFactory;
     }
