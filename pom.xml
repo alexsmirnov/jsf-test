@@ -244,6 +244,7 @@
 	<modules>
 		<module>maven-mockgenerator-plugin</module>
 		<module>mock</module>
+		<module>jsf-mockito</module>
 		<module>stage</module>
 		<module>jetty</module>
 		<module>jsf-test-htmlunit</module>
