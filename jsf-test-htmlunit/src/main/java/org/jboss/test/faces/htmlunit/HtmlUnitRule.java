@@ -37,7 +37,7 @@ public class HtmlUnitRule extends FacesRule {
 
 	public <P extends Page> P getPage(String url) throws FailingHttpStatusCodeException,
 			MalformedURLException, IOException {
-		return environment.getPage(url);
+		return environment.<P>getPage(url);
 	}
 
 

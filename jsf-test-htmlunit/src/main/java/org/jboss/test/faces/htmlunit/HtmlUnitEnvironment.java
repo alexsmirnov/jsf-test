@@ -81,7 +81,7 @@ public class HtmlUnitEnvironment extends FacesEnvironment {
 
     public <P extends Page> P getPage(String url) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
         String hostAddress = MessageFormat.format("http://localhost:{0,number,#####}", getServer().getPort());
-        P page = webClient.getPage(hostAddress + url);
+        P page = webClient.<P>getPage(hostAddress + url);
         return page;
     }
 
