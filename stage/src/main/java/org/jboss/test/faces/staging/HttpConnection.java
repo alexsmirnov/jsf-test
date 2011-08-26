@@ -166,7 +166,7 @@ public abstract class HttpConnection {
     		getRequestParameters().put(name, values);
     	}
 
-    protected String getRequestQueryString() {
+    protected String  getRequestQueryString() {
         StringBuilder queryString = new StringBuilder();
     	for (Map.Entry<String, String[]> entry : getRequestParameters().entrySet()) {
             if(null !=entry.getValue()){
@@ -184,7 +184,7 @@ public abstract class HttpConnection {
         return queryString.length()>0?queryString.toString():null;
     }
 
-    private String encode(String entry) {
+    protected String encode(String entry) {
         try {
             return URLEncoder.encode(entry, getRequestCharacterEncoding());
         } catch (UnsupportedEncodingException e) {
