@@ -21,14 +21,8 @@
  */
 package org.jboss.test.faces.jetty;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.EventListener;
@@ -44,17 +38,13 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.jboss.test.faces.ApplicationServer;
 import org.jboss.test.faces.FilterHolder;
 import org.jboss.test.faces.ServletHolder;
@@ -82,13 +72,12 @@ public class JettyServer extends ApplicationServer {
         private String requestEncoding="UTF-8";
         private String requestBody;
         private final HttpClient client;
-        private HttpRequestBase httpClientMethod;
-        private HttpResponse response;
+        private HttpMethodBase httpClientMethod;
         private int statusCode;
         private Map<String,String> requestHeaders = new HashMap<String, String>();
 
         public JettyConnection(URL url) {
-            client = new DefaultHttpClient();
+            client = new HttpClient();
             // TODO set default values for host, port, protocol.
             this.url = url;
         }
@@ -122,7 +111,7 @@ public class JettyServer extends ApplicationServer {
 
         @Override
         public boolean isFinished() {
-            return null != response;
+            return null != httpClientMethod && httpClientMethod.isRequestSent();
         }
 
         @Override
@@ -132,7 +121,7 @@ public class JettyServer extends ApplicationServer {
 
         @Override
         public Map<String, String[]> getResponseHeaders() {
-            Header[] headers = httpClientMethod.getAllHeaders();
+            Header[] headers = httpClientMethod.getResponseHeaders();
             HashMap<String, String[]> map = new HashMap<String, String[]>(headers.length);
             for (Header header : headers) {
                 map.put(header.getName(), new String[]{header.getValue()});
@@ -142,24 +131,24 @@ public class JettyServer extends ApplicationServer {
 
         @Override
         public String getResponseContentType() {
-            Header responseHeader = httpClientMethod.getFirstHeader("Content-Type");
+            Header responseHeader = httpClientMethod.getResponseHeader("Content-Type");
             return null!=responseHeader?responseHeader.getValue():null;
         }
 
         @Override
         public long getResponseContentLength() {
-            return response.getEntity().getContentLength();
+            return httpClientMethod.getResponseContentLength();
         }
 
         @Override
         public String getResponseCharacterEncoding() {
-            return response.getEntity().getContentEncoding().getName();
+            return httpClientMethod.getResponseCharSet();
         }
 
         @Override
         public byte[] getResponseBody() {
             try {
-                return response.getEntity().getContent().toString().getBytes();
+                return httpClientMethod.getResponseBody();
             } catch (IOException e) {
                 throw new TestException(e);
             }
@@ -177,14 +166,14 @@ public class JettyServer extends ApplicationServer {
 
         @Override
         public String getErrorMessage() {
-            return response.getStatusLine().getReasonPhrase();
+            return httpClientMethod.getStatusText();
         }
 
 
         @Override
         public String getContentAsString() {
             try {
-                return convertStreamToString(response.getEntity().getContent());
+                return httpClientMethod.getResponseBodyAsString();
             } catch (IOException e) {
                 throw new TestException(e);
             }
@@ -193,7 +182,7 @@ public class JettyServer extends ApplicationServer {
         @Override
         public void finish() {
             if(null != httpClientMethod){
-                client.getConnectionManager().shutdown();
+                httpClientMethod.releaseConnection();
             }
             
         }
@@ -202,50 +191,37 @@ public class JettyServer extends ApplicationServer {
         public void execute() {
             switch (getRequestMethod()) {
                 case GET:
-                    this.httpClientMethod = new HttpGet(url.toExternalForm());
+                    this.httpClientMethod = new GetMethod(url.toExternalForm());
                     break;
                 case POST:
-                    HttpPost postMethod = new HttpPost(url.toExternalForm());
-                    if(null != requestBody) {
-                        BasicHttpEntity body = new BasicHttpEntity();
-                        body.setContentType(requestContentType);
-                        body.setContentEncoding(requestEncoding);
-                        postMethod.setEntity(body);
-                    }
+                    PostMethod postMethod = new PostMethod(url.toExternalForm());
+                    if(null != requestBody){
+                        try {
+                            RequestEntity body = new StringRequestEntity(requestBody,requestContentType,requestEncoding);
+                            postMethod.setRequestEntity(body);
+                        } catch (UnsupportedEncodingException e) {
+                            throw new TestException(e);
+                        }
+                    } 
                     this.httpClientMethod = postMethod;
                     break;
 
                 default:
                     throw new UnsupportedOperationException("Http Method "+getRequestMethod()+" is not supported");
             }
-            HttpParams params = getHttpParams();
+            String queryString = getRequestQueryString();
             try {
-                if (null != params) {
-                    httpClientMethod.setParams(params);
+                if (null != queryString) {
+                    httpClientMethod.setQueryString(queryString);
                 }
                 for (Map.Entry<String,String> entry : requestHeaders.entrySet()) {
-                    httpClientMethod.addHeader(entry.getKey(), entry.getValue());
+                    httpClientMethod.addRequestHeader(entry.getKey(), entry.getValue());
                 }
                 // TODO - add parameters to request.
-                this.response = client.execute(httpClientMethod);
-                this.statusCode = this.response.getStatusLine().getStatusCode();
+                this.statusCode = client.executeMethod(httpClientMethod);
             } catch (IOException e) {
                 throw new TestException(e);
             }
-        }
-
-        private HttpParams getHttpParams() {
-            Map<String, String[]> parameterMap = getRequestParameters();
-            BasicHttpParams params = null;
-            if (!parameterMap.isEmpty()) {
-                params = new BasicHttpParams();
-                for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-                    if(null !=entry.getValue()){
-                        params.setParameter(entry.getKey(), entry.getValue());
-                    }
-                }
-            }
-            return params;
         }
 
         @Override
@@ -485,24 +461,5 @@ public class JettyServer extends ApplicationServer {
     @Override
     protected void addDirectory(String directoryPath) {
         serverRoot.createChildDirectory(new ServerResourcePath(directoryPath));
-    }
-
-    private String convertStreamToString(InputStream inputStream) throws IOException {
-        if (inputStream != null) {
-            Writer writer = new StringWriter();
-            char[] buffer = new char[1024];
-            try {
-                Reader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                int n;
-                while ((n = reader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, n);
-                }
-            } finally {
-                inputStream.close();
-            }
-            return writer.toString();
-        } else {
-            return "";
-        }
     }
 }

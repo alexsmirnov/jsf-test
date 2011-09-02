@@ -25,21 +25,12 @@ import static junit.framework.Assert.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.net.URL;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.jboss.test.faces.FacesEnvironment;
 import org.jboss.test.faces.FacesEnvironment.FacesRequest;
 import org.junit.After;
@@ -70,47 +61,25 @@ public class JettyServerTestCase {
 
     @Test
     public void testHelloPage() throws Exception {
-        HttpClient client = new DefaultHttpClient();
-        HttpRequestBase method = new HttpGet(new URL("http", "localhost", PORT, "/hello-jetty.jsf?name=JettyServer")
+        HttpClient client = new HttpClient();
+        HttpMethod method = new GetMethod(new URL("http", "localhost", PORT, "/hello-jetty.jsf?name=JettyServer")
             .toExternalForm());
 
         try {
-            HttpResponse response = client.execute(method);
-            int statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = client.executeMethod(method);
 
             if (statusCode != HttpStatus.SC_OK) {
-                fail("Method failed: " + response.getStatusLine().getReasonPhrase());
+                fail("Method failed: " + method.getStatusLine());
             }
 
-            String responseBodyAsString = convertStreamToString(response.getEntity().getContent());
-            System.out.println("******");
-            System.out.println(responseBodyAsString);
-            System.out.println("******");
+            String responseBodyAsString = method.getResponseBodyAsString();
             assertTrue(responseBodyAsString.contains("Hello, JettyServer!"));
+            
         } finally {
-            client.getConnectionManager().shutdown();
+            method.releaseConnection();
         }
     }
-
-    private String convertStreamToString(InputStream inputStream) throws IOException {
-        if (inputStream != null) {
-            Writer writer = new StringWriter();
-            char[] buffer = new char[1024];
-            try {
-                Reader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                int n;
-                while ((n = reader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, n);
-                }
-            } finally {
-                inputStream.close();
-            }
-            return writer.toString();
-        } else {
-            return "";
-        }
-    }
-
+    
     @Test
     public void testJettyConnection() throws Exception {
         FacesRequest facesRequest = environment.createFacesRequest(new URL("http", "localhost", PORT, "/hello-jetty.jsf?name=JettyServer")
