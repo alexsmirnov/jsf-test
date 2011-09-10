@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.jboss.test-jsf</groupId>
-		<version>1.0.7</version>
+		<version>1.0.8-SNAPSHOT</version>
 	</parent>
 	<groupId>org.jboss.test-jsf</groupId>
 	<artifactId>htmlunit-client</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8-SNAPSHOT</version>
 	<name>jsf-test-htmlunit</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
@@ -19,12 +19,12 @@
 		<dependency>
 			<groupId>org.jboss.test-jsf</groupId>
 			<artifactId>jsf-test-stage</artifactId>
-			<version>1.0.7</version>
+			<version>1.0.8-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.test-jsf</groupId>
 			<artifactId>jsf-test-jetty</artifactId>
-			<version>1.0.7</version>
+			<version>1.0.8-SNAPSHOT</version>
 			<optional>true</optional>
 		</dependency>
         <dependency>
