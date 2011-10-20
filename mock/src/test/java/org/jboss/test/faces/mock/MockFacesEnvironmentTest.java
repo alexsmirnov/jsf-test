@@ -69,13 +69,14 @@ public class MockFacesEnvironmentTest {
 
     @Test
     public void testFactories() throws Exception {
+        mockEnvironment.withExternalContext();
+        mockEnvironment.replay();
         mockEnvironment.withFactories();
         Object factory = FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
         assertTrue(factory instanceof MockFacesContextFactory);
         FacesContextFactory mockFactory = (FacesContextFactory) factory;
         expect(mockFactory.getFacesContext(anyObject(), anyObject(), anyObject(), (Lifecycle) anyObject())).andReturn(mockEnvironment.getFacesContext());
         Lifecycle lifecycle = mockEnvironment.createMock(Lifecycle.class);
-        mockEnvironment.replay();
         FacesMock.replay(factory);
         FacesContextFactory factory2 = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
         assertSame(factory, factory2);

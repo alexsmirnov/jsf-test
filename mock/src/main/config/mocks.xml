@@ -6,12 +6,16 @@
     <mock>
        <name>org.jboss.test.faces.mock.context.MockFacesContext</name>
        <class-name>javax.faces.context.FacesContext</class-name>
-       <postConstruct>setCurrentInstance(this);</postConstruct>
+       <!-- <postConstruct>setCurrentInstance(this);</postConstruct> -->
        <code><![CDATA[//
            @Override
            public void release() {
                setCurrentInstance(null);
            }
+           
+           public static void setCurrentInstance(javax.faces.context.FacesContext context) {
+                javax.faces.context.FacesContext.setCurrentInstance(context);
+            }
                 //]]></code>
        <method name="release" exclude="true" />
     </mock>

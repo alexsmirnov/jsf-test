@@ -25,6 +25,8 @@ package org.jboss.test.faces.mock;
 
 import static org.easymock.EasyMock.*;
 
+import java.util.HashMap;
+
 import javax.el.ELContext;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -43,6 +45,7 @@ import org.easymock.internal.MocksControl.MockType;
 import org.jboss.test.faces.mock.application.MockApplicationFactory;
 import org.jboss.test.faces.mock.context.MockExceptionHandlerFactory;
 import org.jboss.test.faces.mock.context.MockExternalContextFactory;
+import org.jboss.test.faces.mock.context.MockFacesContext;
 import org.jboss.test.faces.mock.context.MockFacesContextFactory;
 import org.jboss.test.faces.mock.context.MockPartialViewContextFactory;
 import org.jboss.test.faces.mock.lifecycle.MockLifecycleFactory;
@@ -153,6 +156,8 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
 
     private void recordExternalContext() {
         EasyMock.expect(facesContext.getExternalContext()).andStubReturn(externalContext);
+        EasyMock.expect(externalContext.getContext()).andStubReturn(null);
+        EasyMock.expect(externalContext.getApplicationMap()).andStubReturn(new HashMap<String, Object>());
     }
 
     /*
@@ -240,6 +245,7 @@ public class MockFacesEnvironment implements FacesMockController.MockObject {
 
     public MockFacesEnvironment replay() {
         mocksControl.replay();
+        MockFacesContext.setCurrentInstance(facesContext);
         return this;
     }
 

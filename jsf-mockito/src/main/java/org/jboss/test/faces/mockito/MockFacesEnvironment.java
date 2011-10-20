@@ -26,6 +26,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+
 import javax.el.ELContext;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -143,6 +145,7 @@ public class MockFacesEnvironment {
         MockFacesContext mockFacesContext = new MockFacesContext();
         facesContext = spy(mockFacesContext);
         MockFacesContext.setCurrentInstance(facesContext);
+        withExternalContext();
     }
 
     /**
@@ -161,6 +164,7 @@ public class MockFacesEnvironment {
      */
     private void recordExternalContext() {
         when(facesContext.getExternalContext()).thenReturn(externalContext);
+        when(externalContext.getApplicationMap()).thenReturn(new HashMap<String, Object>());
     }
 
     /**
