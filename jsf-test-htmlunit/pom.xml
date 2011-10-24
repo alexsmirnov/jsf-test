@@ -9,7 +9,7 @@
 	<groupId>org.jboss.test-jsf</groupId>
 	<artifactId>htmlunit-client</artifactId>
 	<version>1.0.8-SNAPSHOT</version>
-	<name>jsf-test-htmlunit</name>
+	<name>JSF Test Framework: HtmlUnit</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
         <dependency>
@@ -34,16 +34,6 @@
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.faces</groupId>
-            <artifactId>jboss-jsf-api_2.1_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.faces</groupId>
-            <artifactId>jsf-impl</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>javax.el</groupId>

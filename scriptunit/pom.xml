@@ -9,7 +9,7 @@
   <groupId>org.jboss.test-jsf</groupId>
   <artifactId>jsf-test-scriptunit</artifactId>
   <version>1.0.8-SNAPSHOT</version>
-  <name>JavaScript unit</name>
+  <name>JSF Test Framework: Script Unit</name>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
