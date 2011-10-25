@@ -10,7 +10,7 @@
   <artifactId>maven-mockgenerator-plugin</artifactId>
   <version>1.0.8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-  <name>maven-mockgenerator-plugin Maven Mojo</name>
+  <name>JSF Test Framework: Maven Mock-Generator Plugin</name>
   <url>http://maven.apache.org</url>
   <build>
   	<plugins>

@@ -8,11 +8,13 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MockFacesContextTest {
 
     @Test
+    @Ignore
     public void testCreate() throws Exception {
         FacesContext facesContext = FacesMock.createMock(FacesContext.class);
         expect(facesContext.getMaximumSeverity()).andReturn(FacesMessage.SEVERITY_INFO);
