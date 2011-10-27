@@ -7,7 +7,6 @@
 		<version>1.0.8-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.jboss.test-jsf</groupId>
 	<artifactId>jsf-mockito</artifactId>
 	<name>JSF Test Framework: Mockito</name>
 	<description>Uses Mockito to create mocked JavaServer Faces environment classes</description>

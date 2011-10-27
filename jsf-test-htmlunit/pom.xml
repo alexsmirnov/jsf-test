@@ -6,9 +6,7 @@
 		<groupId>org.jboss.test-jsf</groupId>
 		<version>1.0.8-SNAPSHOT</version>
 	</parent>
-	<groupId>org.jboss.test-jsf</groupId>
 	<artifactId>htmlunit-client</artifactId>
-	<version>1.0.8-SNAPSHOT</version>
 	<name>JSF Test Framework: HtmlUnit</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>

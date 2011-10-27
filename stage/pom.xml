@@ -10,7 +10,6 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss.test-jsf</groupId>
 	<artifactId>jsf-test-stage</artifactId>
 	<packaging>jar</packaging>
 	<name>JSF Test Framework: Staging Server</name>

@@ -9,7 +9,6 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jboss.test-jsf</groupId>
 	<artifactId>jsf-test-jetty</artifactId>
 	<packaging>jar</packaging>
 	<name>JSF Test Framework: Jetty</name>

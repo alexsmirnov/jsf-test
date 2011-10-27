@@ -41,6 +41,46 @@
                         <target>1.5</target>
                     </configuration>
                 </plugin>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.modello</groupId>
+                                        <artifactId>modello-maven-plugin</artifactId>
+                                        <versionRange>[1.0.2,)</versionRange>
+                                        <goals>
+                                            <goal>java</goal>
+                                            <goal>xpp3-reader</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.jboss.test-jsf</groupId>
+                                        <artifactId>maven-mockgenerator-plugin</artifactId>
+                                        <versionRange>[1.0.8-SNAPSHOT,)</versionRange>
+                                        <goals>
+                                            <goal>generate-mock</goal>
+                                            <goal>generate-test-mock</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
