@@ -26,21 +26,26 @@ package org.jboss.test.faces.mock;
 import static org.easymock.EasyMock.*;
 
 import javax.faces.FactoryFinder;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 
 import static org.junit.Assert.*;
 
+import org.easymock.EasyMock;
+import org.jboss.test.faces.mock.context.MockExternalContext;
 import org.jboss.test.faces.mock.context.MockFacesContextFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * <p class="changed_added_4_0"></p>
+ * <p class="changed_added_4_0">
+ * </p>
+ * 
  * @author asmirnov@exadel.com
- *
+ * 
  */
 public class MockFacesEnvironmentTest {
 
@@ -62,7 +67,8 @@ public class MockFacesEnvironmentTest {
         expect(mockEnvironment.getExternalContext().getInitParameter("foo")).andReturn("bar");
         expect(mockEnvironment.getResponseStateManager().isPostback(mockEnvironment.getFacesContext())).andReturn(Boolean.TRUE);
         mockEnvironment.replay();
-        assertTrue(FacesContext.getCurrentInstance().getRenderKit().getResponseStateManager().isPostback(FacesContext.getCurrentInstance()));
+        assertTrue(FacesContext.getCurrentInstance().getRenderKit().getResponseStateManager()
+                .isPostback(FacesContext.getCurrentInstance()));
         assertEquals("bar", FacesContext.getCurrentInstance().getExternalContext().getInitParameter("foo"));
         mockEnvironment.verify();
     }
@@ -75,12 +81,36 @@ public class MockFacesEnvironmentTest {
         Object factory = FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
         assertTrue(factory instanceof MockFacesContextFactory);
         FacesContextFactory mockFactory = (FacesContextFactory) factory;
-        expect(mockFactory.getFacesContext(anyObject(), anyObject(), anyObject(), (Lifecycle) anyObject())).andReturn(mockEnvironment.getFacesContext());
+        expect(mockFactory.getFacesContext(anyObject(), anyObject(), anyObject(), (Lifecycle) anyObject())).andReturn(
+                mockEnvironment.getFacesContext());
         Lifecycle lifecycle = mockEnvironment.createMock(Lifecycle.class);
         FacesMock.replay(factory);
         FacesContextFactory factory2 = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
         assertSame(factory, factory2);
-        assertSame(mockEnvironment.getFacesContext(),mockFactory.getFacesContext(new Object(), new Object(), new Object(), lifecycle));
+        assertSame(mockEnvironment.getFacesContext(),
+                mockFactory.getFacesContext(new Object(), new Object(), new Object(), lifecycle));
         mockEnvironment.verify();
+    }
+
+    @Test
+    public void testExternalContextInitialization() {
+        mockEnvironment.withExternalContext();
+        assertTrue(mockEnvironment.getExternalContext() instanceof MockExternalContext);
+
+        mockEnvironment.replay();
+        assertTrue(mockEnvironment.getFacesContext().getExternalContext() instanceof MockExternalContext);
+        assertTrue(FacesContext.getCurrentInstance().getExternalContext() instanceof MockExternalContext);
+        assertSame(mockEnvironment.getFacesContext().getExternalContext(), FacesContext.getCurrentInstance()
+                .getExternalContext());
+    }
+
+    @Test
+    public void externalContextShouldBeAbleToBeStubbed() {
+        mockEnvironment.withExternalContext();
+        ExternalContext externalContext = mockEnvironment.getExternalContext();
+        EasyMock.expect(externalContext.getAuthType()).andStubReturn("customAuthType");
+
+        mockEnvironment.replay();
+        assertEquals("customAuthType", FacesContext.getCurrentInstance().getExternalContext().getAuthType());
     }
 }
