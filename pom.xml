@@ -14,9 +14,9 @@
     <packaging>pom</packaging>
 
     <scm>
-        <connection>scm:git:git://github.com/alexsmirnov/jsf-test.git</connection>
-        <developerConnection>scm:git:git@github.com:alexsmirnov/jsf-test.git</developerConnection>
-        <url>https://github.com/alexsmirnov/jsf-test</url>
+        <connection>scm:git:git://github.com/richfaces/jsf-test.git</connection>
+        <developerConnection>scm:git:git@github.com:richfaces/jsf-test.git</developerConnection>
+        <url>https://github.com/richfaces/jsf-test/tree/develop</url>
     </scm>
 
     <modules>
