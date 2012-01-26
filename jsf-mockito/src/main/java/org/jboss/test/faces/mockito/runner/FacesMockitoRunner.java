@@ -73,13 +73,13 @@ import org.mockito.runners.MockitoJUnitRunner;
  * </p>
  * 
  * <p>
- * It initialized {@link MockFacesEnvironment} and is able to inject mocked JSF classes held by
- * {@link MockFacesEnvironment} to current test instance.
+ * It initialized {@link MockFacesEnvironment} and is able to inject mocked JSF classes held by {@link MockFacesEnvironment} to
+ * current test instance.
  * </p>
  * 
  * <p>
- * Similarly to {@link MockitoJUnitRunner}, it uses {@link MockitoAnnotations#initMocks(Object)} on test instance to
- * mock all the test dependencies annotated by Mockito annotations.
+ * Similarly to {@link MockitoJUnitRunner}, it uses {@link MockitoAnnotations#initMocks(Object)} on test instance to mock all
+ * the test dependencies annotated by Mockito annotations.
  * </p>
  * 
  * 
@@ -97,10 +97,8 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
     /**
      * Instantiates a new faces mockito runner.
      * 
-     * @param klass
-     *            the class
-     * @throws InitializationError
-     *             the initialization error
+     * @param klass the class
+     * @throws InitializationError the initialization error
      */
     public FacesMockitoRunner(Class<?> klass) throws InitializationError {
         super(klass);
@@ -133,14 +131,14 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
     @Override
     protected Statement withAfters(final FrameworkMethod method, final Object target, final Statement originalStatement) {
         final Statement onlyAfters = super.withAfters(method, target, new EmptyStatement());
-        
+
         final Statement runnerAfters = new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 runAfter(target);
             }
         };
-        
+
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
@@ -152,8 +150,7 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
     /**
      * Run before each test
      * 
-     * @param target
-     *            the target test instance
+     * @param target the target test instance
      */
     protected void runBefore(Object target) {
         MockitoAnnotations.initMocks(target);
@@ -166,8 +163,7 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
     /**
      * Run after each test
      * 
-     * @param target
-     *            the target test instance
+     * @param target the target test instance
      */
     protected void runAfter(Object target) {
         environment.release();
@@ -177,16 +173,13 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
     /**
      * Process features.
      * 
-     * @param target
-     *            the target test instance
+     * @param target the target test instance
      */
     private void processFeatures(Object target) {
         Environment annotation = target.getClass().getAnnotation(Environment.class);
-        Environment.Feature[] features;
+        Environment.Feature[] features = new Environment.Feature[0];
         if (annotation != null) {
             features = annotation.value();
-        } else {
-            features = Environment.Feature.values();
         }
 
         for (Environment.Feature feature : features) {
@@ -197,15 +190,16 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
     /**
      * Process injections.
      * 
-     * @param target
-     *            the target test instance
+     * @param target the target test instance
      */
     private void processInjections(Object target) {
-        for (Field field : target.getClass().getDeclaredFields()) {
-            if (field.getAnnotation(Inject.class) != null) {
-                Object injection = getInjection(field.getType());
-                if (injection != null) {
-                    inject(field, target, injection);
+        for (Class<?> clazz = target.getClass(); clazz != Object.class; clazz = clazz.getSuperclass()) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (field.getAnnotation(Inject.class) != null) {
+                    Object injection = getInjection(field.getType());
+                    if (injection != null) {
+                        inject(field, target, injection);
+                    }
                 }
             }
         }
@@ -214,12 +208,9 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
     /**
      * Injects the given injection to field of target test instance.
      * 
-     * @param field
-     *            the field
-     * @param target
-     *            the target
-     * @param injection
-     *            the injection
+     * @param field the field
+     * @param target the target
+     * @param injection the injection
      */
     private void inject(Field field, Object target, Object injection) {
         boolean accessible = field.isAccessible();
@@ -239,10 +230,10 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
     /**
      * Initialize feature with currenct mocked environment
      * 
-     * @param feature
-     *            the feature
+     * @param feature the feature
      */
     private void initializeFeature(Environment.Feature feature) {
+        System.out.println("initializaing feature " + feature);
         switch (feature) {
             case FACTORIES:
                 environment.withFactories();
@@ -279,8 +270,7 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
      * Before injecting, it initializes all dependencies needed by given mock type by initializing given feature.
      * </p>
      * 
-     * @param type
-     *            the JSF class type to initialized and inject
+     * @param type the JSF class type to initialized and inject
      * @return the injection or null if given type ais unknown
      */
     private Object getInjection(Class<?> type) {
@@ -369,8 +359,8 @@ public class FacesMockitoRunner extends BlockJUnit4ClassRunner {
     /**
      * A helper to safely execute multiple statements in one.<br/>
      * 
-     * Will execute all statements even if they fail, all exceptions will be kept. If multiple {@link Statement}s fail,
-     * a {@link MultipleFailureException} will be thrown.
+     * Will execute all statements even if they fail, all exceptions will be kept. If multiple {@link Statement}s fail, a
+     * {@link MultipleFailureException} will be thrown.
      * 
      * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
      * @version $Revision: $

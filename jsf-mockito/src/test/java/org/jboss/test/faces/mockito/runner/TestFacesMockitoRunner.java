@@ -74,5 +74,6 @@ public class TestFacesMockitoRunner {
     @Test
     public void testInjectingApplication() {
         assertNotNull(application);
+        assertSame(application, facesContext.getApplication());
     }
 }
